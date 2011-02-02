@@ -51,6 +51,21 @@ class Formatter {
 		}
 	}
 	
+	public function toFormField($nameField, $idField=null) {
+		Validate::notNull($nameField, "NameField can not be null in a Formatter class");
+		$xhtml  = "<input type='text' name='" . $nameField . "'";
+		if ($idField != null) {
+			$xhtml .= " id='" . $idField . "' ";
+		}
+		$xhtml .= " value='" . $this->screenContent . "' ";
+		$xhtml .= " />";
+		return $xhtml;
+	}
+	
+	protected function toListField() {
+		
+	}
+	
 	// TODO Escrever a lógica de cada Formatter
 	protected function translateToDataBase() { }
 	
