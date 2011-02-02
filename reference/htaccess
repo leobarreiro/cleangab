@@ -1,0 +1,4 @@
+<IfModule mod_rewrite.c>
+   RewriteEngine on
+   RewriteRule (.*)/(.*)$ index.php?cgParams=$1/$2 [L]
+</IfModule>
