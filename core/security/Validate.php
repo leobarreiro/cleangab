@@ -9,18 +9,18 @@
 
 class Validate {
 	
-	public static function notNull($mixed) {
+	public static function notNull($mixed, $message) {
 		if ($mixed == null) {
-			throw new UnexpectedValueException("Value can't be null", 1);
+			throw new UnexpectedValueException($message, 1);
 		}
 	}
 	
-	public static function objectType($type, $mixed) {
+	public static function objectType($type, $mixed, $message) {
 		if (!is_object($mixed)) {
-			throw new Exception("Mixed is not an object", 1);
+			throw new Exception($message, 1);
 		} else {
 			if (!get_class($mixed) == $type) {
-				throw new UnexpectedValueException("Value is not the object type expected", 1);
+				throw new UnexpectedValueException($message, 1);
 			}
 		}
 	}
