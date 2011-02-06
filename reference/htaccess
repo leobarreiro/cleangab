@@ -1,4 +1,6 @@
 <IfModule mod_rewrite.c>
    RewriteEngine on
-   RewriteRule (.*)/(.*)$ index.php?cgParams=$1/$2 [L]
+   RewriteRule ^([a-zA-Z]*)/?$ index.php?cgController=$1 [L]
+   RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/?$ index.php?cgController=$1&cgAction=$2 [L]
+   RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/?([0-9]*)/?$ index.php?cgController=$1&cgAction=$2&cgParam=$3 [L]
 </IfModule>
