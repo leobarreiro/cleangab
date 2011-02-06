@@ -10,6 +10,7 @@ include ("XHTMLComponentInterface.php");
 
 class TableList implements XHTMLComponent {
 	
+	protected $idName;
 	protected $content;
 	protected $header;
 	protected $masks;
@@ -20,53 +21,76 @@ class TableList implements XHTMLComponent {
 	}
 	
 	public function ensamble() {
-		$content = $this->content->getRecords();
 		
-		$xhtml  = "<table border='1' cellpadding='2'>";
-
+		$content = $this->content->getRecords();
+		$xhtml  = "\n\t<table border='1'>\n";
+		
 		if (is_array($this->header) && count($this->header) > 0) {
-			$xhtml .= "<tr>";
+			
+			$xhtml .= "\t\t<tr>\n";
+			
 			foreach ($this->header as $headCell) {
-				$xhtml .= "<th>" . $headCell . "</th>";
+				$xhtml .= "\t\t\t<th>" . $headCell . "</th>\n";
 			}
-			$xhtml .= "</tr>";
+			
+			$xhtml .= "\t\t</tr>\n";
 			$headers = array_keys($this->header);
+			
 			foreach ($content as $record) {
-				$xhtml .= "<tr>";
+				
+				$xhtml .= "\t\t<tr>\n";
+				
 				foreach ($headers as $headCell) {
+					
 					if (is_array($this->masks) && isset($this->masks[$headCell])) {
 						$mask = $this->masks[$headCell];
 						$formatter = new $mask();
-						$xhtml .= "<td>" . $formatter->toScreen($record[$headCell]) . "</td>";
+						$formatter->toScreen($record[$headCell]);
+						$xhtml .= "\t\t\t<td>" . $formatter->toListField() . "</td>\n";
+						
 					} else {
-						$xhtml .= "<td>" . $record[$headCell] . "</td>";
+						$xhtml .= "\t\t\t<td>" . $record[$headCell] . "</td>\n";
 					}
+					
 				}
-				$xhtml .= "</tr>";
+				
+				$xhtml .= "\t\t</tr>\n";
+				
 			}
+			
 		} 
 		else {
+			
 			foreach ($content as $record) {
-				$xhtml .= "<tr>";
+				$xhtml .= "\t\t<tr>\n";
+				
 				foreach ($record as $cell) {
-					$xhtml .= "<td>" . $cell . "</td>";
+					$xhtml .= "\t\t\t<td>" . $cell . "</td>\n";
 				}
-				$xhtml .= "</tr>";
-			}			
+				
+				$xhtml .= "\t\t</tr>\n";
+			}
+					
 		}
-
-		$xhtml .= "</table>";
+		$xhtml .= "\t</table>\n\n";
 		$this->xhtml = $xhtml;
+		
 	}
 	
-	public function renderize() {
+	public function toXhtml() {
 		if (strlen($this->xhtml) == 0) {
 			$this->ensamble();
 		}
-		echo $this->xhtml;
+		return $this->xhtml;
 	}
 	
-	public function __construct($objectModel) {
+	public function getIdName() {
+		return $this->idName;
+	}
+	
+	public function __construct($idName, $objectModel) {
+		Validate::notNull($idName, "ID can not be null");
+		$this->idName = $idName;
 		if ($objectModel->getHintFields() != null) {
 			$this->header = $objectModel->getHintFields();
 		}
@@ -77,6 +101,5 @@ class TableList implements XHTMLComponent {
 			$this->inject($objectModel->getRecordset());
 		}
 	}
-	
 }
 ?>
