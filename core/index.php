@@ -1,12 +1,16 @@
 <?php
 if (isset($_GET) && count($_GET) > 0) {
-	$params = array_values($_GET);
-	$cgParams = explode("/", $params[0]);
 	try {
-		$controllerClass = $cgParams[0] . 'Controller';
-		$controller = new $controllerClass;
-		if (isset($cgParams[1]) && strlen($cgParams[1]) > 0) {
-			$controller->$cgParams[1]();
+		if (isset($_GET['cgController'])) {
+			$controllerClass = $_GET['cgController'] . "Controller";
+			$controller = new $controllerClass;	
+		}
+		if (isset($_GET['cgAction']) && strlen($_GET['cgAction']) > 0) {
+			if (isset($_GET['cgParam'])) {
+				$controller->$_GET['cgAction']($_GET['cgParam']);
+			} else {
+				$controller->$_GET['cgAction']();
+			}
 		} else {
 			$controller->index();
 		}
