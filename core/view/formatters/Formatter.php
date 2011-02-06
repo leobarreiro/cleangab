@@ -52,7 +52,7 @@ class Formatter {
 	}
 	
 	public function toFormField($nameField, $idField=null) {
-		Validate::notNull($nameField, "NameField can not be null in a Formatter class");
+		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
 		$xhtml  = "<input type='text' name='" . $nameField . "'";
 		if ($idField != null) {
 			$xhtml .= " id='" . $idField . "' ";
@@ -62,8 +62,8 @@ class Formatter {
 		return $xhtml;
 	}
 	
-	protected function toListField() {
-		
+	public function toListField($nameField=null, $idField=null) {
+		return $this->screenContent;
 	}
 	
 	// TODO Escrever a lógica de cada Formatter
