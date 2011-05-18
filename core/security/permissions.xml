@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Description of all permissions in the system -->
+<permissions>
+	<permission>
+		<module>Security</module>
+		<name>Login web interface</name>
+		<key>login_web</key>
+	</permission>
+	<permission>
+		<module>Security</module>
+		<name>Grant permissions for others users</name>
+		<key>permissions_to_others</key>
+	</permission>
+</permissions>
