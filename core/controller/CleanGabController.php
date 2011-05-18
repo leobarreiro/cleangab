@@ -9,10 +9,10 @@
 include ("CleanGabEngineView.php");
 
 class CleanGabController {
-	
+
 	private $action;
 	private $args;
-	
+
 	public function __construct($action=null, $args=null) {
 		if ($args != null) {
 			if (is_array($args)) {
@@ -28,9 +28,15 @@ class CleanGabController {
 			$this->action = "index";
 		}
 		$newAction = $this->action."()";
-		$this->$newAction;
+
+		try {
+			$this->$newAction;
+		} catch (Exception $e) {
+			echo $e->getMessage();
+		}
+
 	}
-	
+
 	public function index() {
 		echo "Entrou no index";
 	}
