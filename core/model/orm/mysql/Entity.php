@@ -20,8 +20,11 @@ class Entity implements IDBEntity {
 	private $uk;
 	public $connection;
 	
-	public function __construct($connection, $dataBase=CG_DB_NAME, $tableName)
+	public function __construct($connection=null, $dataBase=CG_DB_NAME, $tableName)
 	{
+		if (!is_object($connection)) {
+			$this->connection = new Connection();
+		}
 		$this->setConnection($connection);
 		$this->setDataBase($dataBase);
 		$this->setTableName($tableName);
