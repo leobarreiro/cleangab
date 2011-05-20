@@ -18,9 +18,9 @@ class Entity implements IDBEntity {
 	private $pk;
 	private $fk;
 	private $uk;
-	public $connection;
+	public 	$connection;
 	
-	public function __construct($connection=null, $dataBase=CG_DB_NAME, $tableName)
+	public function __construct($connection=null, $dataBase=CLEANGAB_DB_DB, $tableName)
 	{
 		if (!is_object($connection)) {
 			$this->connection = new Connection();
@@ -28,60 +28,58 @@ class Entity implements IDBEntity {
 		$this->setConnection($connection);
 		$this->setDataBase($dataBase);
 		$this->setTableName($tableName);
-		$this->init();
+		if (is_resource($this->connection->resource)) {
+			$this->init();	
+		}
 	}
 	
 	public function init()
 	{
-		if (is_resource($this->connection->resource))
+		$primaryKeys = array();
+		$foreignKeys = array();
+		$uniqueKeys  = array();
+		$statement = $this->connection->resource->prepare($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS));
+		$result = $this->connection->resource->query($statement);
+		
+		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS));
+		while ($register = mysql_fetch_assoc($qr))
 		{
-			$primaryKeys = array();
-			$foreignKeys = array();
-			$uniqueKeys  = array();
-			
-			$sql = "SHOW COLUMNS FROM `" . $this->dataBase . "`.`" . $this->tableName . "` ";
-			$qr = mysql_query($sql, $this->connection->resource);
-			
-			while ($register = mysql_fetch_assoc($qr))
+			if (strpos($register['Type'], "("))
 			{
-				if (strpos($register['Type'], "("))
-				{
-					$type = substr($register['Type'], 0, strpos($register['Type'], "("));
-					$size = substr($register['Type'], strpos($register['Type'], "("));
-					$size = preg_replace(array("/[a-z]/", "/\(/", "/\)/"), array("", "", ""), $register['Type']);
-				}
-				else
-				{
-					$type = $register['Type'];
-					$size = '';
-				}
-				
-				$fields[$register['Field']] = array('type'=>$type, 
-													'size'=>$size, 
-													'null'=>$register['Null'], 
-													'key'=>$register['Key'], 
-													'extra'=>$register['Extra'], 
-													'default'=>$register['Default'], 
-													'value'=>'');
-				if ($register['Key'] == 'PRI')
-				{
-					$primaryKeys[] = $register['Field'];
-				}
-				if ($register['Key'] == 'MUL')
-				{
-					$foreignKeys[] = $register['Field'];
-				}
-				if ($register['Key'] == 'UNI')
-				{
-					$uniqueKeys[] = $register['Field'];
-				}
-				
+				$type = substr($register['Type'], 0, strpos($register['Type'], "("));
+				$size = substr($register['Type'], strpos($register['Type'], "("));
+				$size = preg_replace(array("/[a-z]/", "/\(/", "/\)/"), array("", "", ""), $register['Type']);
 			}
-			$this->fields = $fields;
-			$this->pk     = $primaryKeys;
-			$this->fk     = $foreignKeys;
-			$this->uk     = $uniqueKeys;
+			else
+			{
+				$type = $register['Type'];
+				$size = '';
+			}
+			
+			$fields[$register['Field']] = array('type'=>$type, 
+												'size'=>$size, 
+												'null'=>$register['Null'], 
+												'key'=>$register['Key'], 
+												'extra'=>$register['Extra'], 
+												'default'=>$register['Default'], 
+												'value'=>'');
+			if ($register['Key'] == 'PRI')
+			{
+				$primaryKeys[] = $register['Field'];
+			}
+			if ($register['Key'] == 'MUL')
+			{
+				$foreignKeys[] = $register['Field'];
+			}
+			if ($register['Key'] == 'UNI')
+			{
+				$uniqueKeys[] = $register['Field'];
+			}
 		}
+		$this->fields = $fields;
+		$this->pk     = $primaryKeys;
+		$this->fk     = $foreignKeys;
+		$this->uk     = $uniqueKeys;
 	}
 	
 	public function setPk($args)
@@ -119,11 +117,11 @@ class Entity implements IDBEntity {
 	{
 		if ((isset($this->fields[$this->pk])) && ($this->fields[$this->pk]['value'] != ''))
 		{
-			$sql = "UPDATE `" . $this->dataBase . "`.`" . $this->tableName . "`  ";
+			$sql = $this->prepare(CLEANGAB_SQL_INSERT);
 		}
 		else
 		{
-			$sql = "INSERT INTO `" . $this->dataBase . "`.`" . $this->tableName . "`  ";
+			$sql = $this->prepare(CLEANGAB_SQL_UPDATE);
 		}
 		mysql_query($sql);
 		return mysql_affected_rows();
@@ -174,12 +172,17 @@ class Entity implements IDBEntity {
 	}
 	
 	public function retrieve($sql) {
-		$old = array("[database]", "[table]");
-		$new = array($this->dataBase, $this->tableName);
-		$sql = str_replace($old, $new, $sql);
-		$result = mysql_query($sql, $this->connection->resource);
+		$result = mysql_query($this->prepare($sql), $this->connection->resource);
 		$this->recordset = new Recordset($result);
 		return $this->recordset;
 	}
+	
+	private function prepare($sql) {
+		$old = array("[database]", "[table]");
+		$new = array($this->dataBase, $this->tableName);
+		$sql = str_replace($old, $new, $sql);
+		return $sql;
+	}
+	
 }
 ?>
