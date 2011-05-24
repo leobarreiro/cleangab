@@ -10,10 +10,14 @@ if (isset($_GET) && count($_GET) > 0) {
 			}
 		}
 		if (isset($_GET['cgAction']) && strlen($_GET['cgAction']) > 0) {
-			if (isset($_GET['cgParam'])) {
-				$controller->$_GET['cgAction']($_GET['cgParam']);
+			if (method_exists($controller, $_GET['cgAction'])) {
+				if (isset($_GET['cgParam'])) {
+					$controller->$_GET['cgAction']($_GET['cgParam']);
+				} else {
+					$controller->$_GET['cgAction']();
+				}
 			} else {
-				$controller->$_GET['cgAction']();
+				header("Location: " . CLEANGAB_404);
 			}
 		} else {
 			$controller->index();
