@@ -15,15 +15,18 @@ define ("CLEANGAB_FWK_CONTROL", CLEANGAB_FWK_ROOT . "controller" . SEPARATOR);
 define ("CLEANGAB_FWK_VIEW", CLEANGAB_FWK_ROOT . "view" . SEPARATOR);
 define ("CLEANGAB_FWK_SECURITY", CLEANGAB_FWK_ROOT . "security" . SEPARATOR);
 define ("CLEANGAB_FWK_FORMATTER", CLEANGAB_FWK_VIEW . SEPARATOR . "formatters" . SEPARATOR);
-define ("CLEANGAB_DB_DRIVER", "mysql");
-define ("CLEANGAB_WELCOME", "welcome.php");
+
+//define ("CLEANGAB_DB_DRIVER", "mysql");
+
+//define ("CLEANGAB_WELCOME", "welcome.php");
+//define ("CLEANGAB_404", "404.php");
 
 // Database connection
-define ("CLEANGAB_DB_HOST", "localhost");
-define ("CLEANGAB_DB_PORT", "localhost");
-define ("CLEANGAB_DB_USER", "root");
-define ("CLEANGAB_DB_PWD", "root");
-define ("CLEANGAB_DB_DB", "cleangab");
+//define ("CLEANGAB_DB_HOST", "localhost");
+//define ("CLEANGAB_DB_PORT", "localhost");
+//define ("CLEANGAB_DB_USER", "root");
+//define ("CLEANGAB_DB_PWD", "");
+//define ("CLEANGAB_DB_DB", "cleangab");
 
 // Set the new Paths
 
