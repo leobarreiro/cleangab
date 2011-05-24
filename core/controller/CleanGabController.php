@@ -27,18 +27,17 @@ class CleanGabController {
 		} else {
 			$this->action = "index";
 		}
-		$newAction = $this->action."()";
-
+		$newAction = $this->action . "()";
 		try {
-			$this->$newAction;
+			eval('$this->$newAction');
+			//$this->{$newAction};
+			//$this->$newAction;
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
-
 	}
 
 	public function index() {
-		echo "Entrou no index";
 	}
 }
 ?>
