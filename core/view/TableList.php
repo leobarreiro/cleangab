@@ -6,7 +6,7 @@
  * Author: 	Leopoldo Barreiro
  */
 
-include ("XHTMLComponentInterface.php");
+include ("XHTMLComponent.php");
 
 class TableList implements XHTMLComponent {
 	
@@ -23,7 +23,7 @@ class TableList implements XHTMLComponent {
 	public function ensamble() {
 		
 		$content = $this->content->getRecords();
-		$xhtml  = "\n\t<table border='1'>\n";
+		$xhtml  = "\n\t<table id='" . $this->idName . "' border='1'>\n";
 		
 		if (is_array($this->header) && count($this->header) > 0) {
 			
