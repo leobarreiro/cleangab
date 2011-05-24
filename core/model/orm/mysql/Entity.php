@@ -20,17 +20,25 @@ class Entity implements IDBEntity {
 	private $uk;
 	public 	$connection;
 	
-	public function __construct($connection=null, $dataBase=CLEANGAB_DB_DB, $tableName)
+	public function __construct($tableName, $dataBase=CLEANGAB_DB_DB, $connection=null)
 	{
-		if (!is_object($connection)) {
+		if ($connection != null) {
+			$this->setConnection($connection);
+		} else {
 			$this->connection = new Connection();
 		}
-		$this->setConnection($connection);
 		$this->setDataBase($dataBase);
 		$this->setTableName($tableName);
-		if (is_resource($this->connection->resource)) {
-			$this->init();	
+	}
+	
+	public function setConnection($conn) {
+		if (is_object($conn) && get_class($conn) == "Connection") {
+			$this->connection = $conn;
 		}
+	}
+	
+	public function getConnection() {
+		return $this->connection;
 	}
 	
 	public function init()
@@ -38,44 +46,43 @@ class Entity implements IDBEntity {
 		$primaryKeys = array();
 		$foreignKeys = array();
 		$uniqueKeys  = array();
-		$statement = $this->connection->resource->prepare($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS));
-		$result = $this->connection->resource->query($statement);
-		
 		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS));
-		while ($register = mysql_fetch_assoc($qr))
+		while ($record = $qr->fetch_object())
 		{
-			if (strpos($register['Type'], "("))
+			if (strpos($record->Type, "("))
 			{
-				$type = substr($register['Type'], 0, strpos($register['Type'], "("));
-				$size = substr($register['Type'], strpos($register['Type'], "("));
-				$size = preg_replace(array("/[a-z]/", "/\(/", "/\)/"), array("", "", ""), $register['Type']);
+				$type = substr($record->Type, 0, strpos($record->Type, "("));
+				$size = substr($record->Type, strpos($record->Type, "("));
+				$size = preg_replace(array("/[a-z]/", "/\(/", "/\)/"), array("", "", ""), $record->Type);
 			}
 			else
 			{
-				$type = $register['Type'];
+				$type = $record->Type;
 				$size = '';
 			}
 			
-			$fields[$register['Field']] = array('type'=>$type, 
+			$fields[$record->Field] = array('type'=>$type, 
 												'size'=>$size, 
-												'null'=>$register['Null'], 
-												'key'=>$register['Key'], 
-												'extra'=>$register['Extra'], 
-												'default'=>$register['Default'], 
+												'null'=>$record->Null, 
+												'key'=>$record->Key, 
+												'extra'=>$record->Extra, 
+												'default'=>$record->Default, 
 												'value'=>'');
-			if ($register['Key'] == 'PRI')
+			if ($record->Key == 'PRI')
 			{
-				$primaryKeys[] = $register['Field'];
+				$primaryKeys[] = $record->Field;
 			}
-			if ($register['Key'] == 'MUL')
+			if ($record->Key == 'MUL')
 			{
-				$foreignKeys[] = $register['Field'];
+				$foreignKeys[] = $record->Field;
 			}
-			if ($register['Key'] == 'UNI')
+			if ($record->Key == 'UNI')
 			{
-				$uniqueKeys[] = $register['Field'];
+				$uniqueKeys[] = $record->Field;
 			}
 		}
+		
+		$qr->close();
 		$this->fields = $fields;
 		$this->pk     = $primaryKeys;
 		$this->fk     = $foreignKeys;
@@ -157,11 +164,6 @@ class Entity implements IDBEntity {
 		$this->dataBase = $dataBase;
 	}
 	
-	public function setConnection($connection)
-	{
-		$this->connection = $connection;
-	}
-	
 	public function setTableName($tableName)
 	{
 		$this->tableName = $tableName;
@@ -171,15 +173,19 @@ class Entity implements IDBEntity {
 		return $this->tableName;
 	}
 	
-	public function retrieve($sql) {
-		$result = mysql_query($this->prepare($sql), $this->connection->resource);
-		$this->recordset = new Recordset($result);
+	public function retrieve($sql=CLEANGAB_SQL_RETRIEVE_ALL) {
+		$qr = $this->connection->resource->query($this->prepare($sql));
+		$this->recordset = new Recordset($qr);
 		return $this->recordset;
 	}
 	
 	private function prepare($sql) {
 		$old = array("[database]", "[table]");
 		$new = array($this->dataBase, $this->tableName);
+		if ($this->fields != null) {
+			$old[] = "[listable_fields]";
+			$new[] = implode(", ", array_keys($this->fields));
+		}
 		$sql = str_replace($old, $new, $sql);
 		return $sql;
 	}

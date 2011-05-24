@@ -35,19 +35,18 @@ class Recordset {
 	}
 	
 	function ensamble() {
-		if (is_resource($this->result)) {
-			$x = 0;
-			while ($record = mysql_fetch_assoc($this->result)) {
-				$this->records[] = $record;
-				$x++;
+		while ($record = $this->result->fetch_object()) {
+			$item = array();
+			foreach ($record as $property => $value) {
+				$item[$property] = $value;
 			}
-			$this->i = (count($this->records)-1);
+			$this->records[] = $item;
 		}
+		$this->i = (count($this->records)-1);
 	}
 	
 	public function getRecords() {
 		return $this->records;
 	}
-	
 }
 ?>
