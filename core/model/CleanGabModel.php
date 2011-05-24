@@ -36,7 +36,7 @@ class CleanGabModel {
 		$this->masks = array();
 		$this->entity = null;
 		$this->recordset = null;
-		$this->sqlListAll = null;
+		$this->sqlListAll = CLEANGAB_SQL_RETRIEVE_ALL;
 	}
 	
 	public function retrieveAll() {
