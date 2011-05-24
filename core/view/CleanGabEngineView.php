@@ -50,9 +50,9 @@ class CleanGabEngineView {
 	public function getTemplateXhtml() {
 		return $this->templateXhtml;
 	}
-	
+	/*
 	final function inject() {
-		Validate::notNull($this->objects, "Objects can not be null");
+		//Validate::notNull($this->objects, "Objects can not be null");
 		$xhtml = $this->xhtmlObject;
 		$childrens = $xhtml->body->children();
 		$xhtmlNovo = "";
@@ -60,7 +60,7 @@ class CleanGabEngineView {
 			$arr = $childrens[$x]->attributes();
 			if (isset($arr['type']) && strtolower((string)$arr['type']) == 'cleangab') {
 				foreach ($this->objects as $objectView) {
-					if ($objectView->getIdName() == (string)$arr['var']) {
+					if ($objectView->getIdName() == (string)$arr['id']) {
 						$xhtmlNovo .= $objectView->toXhtml();
 					}
 				}
@@ -72,6 +72,17 @@ class CleanGabEngineView {
 		$newContent = "<html>" . $head . "<body>" . $xhtmlNovo . "</body></html>";
 		$this->translated = $newContent;
 	}
+	*/
+	
+	final function inject() {
+		$newContent = $this->xhtmlContent;
+		foreach ($this->objects as $objView) {
+			$elTag = "#{" . $objView->getIdName() . "}";
+			$newContent = str_replace($elTag, $objView->toXhtml(), $newContent);
+		}
+		$this->translated = $newContent;
+	}
+	
 	
 	public function addObject($object) {
 		if (is_object($object)) {
