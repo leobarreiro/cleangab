@@ -15,64 +15,45 @@ class CleanGabEngineView {
 	protected $nameController;
 	protected $operationController;
 	protected $objects;
+	protected $template;
 	protected $xhtmlFile;
 	protected $xhtmlContent;
-	protected $xhtmlObject;
 	protected $translated;
 	
 	public function __construct($nameController, $operationController, $objects=null) {
+		
 		$this->nameController 		= $nameController;
 		$this->operationController 	= $operationController;
-		if ($objects != null) {
-			if (is_array($objects)) {
-				$this->objects = $objects;
-			} else {
-				$this->objects[] = $objects;
+		$this->template 			= CLEANGAB_XHTML_TEMPLATE;
+		$this->objects 				= array();
+		if (is_array($objects)) {
+			foreach ($objects as $obj) {
+				$this->addObject($obj);
 			}
 		} else {
-			$this->objects = array();
+			$this->addObject($objects);
 		}
+		
 		$this->xhtmlFile = "view" . SEPARATOR . strtolower($this->nameController) . SEPARATOR . strtolower($this->operationController) . ".xhtml";
 		
 		try {
 			$this->xhtmlContent = file_get_contents($this->xhtmlFile);
-			$this->xhtmlObject = new SimpleXMLElement($this->xhtmlContent);
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
-		$this->inject();
 	}
 	
 	public function getNameController() {
 		return $this->nameController;
 	}
 	
-	public function getTemplateXhtml() {
-		return $this->templateXhtml;
+	public function setTemplate($template) {
+		$this->template = $template;
 	}
-	/*
-	final function inject() {
-		//Validate::notNull($this->objects, "Objects can not be null");
-		$xhtml = $this->xhtmlObject;
-		$childrens = $xhtml->body->children();
-		$xhtmlNovo = "";
-		for ($x=0; $x<count($childrens); $x++) {
-			$arr = $childrens[$x]->attributes();
-			if (isset($arr['type']) && strtolower((string)$arr['type']) == 'cleangab') {
-				foreach ($this->objects as $objectView) {
-					if ($objectView->getIdName() == (string)$arr['id']) {
-						$xhtmlNovo .= $objectView->toXhtml();
-					}
-				}
-			} else {
-				$xhtmlNovo .= $childrens[$x]->asXML();
-			}
-		}
-		$head = $xhtml->head->asXML();
-		$newContent = "<html>" . $head . "<body>" . $xhtmlNovo . "</body></html>";
-		$this->translated = $newContent;
+	
+	public function getTemplate() {
+		return $this->template;
 	}
-	*/
 	
 	final function inject() {
 		$newContent = $this->xhtmlContent;
@@ -83,17 +64,21 @@ class CleanGabEngineView {
 		$this->translated = $newContent;
 	}
 	
-	
 	public function addObject($object) {
-		if (is_object($object)) {
+		
+		if (is_object($object) && method_exists($object, "getIdName") && 
+			method_exists($object, "ensamble") && method_exists($object, "toXhtml")) {
 			$this->objects[] = $object;
 		}
 	}
 	
 	public function renderize() {
-		Validate::notNull($this->translated, "To renderize a view the content can not be null");
-		echo $this->translated;
+		$this->inject();
+		$templatePath = "lib" . SEPARATOR . "xhtml" . SEPARATOR . $this->template;
+		$renderized = file_get_contents($templatePath);
+		$renderized = str_replace("#{content}", $this->translated, $renderized);
+		echo $renderized;
 	}
-	
+
 }
 ?>
