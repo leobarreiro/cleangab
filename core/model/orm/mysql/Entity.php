@@ -19,6 +19,7 @@ class Entity implements IDBEntity {
 	private $fk;
 	private $uk;
 	public 	$connection;
+	public  $args;
 	
 	public function __construct($tableName, $dataBase=CLEANGAB_DB_DB, $connection=null)
 	{
@@ -27,6 +28,7 @@ class Entity implements IDBEntity {
 		} else {
 			$this->connection = new Connection();
 		}
+		$this->args = array();
 		$this->setDataBase($dataBase);
 		$this->setTableName($tableName);
 	}
@@ -34,6 +36,14 @@ class Entity implements IDBEntity {
 	public function setConnection($conn) {
 		if (is_object($conn) && get_class($conn) == "Connection") {
 			$this->connection = $conn;
+		}
+	}
+	
+	public function addArgs($args) {
+		if (is_array($args)) {
+			foreach ($args as $key=>$value) {
+				$this->args[$key] = $value;
+			}
 		}
 	}
 	
@@ -185,6 +195,10 @@ class Entity implements IDBEntity {
 		if ($this->fields != null) {
 			$old[] = "[listable_fields]";
 			$new[] = implode(", ", array_keys($this->fields));
+		}
+		foreach ($this->args as $key=>$value) {
+			$old[] = "[" . $key . "]";
+			$new[] = $value;
 		}
 		$sql = str_replace($old, $new, $sql);
 		return $sql;
