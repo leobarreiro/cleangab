@@ -4,31 +4,40 @@ if (isset($_SERVER['SCRIPT_NAME']) &&
 	exit();
 }
 
-if (isset($_GET) && count($_GET) > 0) {
-	try {
-		if (isset($_GET['cgController'])) {
-			if (strlen($_GET['cgController']) > 0) {
-				$controllerClass = $_GET['cgController'] . "Controller";
-				$controller = new $controllerClass;	
-			} else {
-				header("Location: " . CLEANGAB_WELCOME);
-			}
+$friendlyUrl = array();
+$friendlyUrl['cgController'] 	= filter_input(INPUT_GET, "cgController", FILTER_SANITIZE_STRING);
+$friendlyUrl['cgAction'] 		= filter_input(INPUT_GET, "cgAction", FILTER_SANITIZE_STRING);
+$friendlyUrl['cgParam'] 		= filter_input(INPUT_GET, "cgParam", FILTER_SANITIZE_STRING);
+
+try {
+	if ($friendlyUrl['cgController'] != null && strlen($friendlyUrl['cgController']) > 0) {
+		$controllerClass = ucfirst($_GET['cgController']) . "Controller";
+		if (in_array($controllerClass, get_declared_classes())) {
+			$controller = new $controllerClass;
+		} else {
+			include (CLEANGAB_404);
+			die();
 		}
-		if (isset($_GET['cgAction']) && strlen($_GET['cgAction']) > 0) {
-			if (method_exists($controller, $_GET['cgAction'])) {
-				if (isset($_GET['cgParam'])) {
-					$controller->$_GET['cgAction']($_GET['cgParam']);
-				} else {
-					$controller->$_GET['cgAction']();
-				}
+	} else {
+			include (CLEANGAB_WELCOME);
+			die();
+	}
+	
+	if ($friendlyUrl['cgAction'] != null && strlen($friendlyUrl['cgAction']) > 0) {
+		if (method_exists($controller, $friendlyUrl['cgAction'])) {
+			if ($friendlyUrl['cgParam'] != null) {
+				$controller->$friendlyUrl['cgAction']($friendlyUrl['cgParam']);
 			} else {
-				header("Location: " . CLEANGAB_404);
+				$controller->$friendlyUrl['cgAction']();
 			}
 		} else {
-			$controller->index();
+			include (CLEANGAB_404);
+			die();
 		}
-	} catch (Exception $e) {
-		echo $e->getMessage();
+	} else {
+		$controller->index();
 	}
+} catch (Exception $e) {
+	echo $e->getMessage();
 }
 ?>
