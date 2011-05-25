@@ -7,6 +7,8 @@
  * 
  */
 
+include_once("Entity.php");
+
 class Session {
 
 	private $user;
@@ -16,11 +18,32 @@ class Session {
 	private $permissions;
 	
 	public function __construct() {
+		
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		$_SESSION['cleangab'] = array();
+		$_SESSION['cleangab']['user'] = "";
 		$this->user 		= "";
 		$this->name 		= "";
 		$this->email 		= "";
 		$this->initDate 	= new DateTime();
 		$this->permissions 	= array();
+	}
+
+	public static function login() {
+		$username = filter_input(INPUT_POST, "username", FILTER_SANITIZE_STRING);
+		$passwd   = filter_input(INPUT_POST, "passwd", FILTER_SANITIZE_STRING);
+		if ($username == null || $passwd == null) {
+			throw new Exception("username or password invalid", "1");
+		}
+		$entity = new Entity("usuario");
+		$entity->addArgs(array("username"=>$username, "password"=>$passwd));
+		$rs = $entity->retrieve(CLEANGAB_SQL_VERIFY_LOGIN);
+		
+		CleanGab::debug($rs);
+		
+		//throw new Exception("login fail", "1");
 	}
 	
 	public function getUser() {
