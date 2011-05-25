@@ -59,6 +59,5 @@ class CleanGabModel {
 	public function getMasks() {
 		return $this->masks;
 	}
-	
 }
 ?>
