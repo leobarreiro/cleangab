@@ -1,4 +1,9 @@
 <?php
+if (isset($_SERVER['SCRIPT_NAME']) && 
+	(preg_match("/\/cleangab\/core\/index.php/", $_SERVER['SCRIPT_NAME']) > 0)) {
+	exit();
+}
+
 if (isset($_GET) && count($_GET) > 0) {
 	try {
 		if (isset($_GET['cgController'])) {
