@@ -14,30 +14,22 @@ class CleanGabController {
 	private $args;
 
 	public function __construct($action=null, $args=null) {
-		if ($args != null) {
-			if (is_array($args)) {
-				$this->args = $args;
-			}
-			if (is_string($args)) {
-				$this->args = array($args);
-			}
-		}
-		if ($action != null) {
-			$this->action = $action;
-		} else {
-			$this->action = "index";
-		}
+
+		$this->action = ($action != null) ? $action : "index";
+		$this->args = (is_array($args)) ? $args : array($args);
 		$newAction = $this->action . "()";
 		try {
 			eval('$this->$newAction');
-			//$this->{$newAction};
-			//$this->$newAction;
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
 	}
 
-	public function index() {
-	}
+	public function index() {}
+	
+	public function view() {}
+	
+	public function save() {}
+	
 }
 ?>
