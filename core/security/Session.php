@@ -40,7 +40,10 @@ class Session {
 	}
 	
 	public static function verify() {
-		return (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && strlen($_SESSION['CLEANGAB']['user'] > 0));
+		$validSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && strlen($_SESSION['CLEANGAB']['user'] > 0));
+		if (!$validSession) {
+			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
+		}
 	}
 	
 	public function getUser() {
