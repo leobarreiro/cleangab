@@ -22,6 +22,9 @@ define ("CLEANGAB_WELCOME", "welcome.php");
 define ("CLEANGAB_404", "404.php");
 define ("CLEANGAB_XHTML_TEMPLATE", "base.xhtml");
 
+define ("CLEANGAB_APP_ENV", "DEV");
+define ("CLEANGAB_STACKTRACEDEBUG_FILE", "C:/Disys/log/cleangab.log");
+
 // Database connection
 // See localconfig.php from your application
 //define ("CLEANGAB_DB_HOST", "localhost");
