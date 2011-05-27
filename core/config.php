@@ -24,6 +24,8 @@ define ("CLEANGAB_XHTML_TEMPLATE", "base.xhtml");
 
 define ("CLEANGAB_APP_ENV", "DEV");
 define ("CLEANGAB_STACKTRACEDEBUG_FILE", "C:/Disys/log/cleangab.log");
+define ("CLEANGAB_URL_BASE_APP", "http://localhost:800/portal");
+
 
 // Database connection
 // See localconfig.php from your application
