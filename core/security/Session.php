@@ -11,47 +11,44 @@ include_once("Entity.php");
 
 class Session {
 
-	private $user;
-	private $name;
-	private $email;
-	private $initDate;
-	private $permissions;
-	
-	public function __construct() {
-		
-		if (!isset($_SESSION)) {
-			session_start();
-		}
-		$_SESSION['cleangab'] = array();
-		$_SESSION['cleangab']['user'] = "";
-		$this->user 		= "";
-		$this->name 		= "";
-		$this->email 		= "";
-		$this->initDate 	= new DateTime();
-		$this->permissions 	= array();
-	}
-
 	public static function login() {
 		$username = filter_input(INPUT_POST, "username", FILTER_SANITIZE_STRING);
 		$passwd   = filter_input(INPUT_POST, "passwd", FILTER_SANITIZE_STRING);
-		if ($username == null || $passwd == null) {
-			throw new Exception("username or password invalid", "1");
+		try {
+			if ($username == null || $passwd == null) {
+				throw new Exception("username or password invalid", "1");
+			}
+			$entity = new Entity("usuario");
+			$entity->addArgs(array("username"=>$username, "password"=>$passwd));
+			$rs = $entity->retrieve(CLEANGAB_SQL_VERIFY_LOGIN);
+			if (count($rs->getRecords()) == 0) {
+				throw new Exception("login fail", "2");
+			} else {
+				if (!isset($_SESSION)) {
+					session_start();
+				}
+				if (!isset($_SESSION['CLEANGAB'])) {
+					$_SESSION["CLEANGAB"] = array();
+				}
+				foreach ($rs->get() as $key=>$value) {
+					$_SESSION['CLEANGAB'][$key] = $value;
+				}
+			}
+		} catch (Exception $e) {
+			CleanGab::stackTraceDebug($e);
 		}
-		$entity = new Entity("usuario");
-		$entity->addArgs(array("username"=>$username, "password"=>$passwd));
-		$rs = $entity->retrieve(CLEANGAB_SQL_VERIFY_LOGIN);
-		
-		CleanGab::debug($rs);
-		
-		//throw new Exception("login fail", "1");
+	}
+	
+	public static function verify() {
+		return (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && strlen($_SESSION['CLEANGAB']['user'] > 0));
 	}
 	
 	public function getUser() {
-		return $this->user;
+		return $_SESSION['CLEANGAB']['user'];
 	}
 	
 	public function getName() {
-		return $this->name;
+		return $_SESSION['CLEANGAB']['name'];
 	}
 	
 	public function getPermissions() {
