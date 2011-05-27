@@ -53,46 +53,50 @@ class Entity implements IDBEntity {
 	
 	public function init()
 	{
+		$fields 	 = array();
 		$primaryKeys = array();
 		$foreignKeys = array();
 		$uniqueKeys  = array();
-		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS));
-		while ($record = $qr->fetch_object())
-		{
-			if (strpos($record->Type, "("))
-			{
-				$type = substr($record->Type, 0, strpos($record->Type, "("));
-				$size = substr($record->Type, strpos($record->Type, "("));
-				$size = preg_replace(array("/[a-z]/", "/\(/", "/\)/"), array("", "", ""), $record->Type);
+		try {
+			$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS));
+			if (!$qr) {
+				throw new Exception("Error when retrieving table fields", "3");
 			}
-			else
+			while ($record = $qr->fetch_object())
 			{
-				$type = $record->Type;
-				$size = '';
+				if (strpos($record->Type, "("))
+				{
+					$type = substr($record->Type, 0, strpos($record->Type, "("));
+					$size = substr($record->Type, strpos($record->Type, "("));
+					$size = preg_replace(array("/[a-z]/", "/\(/", "/\)/"), array("", "", ""), $record->Type);
+				}
+				else
+				{
+					$type = $record->Type;
+					$size = '';
+				}
+				$fields[$record->Field] = array('type'=>$type, 
+													'size'=>$size, 
+													'null'=>$record->Null, 
+													'key'=>$record->Key, 
+													'extra'=>$record->Extra, 
+													'default'=>$record->Default, 
+													'value'=>'');
+				if ($record->Key == 'PRI') {
+					$primaryKeys[] = $record->Field;
+				}
+				if ($record->Key == 'MUL') {
+					$foreignKeys[] = $record->Field;
+				}
+				if ($record->Key == 'UNI') {
+					$uniqueKeys[] = $record->Field;
+				}
 			}
-			
-			$fields[$record->Field] = array('type'=>$type, 
-												'size'=>$size, 
-												'null'=>$record->Null, 
-												'key'=>$record->Key, 
-												'extra'=>$record->Extra, 
-												'default'=>$record->Default, 
-												'value'=>'');
-			if ($record->Key == 'PRI')
-			{
-				$primaryKeys[] = $record->Field;
-			}
-			if ($record->Key == 'MUL')
-			{
-				$foreignKeys[] = $record->Field;
-			}
-			if ($record->Key == 'UNI')
-			{
-				$uniqueKeys[] = $record->Field;
-			}
+			$qr->close();
+		} catch (Exception $e) {
+			CleanGab::debug($e->getMessage());
+			CleanGab::stackTraceDebug($e);
 		}
-		
-		$qr->close();
 		$this->fields = $fields;
 		$this->pk     = $primaryKeys;
 		$this->fk     = $foreignKeys;
