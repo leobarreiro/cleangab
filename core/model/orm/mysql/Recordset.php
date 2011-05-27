@@ -14,6 +14,7 @@ class Recordset {
 
 	function __construct($result) {
 		$this->records = array();
+		$this->i = 0;
 		$this->setResult($result);
 		$this->ensamble();
 	}
@@ -34,7 +35,29 @@ class Recordset {
 		$this->result = $result;
 	}
 	
+	public function get($p=null) {
+		if (count($this->records) == 0) {
+			throw new OutOfRangeException("Out of range exception");
+			return false;
+		}
+		if ($p != null) {
+			if ($p < count($this->records)) {
+				return $this->records[$p];
+			}
+			else {
+				throw new OutOfRangeException("Out of range exception");
+				return false;
+			} 
+		}
+		return $this->records[$this->i];
+	}
+	
 	function ensamble() {
+		$this->records = array();
+		$this->i = 0;
+		if (!$this->result) {
+			throw new Exception("recordset dont have a valid resultset", "4");
+		}
 		while ($record = $this->result->fetch_object()) {
 			$item = array();
 			foreach ($record as $property => $value) {
