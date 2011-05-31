@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="cleangab" basedir="." default="deploy">
-	<property name="source" value="C:\Disys\projetos\cleangab\\" />
-	<property name="dest" value="C:\Disys\apps\xampp\apache\htdocs\cleangab\\" />
+	<property name="source" value="/home/leo/leopoldobarreiro/projects/cleangab/" />
+	<property name="dest" value="/var/www/cleangab/" />
 	<target name="deploy" description="deploy do projeto ${ant.file.cleangab}">
 		<delete dir="${dest}" includeemptydirs="true" failonerror="false" />
 		<copy todir="${dest}" overwrite="true">
