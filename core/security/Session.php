@@ -40,8 +40,8 @@ class Session {
 	}
 	
 	public static function verify() {
-		$validSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && strlen($_SESSION['CLEANGAB']['user'] > 0));
-		if (!$validSession) {
+		$isValidSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && strlen($_SESSION['CLEANGAB']['user'] > 0));
+		if (!$isValidSession) {
 			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
 		}
 	}
