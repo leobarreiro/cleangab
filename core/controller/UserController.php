@@ -4,9 +4,7 @@ include ("model/UserModel.php");
 class UserController extends CleanGabController {
 
 	public function index() {
-		//phpinfo();
-		//die();
-		Session::verify();
+		//Session::verify();
 		$model = new UserModel();
 		$tableUsers = new TableList("users", $model);
 		$view = new CleanGabEngineView("User", "index", $tableUsers);
