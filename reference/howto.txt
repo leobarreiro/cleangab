@@ -1,0 +1,22 @@
+CleanGab Framework
+HOWTO
+
+- - - - - - - - - - - - - - - - - - - - - - - - 
+Como habilitar o mod_rewrite usado no .htaccess
+- - - - - - - - - - - - - - - - - - - - - - - -
+
+1) Abra o shell e digite:
+# sudo a2enmod rewrite
+
+2) Edite o arquivo /etc/apache2/conf.d/default
+Altere a linha: AllowOverride None para: AllowOverride All do domínio que deseja habilitar.
+
+3) Digite o comando:
+# sudo /etc/init.d/apache2 reload  // para recarregar as configurações do apache
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - 
+Como utilizar o ini_set para incluir os caminhos padrão dos arquivos PHP
+- - - - - - - - - - - - - - - - - - - - - - - -
+
+No linux utilize o símbolo de dois pontos ":" para separar diferentes rotas.
