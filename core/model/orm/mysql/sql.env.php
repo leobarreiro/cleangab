@@ -1,5 +1,10 @@
 <?php
-define ("CLEANGAB_SQL_RETRIEVE_ALL", "SELECT [listable_fields] FROM `[database]`.`[table]`");
+
+define ("CLEANGAB_SQL_STRING_TYPES", serialize(array("CHAR", "VARCHAR", "TEXT")));
+define ("CLEANGAB_SQL_NUMERIC_TYPES", serialize(array("INT", "NUMERIC", "FLOAT")));
+define ("CLEANGAB_SQL_LIKE", "LIKE '[like]'");
+
+define ("CLEANGAB_SQL_RETRIEVE_ALL", "SELECT [listable_fields] FROM `[database]`.`[table]` WHERE [args] ORDER BY [order] LIMIT [offset], [limit]");
 define ("CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS", "SHOW COLUMNS FROM `[database]`.`[table]` ");
 define ("CLEANGAB_SQL_RETRIEVE_USERS", "SELECT * FROM `[database]`.usuario WHERE id = [user_id] ");
 define ("CLEANGAB_SQL_RETRIEVE_PERMISSIONS", "SELECT * FROM `[database]`.permission WHERE user_id = [user_id] ");
