@@ -12,6 +12,8 @@ class TableList implements XHTMLComponent {
 	
 	protected $idName;
 	protected $content;
+	protected $pages;
+	protected $page;
 	protected $header;
 	protected $masks;
 	protected $xhtml;
