@@ -26,6 +26,7 @@ class CleanGabEngineView {
 		$this->operationController 	= $operationController;
 		$this->template 			= CLEANGAB_XHTML_TEMPLATE;
 		$this->objects 				= array();
+		
 		if (is_array($objects)) {
 			foreach ($objects as $obj) {
 				$this->add($obj);
@@ -37,9 +38,13 @@ class CleanGabEngineView {
 		$this->xhtmlFile = "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
 		
 		try {
-			$this->xhtmlContent = file_get_contents($this->xhtmlFile);
+			if (file_exists($this->xhtmlFile)) {
+				$this->xhtmlContent = file_get_contents($this->xhtmlFile);
+			} else {
+				header ("Location: " . CLEANGAB_404);
+			}
 		} catch (Exception $e) {
-			echo $e->getMessage();
+			CleanGab::stackTraceDebug($e);
 		}
 	}
 	
@@ -58,6 +63,8 @@ class CleanGabEngineView {
 	final function inject() {
 		$newContent = $this->xhtmlContent;
 		$tagNames   = $this->parserELTag($newContent);
+		CleanGab::debug($tagNames);
+		
 		foreach ($tagNames as $tag) {
 			if (strpos($tag, ".")) {
 				$parts = explode(".", $tag);
@@ -103,6 +110,7 @@ class CleanGabEngineView {
 		$this->inject();
 		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->template;
 		$renderized = file_get_contents($templatePath);
+		CleanGab::debug($this->translated);
 		$renderized = str_replace("#{content}", $this->translated, $renderized);
 		echo $renderized;
 	}
