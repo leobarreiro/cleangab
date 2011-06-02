@@ -17,9 +17,9 @@ class CleanGabController {
 
 		$this->action = ($action != null) ? $action : "index";
 		$this->args = (is_array($args)) ? $args : array($args);
-		$newAction = $this->action . "()";
+		$newAction = $this->action . '()';
 		try {
-			eval('$this->$newAction');
+			$this->{$newAction};
 		} catch (Exception $e) {
 			echo $e->getMessage();
 		}
