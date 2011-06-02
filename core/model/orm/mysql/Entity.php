@@ -15,11 +15,17 @@ class Entity implements IDBEntity {
 	private $tableName;
 	private $dataBase;
 	private $fields;
+	private $orderBy;
+	private $offset;
+	private $limit;
 	private $pk;
 	private $fk;
 	private $uk;
 	public 	$connection;
 	public  $args;
+	private $defaultArgument;
+	private $stringTypes;
+	private $numericTypes;
 	
 	public function __construct($tableName, $dataBase=CLEANGAB_DB_DB, $connection=null)
 	{
@@ -28,9 +34,15 @@ class Entity implements IDBEntity {
 		} else {
 			$this->connection = new Connection();
 		}
-		$this->args = array();
+		$this->defaultArgument = "TRUE";
+		$this->stringTypes  = unserialize(CLEANGAB_SQL_STRING_TYPES);
+		$this->numericTypes = unserialize(CLEANGAB_SQL_NUMERIC_TYPES);
+		
 		$this->setDataBase($dataBase);
 		$this->setTableName($tableName);
+		$this->args   = array();
+		$this->offset = 0;
+		$this->limit  = CLEANGAB_DEFAULT_SQL_LIMIT;
 	}
 	
 	public function setConnection($conn) {
@@ -39,12 +51,18 @@ class Entity implements IDBEntity {
 		}
 	}
 	
-	public function addArgs($args) {
-		if (is_array($args)) {
-			foreach ($args as $key=>$value) {
-				$this->args[$key] = $value;
-			}
+	public function addArgument($key, $search, $operation=null) {
+		if (in_array($key, $this->fields)) {
+			$this->args[] = array('key'=>$key, 'search'=>$search, 'operation'=>$operation);
 		}
+	}
+
+	public function setOffset($intOffset) {
+		$this->offset = $intOffset;
+	}
+	
+	public function setLimit($intLimit) {
+		$this->limit = $intLimit;
 	}
 	
 	public function getConnection() {
@@ -76,12 +94,12 @@ class Entity implements IDBEntity {
 					$size = '';
 				}
 				$fields[$record->Field] = array('type'=>$type, 
-													'size'=>$size, 
-													'null'=>$record->Null, 
-													'key'=>$record->Key, 
-													'extra'=>$record->Extra, 
-													'default'=>$record->Default, 
-													'value'=>'');
+												'size'=>$size, 
+												'null'=>$record->Null, 
+												'key'=>$record->Key, 
+												'extra'=>$record->Extra, 
+												'default'=>$record->Default, 
+												'value'=>'');
 				if ($record->Key == 'PRI') {
 					$primaryKeys[] = $record->Field;
 				}
@@ -94,13 +112,13 @@ class Entity implements IDBEntity {
 			}
 			$qr->close();
 		} catch (Exception $e) {
-			CleanGab::debug($e->getMessage());
 			CleanGab::stackTraceDebug($e);
 		}
-		$this->fields = $fields;
-		$this->pk     = $primaryKeys;
-		$this->fk     = $foreignKeys;
-		$this->uk     = $uniqueKeys;
+		$this->fields  = $fields;
+		$this->pk      = $primaryKeys;
+		$this->fk      = $foreignKeys;
+		$this->uk      = $uniqueKeys;
+		$this->orderBy = implode(", ", $this->pk);
 	}
 	
 	public function setPk($args)
@@ -200,12 +218,38 @@ class Entity implements IDBEntity {
 			$old[] = "[listable_fields]";
 			$new[] = implode(", ", array_keys($this->fields));
 		}
-		foreach ($this->args as $key=>$value) {
-			$old[] = "[" . $key . "]";
-			$new[] = $value;
+		
+		$sqlArguments = array();
+		foreach ($this->args as $arg) {
+			$sqlArguments[] = $this->parseArgumentToSql($arg);
 		}
+
+		$old[] = "[args]";
+		$new[] = (count($sqlArguments) > 0) ? implode (" AND ", $sqlArguments) : $this->defaultArgument;
+		
+		$old[] = "[order]";
+		$new[] = $this->orderBy;
+		
+		$old[] = "[offset]";
+		$new[] = $this->offset;
+		
+		$old[] = "[limit]";
+		$new[] = $this->limit;
+				
 		$sql = str_replace($old, $new, $sql);
 		return $sql;
+	}
+	
+	private function parseArgumentToSql($arArgument) {
+		$sqlPart  = $arArgument['key'];
+		$sqlPart .= " ";
+		$sqlPart .= $arArgument['operation'];
+		if (in_array($this->fields[$arArgument['key']]['type'], $this->numericTypes)) {
+			$sqlPart .= $arArgument['search'];
+		} else {
+			$sqlPart .= "'" . $arArgument['search'] . "'";
+		}
+		return $sqlPart;
 	}
 	
 }
