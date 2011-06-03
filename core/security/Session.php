@@ -85,5 +85,30 @@ class Session {
 		return false;
 	}
 	
+	private function createIfNotExists() {
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+	}
+	
+	private function prepareComponentsHost() {
+		$this->createIfNotExists();
+		if (!isset($_SESSION['CLEANGAB'])) {
+			$_SESSION['CLEANGAB'] = array();
+		}
+		if (!isset($_SESSION['CLEANGAB']['xhtmlComponents'])) {
+			$_SESSION['CLEANGAB']['xhtmlComponents'] = array();
+		}
+	}
+	
+	public function addToSession($component) {
+		if (is_object($component) && $component instanceof XHTMLComponent) {
+			$this->prepareComponentsHost();
+			$_SESSION['CLEANGAB']['xhtmlComponents'][$component->getIdName()] = serialize($component);
+			return true;
+		}
+		return false;
+	}
+	
 }
 ?>
