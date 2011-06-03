@@ -63,8 +63,6 @@ class CleanGabEngineView {
 	final function inject() {
 		$newContent = $this->xhtmlContent;
 		$tagNames   = $this->parserELTag($newContent);
-		CleanGab::debug($tagNames);
-		
 		foreach ($tagNames as $tag) {
 			if (strpos($tag, ".")) {
 				$parts = explode(".", $tag);
@@ -110,7 +108,6 @@ class CleanGabEngineView {
 		$this->inject();
 		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->template;
 		$renderized = file_get_contents($templatePath);
-		CleanGab::debug($this->translated);
 		$renderized = str_replace("#{content}", $this->translated, $renderized);
 		echo $renderized;
 	}
@@ -120,6 +117,7 @@ class CleanGabEngineView {
 	}
 
 	private function parserELTag($xhtml) {
+		//TODO: aprimorar esta expressao regular
 		$pattern = "%(\#{){1}.[a-zA-Z]+.(\.+)*.([a-zA-Z]*).(}){1}%";
 		preg_match_all($pattern, $xhtml, $matches, PREG_PATTERN_ORDER);
 		if (is_array($matches)) {
