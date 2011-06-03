@@ -18,12 +18,12 @@ class Entity implements IDBEntity {
 	private $orderBy;
 	private $offset;
 	private $limit;
+	private $total;
 	private $pk;
 	private $fk;
 	private $uk;
 	public 	$connection;
 	public  $args;
-	private $defaultArgument;
 	private $stringTypes;
 	private $numericTypes;
 	
@@ -34,15 +34,20 @@ class Entity implements IDBEntity {
 		} else {
 			$this->connection = new Connection();
 		}
-		$this->defaultArgument = "TRUE";
 		$this->stringTypes  = unserialize(CLEANGAB_SQL_STRING_TYPES);
 		$this->numericTypes = unserialize(CLEANGAB_SQL_NUMERIC_TYPES);
 		
 		$this->setDataBase($dataBase);
 		$this->setTableName($tableName);
-		$this->args   = array();
-		$this->offset = 0;
-		$this->limit  = CLEANGAB_DEFAULT_SQL_LIMIT;
+
+		$this->fields 	= array();
+		$this->pk 		= array();
+		$this->fk 		= array();
+		$this->uk 		= array();
+		$this->total 	= 0;
+		$this->args 	= array();
+		$this->offset 	= 0;
+		$this->limit  	= CLEANGAB_DEFAULT_SQL_LIMIT;
 	}
 	
 	public function setConnection($conn) {
@@ -51,10 +56,14 @@ class Entity implements IDBEntity {
 		}
 	}
 	
-	public function addArgument($key, $search, $operation=null) {
-		if (in_array($key, $this->fields)) {
+	public function addArgument($key, $search, $operation='LIKE') {
+		if (array_key_exists($key, $this->fields)) {
 			$this->args[] = array('key'=>$key, 'search'=>$search, 'operation'=>$operation);
 		}
+	}
+	
+	public function setOrderBy($strOrder) {
+		$this->orderBy = $strOrder;
 	}
 
 	public function setOffset($intOffset) {
@@ -207,13 +216,24 @@ class Entity implements IDBEntity {
 	
 	public function retrieve($sql=CLEANGAB_SQL_RETRIEVE_ALL) {
 		$qr = $this->connection->resource->query($this->prepare($sql));
-		$this->recordset = new Recordset($qr);
-		return $this->recordset;
+		$recordset = new Recordset($qr);
+		$this->countRecords();
+		return $recordset;
+	}
+	
+	private function countRecords() {
+		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_COUNT_ALL));
+		$rset = new Recordset($qr);
+		$record = $rset->get();
 	}
 	
 	private function prepare($sql) {
 		$old = array("[database]", "[table]");
 		$new = array($this->dataBase, $this->tableName);
+		
+		$old[] = "[pk]";
+		$new[] = implode (", ", $this->pk);
+		
 		if ($this->fields != null) {
 			$old[] = "[listable_fields]";
 			$new[] = implode(", ", array_keys($this->fields));
@@ -224,30 +244,34 @@ class Entity implements IDBEntity {
 			$sqlArguments[] = $this->parseArgumentToSql($arg);
 		}
 
+		//CleanGab::debug($this->args);
+		//CleanGab::debug($sqlArguments);
+		
 		$old[] = "[args]";
-		$new[] = (count($sqlArguments) > 0) ? implode (" AND ", $sqlArguments) : $this->defaultArgument;
+		$new[] = (count($sqlArguments) >0) ? " WHERE " . implode (" AND ", $sqlArguments) : "";
 		
 		$old[] = "[order]";
-		$new[] = $this->orderBy;
-		
-		$old[] = "[offset]";
-		$new[] = $this->offset;
+		$new[] = " ORDER BY " . $this->orderBy;
 		
 		$old[] = "[limit]";
-		$new[] = $this->limit;
-				
+		$new[] = "LIMIT " . $this->offset . ", " . $this->limit;
+		
 		$sql = str_replace($old, $new, $sql);
+		//CleanGab::debug($sql);
 		return $sql;
 	}
 	
 	private function parseArgumentToSql($arArgument) {
 		$sqlPart  = $arArgument['key'];
-		$sqlPart .= " ";
-		$sqlPart .= $arArgument['operation'];
+		$sqlPart .= " " . $arArgument['operation'] . " ";
 		if (in_array($this->fields[$arArgument['key']]['type'], $this->numericTypes)) {
 			$sqlPart .= $arArgument['search'];
 		} else {
-			$sqlPart .= "'" . $arArgument['search'] . "'";
+			if ($arArgument['operation'] == "LIKE") {
+				$sqlPart .= "'%" . $arArgument['search'] . "%'";
+			} else {
+				$sqlPart .= "'" . $arArgument['search'] . "'";
+			}
 		}
 		return $sqlPart;
 	}
