@@ -26,9 +26,14 @@ class CleanGabModel {
 	// formato array: nome_campo=>nome_classe_formatter
 	protected $masks;
 	
-	protected $sqlListAll;
-	
+	// dados obtidos do banco de dados
+	// formato: object recordset
 	protected $recordset;
+	
+	// argumentos usados para pesquisar e/ou manipular registros no banco de dados
+	// formato array: nome_campo=>valor_do_input
+	public $argumentData;
+	
 	
 	public function __construct() {
 		$this->hintFields = array();
@@ -36,20 +41,14 @@ class CleanGabModel {
 		$this->masks = array();
 		$this->entity = null;
 		$this->recordset = null;
-		$this->sqlListAll = CLEANGAB_SQL_RETRIEVE_ALL;
-	}
-	
-	public function retrieveAll() {
-		
-		if ($this->sqlListAll != null) {
-			$this->recordset = $this->entity->retrieve($this->sqlListAll);
-		} else {
-			$this->recordset = false;
-		}
 	}
 	
 	public function getHintFields() {
 		return $this->hintFields;
+	}
+	
+	public function setRecordset($recordset) {
+		$this->recordset = $recordset;
 	}
 	
 	public function getRecordset() {
@@ -59,5 +58,28 @@ class CleanGabModel {
 	public function getMasks() {
 		return $this->masks;
 	}
+	
+	public function addArgumentData($key, $value) {
+		if (isset($key) && is_string($key) && isset($value)) {
+			$this->argumentData[$key] = $value;
+			return true;
+		}
+		return false;
+	}
+	
+	public function getArgumentData($key) {
+		if (isset($this->argumentData[$key])) {
+			return $this->argumentData[$key];
+		} else {
+			return false;
+		}
+	}
+	
+	// TODO: override
+	public function prepareList() {}
+	
+	// TODO: override
+	public function prepareSave() {}
+
 }
 ?>
