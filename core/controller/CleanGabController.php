@@ -25,6 +25,14 @@ class CleanGabController {
 		}
 	}
 
+	public function getUserInput($strKey) {
+		$input = filter_input(INPUT_POST, $strKey, FILTER_SANITIZE_STRING);
+		if ($input != null) {
+			return $input;
+		}
+		return false;
+	}
+
 	public function index() {}
 	
 	public function view() {}
