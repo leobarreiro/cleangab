@@ -41,7 +41,8 @@ class CleanGabEngineView {
 			if (file_exists($this->xhtmlFile)) {
 				$this->xhtmlContent = file_get_contents($this->xhtmlFile);
 			} else {
-				header ("Location: " . CLEANGAB_404);
+				include (CLEANGAB_501);
+				die();
 			}
 		} catch (Exception $e) {
 			CleanGab::stackTraceDebug($e);
@@ -80,9 +81,7 @@ class CleanGabEngineView {
 			if ($obj) {
 				if ($methods) {
 					$eval = implode("->", $methods);
-					
 					$newContent = str_replace("#{".$tag."}", eval($obj->$eval), $newContent);
-					CleanGab::debug($obj->$eval);
 				} else {
 					$newContent = str_replace("#{".$tag."}", $obj->toXhtml(), $newContent);
 				}
