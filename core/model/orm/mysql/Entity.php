@@ -225,6 +225,7 @@ class Entity implements IDBEntity {
 		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_COUNT_ALL));
 		$rset = new Recordset($qr);
 		$record = $rset->get();
+		$this->total = $record['total'];
 	}
 	
 	private function prepare($sql) {
@@ -244,9 +245,6 @@ class Entity implements IDBEntity {
 			$sqlArguments[] = $this->parseArgumentToSql($arg);
 		}
 
-		//CleanGab::debug($this->args);
-		//CleanGab::debug($sqlArguments);
-		
 		$old[] = "[args]";
 		$new[] = (count($sqlArguments) >0) ? " WHERE " . implode (" AND ", $sqlArguments) : "";
 		
@@ -257,7 +255,6 @@ class Entity implements IDBEntity {
 		$new[] = "LIMIT " . $this->offset . ", " . $this->limit;
 		
 		$sql = str_replace($old, $new, $sql);
-		//CleanGab::debug($sql);
 		return $sql;
 	}
 	
