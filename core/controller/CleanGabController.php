@@ -17,12 +17,6 @@ class CleanGabController {
 
 		$this->action = ($action != null) ? $action : "index";
 		$this->args = (is_array($args)) ? $args : array($args);
-		$newAction = $this->action . '()';
-		try {
-			$this->{$newAction};
-		} catch (Exception $e) {
-			echo $e->getMessage();
-		}
 	}
 
 	public function getUserInput($strKey) {
