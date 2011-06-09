@@ -6,6 +6,7 @@ class UserController extends CleanGabController {
 	public function index() {
 		//Session::verify();
 		$model = new UserModel();
+		$model->prepareList();
 		$tableUsers = new TableList("users", $model);
 		$view = new CleanGabEngineView("User", "index", $tableUsers);
 		$view->renderize();
