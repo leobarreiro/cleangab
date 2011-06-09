@@ -2,7 +2,11 @@
 
 class CleanGab {
 	
-	static function debug($mixedVar) {
+	static function debug($mixedVar) 
+	{
+		echo "<pre>";
+		echo var_dump($mixedVar);
+		echo "</pre>";
 		$file = (defined("CLEANGAB_STACKTRACEDEBUG_FILE")) ? CLEANGAB_STACKTRACEDEBUG_FILE : "log" . SEPARATOR . "cleangab.log";
 		$handle = (is_writable($file)) ? fopen($file, "a") : false;
 		if ($handle) {
@@ -11,12 +15,15 @@ class CleanGab {
 		}
 	}
 	
-	static function stackTraceDebug($exception) {
+	static function stackTraceDebug($exception) 
+	{
 		$file = (defined("CLEANGAB_STACKTRACEDEBUG_FILE")) ? CLEANGAB_STACKTRACEDEBUG_FILE : "log" . SEPARATOR . "cleangab.log";
 		$handle = (is_writable($file)) ? fopen($file, "a") : false;
-		if ($handle) {
+		if ($handle) 
+		{
 			fwrite($handle, "\n[" . date("Y.m.d H:i:s") . "] CG-" . strtoupper(CLEANGAB_APP_ENV) . " ");
-			switch (strtoupper(CLEANGAB_APP_ENV)) {
+			switch (strtoupper(CLEANGAB_APP_ENV)) 
+			{
 				case "DEV":
 					fwrite($handle, " msg: {" . $exception->getMessage() . "}, at:");
 					foreach ($exception->getTrace() as $traced) {
