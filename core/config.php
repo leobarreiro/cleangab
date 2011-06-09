@@ -7,7 +7,7 @@
  */
 // Constants
 
-define ("CLEANGAB_FWK_ROOT", "C:\\Disys\\apps\\xampp\\apache\\htdocs\\cleangab\\core\\");
+define ("CLEANGAB_FWK_ROOT", "C:\\Dev\\apps\\apache\\htdocs\\cleangab\\core\\");
 define ("CLEANGAB_FWK_MODEL", CLEANGAB_FWK_ROOT . "model" . DIRECTORY_SEPARATOR);
 define ("CLEANGAB_FWK_ORM", CLEANGAB_FWK_MODEL . "orm" . DIRECTORY_SEPARATOR);
 define ("CLEANGAB_FWK_CONTROL", CLEANGAB_FWK_ROOT . "controller" . DIRECTORY_SEPARATOR);
@@ -15,11 +15,14 @@ define ("CLEANGAB_FWK_VIEW", CLEANGAB_FWK_ROOT . "view" . DIRECTORY_SEPARATOR);
 define ("CLEANGAB_FWK_SECURITY", CLEANGAB_FWK_ROOT . "security" . DIRECTORY_SEPARATOR);
 define ("CLEANGAB_FWK_FORMATTER", CLEANGAB_FWK_VIEW . "formatters" . DIRECTORY_SEPARATOR);
 
+require ("localconfig.php");
+
 define ("CLEANGAB_WELCOME", "welcome.php");
 define ("CLEANGAB_404", "404.php");
+define ("CLEANGAB_501", "501.php");
 define ("CLEANGAB_XHTML_TEMPLATE", "base.xhtml");
 
-require ("localconfig.php");
+
 
 // Set the new Paths
 
