@@ -10,22 +10,17 @@ class UserModel extends CleanGabModel {
 	}
 	
 	public function prepareList() {
-		
 		$entity = new Entity("user");
 		$entity->init();
-		
 		// argumentos
 		if ($this->getArgumentData("user")) {
 			$entity->addArgument("user", $this->getArgumentData("user"), "LIKE");
 		}
-		
 		// order
 		if ($this->getArgumentData("order")) {
 			$entity->setOrderBy($this->getArgumentData("order"));
 		}
-		
 		$this->setRecordset($entity->retrieve());
-		
 	}
 	
 }
