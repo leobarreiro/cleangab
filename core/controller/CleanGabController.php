@@ -19,9 +19,12 @@ class CleanGabController {
 		$this->args = (is_array($args)) ? $args : array($args);
 	}
 
-	public function getUserInput($strKey) {
-		$input = filter_input(INPUT_POST, $strKey, FILTER_SANITIZE_STRING);
-		if ($input != null) {
+	public function getUserInput($strKey, $inputMethod="post") 
+	{
+		$method = (strtolower($inputMethod) == "post") ? INPUT_POST : INPUT_GET;
+		$input = filter_input($method, $strKey, FILTER_SANITIZE_STRING);
+		if ($input != null) 
+		{
 			return $input;
 		}
 		return false;
