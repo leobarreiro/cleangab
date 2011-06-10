@@ -27,24 +27,38 @@ class CleanGabEngineView {
 		$this->template 			= CLEANGAB_XHTML_TEMPLATE;
 		$this->objects 				= array();
 		
-		if (is_array($objects)) {
-			foreach ($objects as $obj) {
+		if (is_array($objects)) 
+		{
+			foreach ($objects as $obj) 
+			{
 				$this->add($obj);
 			}
-		} else {
+		} 
+		else 
+		{
 			$this->add($objects);
 		}
 		
 		$this->xhtmlFile = "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
 		
-		try {
-			if (file_exists($this->xhtmlFile)) {
+		try 
+		{
+			if (file_exists($this->xhtmlFile)) 
+			{
 				$this->xhtmlContent = file_get_contents($this->xhtmlFile);
-			} else {
+			} 
+			elseif (file_exists("../cleangab/core/" . $this->xhtmlFile))
+			{
+				$this->xhtmlContent = file_get_contents("../cleangab/core/" . $this->xhtmlFile);
+			}
+			else 
+			{
 				include (CLEANGAB_501);
 				die();
 			}
-		} catch (Exception $e) {
+		} 
+		catch (Exception $e) 
+		{
 			CleanGab::stackTraceDebug($e);
 		}
 	}
@@ -93,44 +107,52 @@ class CleanGabEngineView {
 	public function add($object) {
 		if ($this->isXhtmlComponent($object)) {
 			if ($this->getXhtmlComponentByName($object->getIdName())) {
-				CleanGab::stackTraceDebug(new Exception("Objects já possui um membro com idName ".$object->getIdName()));
+				CleanGab::stackTraceDebug(new Exception("Objects ja possui um membro com idName ".$object->getIdName()));
 				return false;
 			}
 			$this->objects[] = $object;
 			return true;
 		}
-		CleanGab::stackTraceDebug(new Exception("Objects só aceita objetos que implementam XhtmlComponent"));
+		CleanGab::stackTraceDebug(new Exception("Objects so aceita objetos que implementam XhtmlComponent"));
 		return false;
 	}
 	
-	public function renderize() {
+	public function renderize() 
+	{
 		$this->inject();
 		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->template;
-		$renderized = file_get_contents($templatePath);
+		$renderized = (file_exists($templatePath)) ? file_get_contents($templatePath) : file_get_contents("../cleangab/core/" . $templatePath);
 		$renderized = str_replace("#{content}", $this->translated, $renderized);
 		echo $renderized;
 	}
 	
-	private function isXhtmlComponent($mixed) {
+	private function isXhtmlComponent($mixed) 
+	{
 		return (is_object($mixed) && $mixed instanceof XHTMLComponent);
 	}
 
-	private function parserELTag($xhtml) {
+	private function parserELTag($xhtml) 
+	{
 		//TODO: aprimorar esta expressao regular
 		$pattern = "%(\#{){1}.[a-zA-Z]+.(\.+)*.([a-zA-Z]*).(}){1}%";
 		preg_match_all($pattern, $xhtml, $matches, PREG_PATTERN_ORDER);
-		if (is_array($matches)) {
+		if (is_array($matches)) 
+		{
 			$tags = $matches[0];
 		}
-		for ($i=0; $i<count($tags); $i++) {
+		for ($i=0; $i<count($tags); $i++) 
+		{
 			$tags[$i] = str_replace(array("#", "{", "}"), array("", "", ""), $tags[$i]);
 		}
 		return $tags;
 	}
 	
-	private function getXhtmlComponentByName($name) {
-		foreach ($this->objects as $obj) {
-			if ($obj->getIdName() == $name) {
+	private function getXhtmlComponentByName($name) 
+	{
+		foreach ($this->objects as $obj) 
+		{
+			if ($obj->getIdName() == $name) 
+			{
 				return $obj;
 			}
 		}
