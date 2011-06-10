@@ -2,7 +2,7 @@
 
 interface IDBEntity {
 
-	public function __construct($tableName, $dataBase=CLEANGAB_DB_DB, $connection=null);
+	public function __construct($tableName, $dataBase=CLEANGAB_DB_DB);
 
 	/**
 	 * @return void
