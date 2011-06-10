@@ -5,7 +5,7 @@ class CleanGab {
 	static function debug($mixedVar) 
 	{
 		echo "<pre>";
-		echo var_dump($mixedVar);
+		echo print_r($mixedVar);
 		echo "</pre>";
 		$file = (defined("CLEANGAB_STACKTRACEDEBUG_FILE")) ? CLEANGAB_STACKTRACEDEBUG_FILE : "log" . SEPARATOR . "cleangab.log";
 		$handle = (is_writable($file)) ? fopen($file, "a") : false;
