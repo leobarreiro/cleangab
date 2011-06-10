@@ -55,6 +55,16 @@ class CleanGabModel {
 		return $this->recordset;
 	}
 	
+	public function setEntity($objEntity) {
+		if (get_class($objEntity) == "Entity") {
+			$this->entity = $objEntity;
+		}
+	}
+	
+	public function getEntity() {
+		return $this->entity;
+	}
+	
 	public function getMasks() {
 		return $this->masks;
 	}
