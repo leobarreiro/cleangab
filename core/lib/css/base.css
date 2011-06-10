@@ -1,0 +1,43 @@
+@CHARSET "ISO-8859-1";
+
+body {
+	font-family: Arial, Verdana, Helvetica;
+}
+
+h1 {
+	color: #000066;
+	font-size: 24px;
+}
+
+div#workarea {
+	border: 1px solid #000066;
+	background-color: #CCCCCC;
+	width: 900px;
+	margin-left: 20px;
+}
+
+div.page-title {
+	font-weight: bold;
+	font-size: 18px;
+	margin: 4px 4px 2px 2px;
+	padding: 4px;
+}
+
+.tablelist {
+	width: 100%;
+	padding: 2px;
+	font-family: Arial, Verdana, Helvetica;
+}
+
+.tablelist tr td {
+	border: 1px solid #fff;
+	padding: 1px;
+}
+
+div.paginator {
+	text-align: right;
+}
+
+div.paginator a, div.paginator b {
+	margin-right: 6px;
+}
