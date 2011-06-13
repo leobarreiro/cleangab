@@ -71,5 +71,9 @@ class Recordset {
 	public function getRecords() {
 		return $this->records;
 	}
+	
+	public function getI() {
+		return $this->i;
+	}
 }
 ?>

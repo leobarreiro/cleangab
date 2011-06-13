@@ -85,5 +85,45 @@ class Session {
 		return false;
 	}
 	
+	private function createIfNotExists() {
+		if (!isset($_SESSION)) {
+			session_start();
+		}
+		if (!isset($_SESSION["CLEANGAB"])) {
+			$_SESSION["CLEANGAB"] = array();
+		}
+		if (!isset($_SESSION["CLEANGAB"]["objects"]))
+		{
+			$_SESSION["CLEANGAB"]["objects"] = array();
+		}
+	}
+	
+	private function prepareComponentsHost() {
+		$this->createIfNotExists();
+		if (!isset($_SESSION['CLEANGAB']['xhtmlComponents'])) {
+			$_SESSION['CLEANGAB']['xhtmlComponents'] = array();
+		}
+	}
+	
+	public function addToSession($component) {
+		if (is_object($component) && $component instanceof XHTMLComponent) {
+			$this->prepareComponentsHost();
+			$_SESSION["CLEANGAB"]["xhtmlComponents"][$component->getIdName()] = serialize($component);
+			return true;
+		}
+		return false;
+	}
+	
+	public static function hostObject($uniqueName, $mixedObject)
+	{
+		Session::createIfNotExists();
+		$_SESSION["CLEANGAB"]["objects"][$uniqueName] = $mixedObject;
+	}
+	
+	public static function getHostedObject($uniqueName)
+	{
+		return (isset($_SESSION["CLEANGAB"]["objects"][$uniqueName])) ? $_SESSION["CLEANGAB"]["objects"][$uniqueName] : false; 
+	}
+	
 }
 ?>

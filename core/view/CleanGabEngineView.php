@@ -26,20 +26,40 @@ class CleanGabEngineView {
 		$this->operationController 	= $operationController;
 		$this->template 			= CLEANGAB_XHTML_TEMPLATE;
 		$this->objects 				= array();
-		if (is_array($objects)) {
-			foreach ($objects as $obj) {
-				$this->addObject($obj);
+		
+		if (is_array($objects)) 
+		{
+			foreach ($objects as $obj) 
+			{
+				$this->add($obj);
 			}
-		} else {
-			$this->addObject($objects);
+		} 
+		else 
+		{
+			$this->add($objects);
 		}
 		
-		$this->xhtmlFile = "view" . SEPARATOR . strtolower($this->nameController) . SEPARATOR . strtolower($this->operationController) . ".xhtml";
+		$this->xhtmlFile = "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
 		
-		try {
-			$this->xhtmlContent = file_get_contents($this->xhtmlFile);
-		} catch (Exception $e) {
-			echo $e->getMessage();
+		try 
+		{
+			if (file_exists($this->xhtmlFile)) 
+			{
+				$this->xhtmlContent = file_get_contents($this->xhtmlFile);
+			} 
+			elseif (file_exists("../cleangab/core/" . $this->xhtmlFile))
+			{
+				$this->xhtmlContent = file_get_contents("../cleangab/core/" . $this->xhtmlFile);
+			}
+			else 
+			{
+				include (CLEANGAB_501);
+				die();
+			}
+		} 
+		catch (Exception $e) 
+		{
+			CleanGab::stackTraceDebug($e);
 		}
 	}
 	
@@ -57,28 +77,86 @@ class CleanGabEngineView {
 	
 	final function inject() {
 		$newContent = $this->xhtmlContent;
-		foreach ($this->objects as $objView) {
-			$elTag = "#{" . $objView->getIdName() . "}";
-			$newContent = str_replace($elTag, $objView->toXhtml(), $newContent);
+		$tagNames   = $this->parserELTag($newContent);
+		foreach ($tagNames as $tag) {
+			if (strpos($tag, ".")) {
+				$parts = explode(".", $tag);
+				$parts = array_shift($parts);
+				$methods = array();
+				for ($i=1;$i<count($parts);$i++) {
+					$methods[] = $parts[$i];
+				}
+				$objectName = $parts[0];
+			} else {
+				$methods = false;
+				$objectName = $tag;
+			}
+			$obj = $this->getXhtmlComponentByName($objectName);
+			if ($obj) {
+				if ($methods) {
+					$eval = implode("->", $methods);
+					$newContent = str_replace("#{".$tag."}", eval($obj->$eval), $newContent);
+				} else {
+					$newContent = str_replace("#{".$tag."}", $obj->toXhtml(), $newContent);
+				}
+			}
 		}
 		$this->translated = $newContent;
 	}
 	
-	public function addObject($object) {
-		
-		if (is_object($object) && method_exists($object, "getIdName") && 
-			method_exists($object, "ensamble") && method_exists($object, "toXhtml")) {
+	public function add($object) {
+		if ($this->isXhtmlComponent($object)) {
+			if ($this->getXhtmlComponentByName($object->getIdName())) {
+				CleanGab::stackTraceDebug(new Exception("Objects ja possui um membro com idName ".$object->getIdName()));
+				return false;
+			}
 			$this->objects[] = $object;
+			return true;
 		}
+		CleanGab::stackTraceDebug(new Exception("Objects so aceita objetos que implementam XhtmlComponent"));
+		return false;
 	}
 	
-	public function renderize() {
+	public function renderize() 
+	{
 		$this->inject();
-		$templatePath = "lib" . SEPARATOR . "xhtml" . SEPARATOR . $this->template;
-		$renderized = file_get_contents($templatePath);
+		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->template;
+		$renderized = (file_exists($templatePath)) ? file_get_contents($templatePath) : file_get_contents("../cleangab/core/" . $templatePath);
 		$renderized = str_replace("#{content}", $this->translated, $renderized);
 		echo $renderized;
 	}
+	
+	private function isXhtmlComponent($mixed) 
+	{
+		return (is_object($mixed) && $mixed instanceof XHTMLComponent);
+	}
 
+	private function parserELTag($xhtml) 
+	{
+		//TODO: aprimorar esta expressao regular
+		$pattern = "%(\#{){1}.[a-zA-Z]+.(\.+)*.([a-zA-Z]*).(}){1}%";
+		preg_match_all($pattern, $xhtml, $matches, PREG_PATTERN_ORDER);
+		if (is_array($matches)) 
+		{
+			$tags = $matches[0];
+		}
+		for ($i=0; $i<count($tags); $i++) 
+		{
+			$tags[$i] = str_replace(array("#", "{", "}"), array("", "", ""), $tags[$i]);
+		}
+		return $tags;
+	}
+	
+	private function getXhtmlComponentByName($name) 
+	{
+		foreach ($this->objects as $obj) 
+		{
+			if ($obj->getIdName() == $name) 
+			{
+				return $obj;
+			}
+		}
+		return false;
+	}
 }
 ?>

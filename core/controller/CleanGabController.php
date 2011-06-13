@@ -17,12 +17,17 @@ class CleanGabController {
 
 		$this->action = ($action != null) ? $action : "index";
 		$this->args = (is_array($args)) ? $args : array($args);
-		$newAction = $this->action . "()";
-		try {
-			eval('$this->$newAction');
-		} catch (Exception $e) {
-			echo $e->getMessage();
+	}
+
+	public function getUserInput($strKey, $inputMethod="post") 
+	{
+		$method = (strtolower($inputMethod) == "post") ? INPUT_POST : INPUT_GET;
+		$input = filter_input($method, $strKey, FILTER_SANITIZE_STRING);
+		if ($input != null) 
+		{
+			return $input;
 		}
+		return false;
 	}
 
 	public function index() {}
