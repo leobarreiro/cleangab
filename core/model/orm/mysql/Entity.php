@@ -246,11 +246,13 @@ class Entity implements IDBEntity {
 		$this->tableName = $tableName;
 	}
 	
-	public function getTableName() {
+	public function getTableName() 
+	{
 		return $this->tableName;
 	}
 	
-	public function retrieve($sql=CLEANGAB_SQL_RETRIEVE_ALL) {
+	public function retrieve($sql=CLEANGAB_SQL_RETRIEVE_ALL) 
+	{
 		$this->connectIfNull();
 		$this->sqlBeforeParser = $sql;
 		$qr = $this->connection->resource->query($this->prepare($this->sqlBeforeParser));
@@ -259,7 +261,8 @@ class Entity implements IDBEntity {
 		return $recordset;
 	}
 	
-	private function countRecords() {
+	private function countRecords() 
+	{
 		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_COUNT_ALL));
 		$rset = new Recordset($qr);
 		$record = $rset->get();
