@@ -16,14 +16,14 @@ class TableList implements XHTMLComponent {
 	protected $page;
 	protected $header;
 	protected $masks;
+	protected $formFields;
+	protected $nameFields;
 	protected $xhtml;
 
 	public function __construct($idName, $objectModel)
 	{
 		Validate::notNull($idName, "ID can not be null");
-
 		$this->idName = $idName;
-
 		if ($objectModel->getHintFields() != null)
 		{
 			$this->header = $objectModel->getHintFields();
@@ -47,6 +47,8 @@ class TableList implements XHTMLComponent {
 		
 		$this->pages = floor($totalRecords / $recordsPerPage);
 		$this->page  = $this->getActualPage($totalRecords, $recordsPerPage, $actualRecord);
+		$this->formFields = $objectModel->getListableFields();
+		$this->nameFields = $objectModel->getHintFields();
 	}
 
 	public function inject($mixedContent)
@@ -58,15 +60,15 @@ class TableList implements XHTMLComponent {
 	{
 		$content = $this->content->getRecords();
 		$xhtml = "";
-		
-		if ($this->content->getI() < 1)
+		if (count($this->content->getRecords()) == 0)
 		{
 			$xhtml .= "No records found.";
 		}
 		else 
 		{
+			$xhtml .= $this->formNavigatorToXhtml();
 			$xhtml .= $this->paginationToXhtml();
-			$xhtml  .= "\n\t<table id='" . $this->idName . "' class='" . strtolower(get_class($this)) . "'>\n";
+			$xhtml .= "\n\t<table id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">\n";
 			if (is_array($this->header) && count($this->header) > 0)
 			{
 				$xhtml .= "\t\t<tr>\n";
@@ -132,24 +134,46 @@ class TableList implements XHTMLComponent {
 	
 	private function getActualPage($totalRecords, $recordsPerPage, $actualRecord) 
 	{
-		$pages = ($totalRecords > 0 && $actualRecord > 0) ? $totalRecords / $recordsPerPage : 0;
-		$actualPage = ($pages > 0) ? ($pages * $actualRecord) / $totalRecords : 0; 
+		$actualPage = ($totalRecords > 0) ? ($actualRecord / $recordsPerPage) + 1 : 1;
 		return floor($actualPage);
 	}
 	
 	private function paginationToXhtml() 
 	{
-		$pg = $this->page;
-		$tt = $this->pages;
 		$xhtml  = array();
-		$xhtml[] = "<div class='paginator'>";
-		for ($i=1; $i<=$tt; ++$i)
+		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Paginator\">";
+		$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(1);\">&laquo;&laquo;</a>";
+		for ($i=1; $i<=$this->pages; ++$i)
 		{
-			$xhtml[] = ($i == $pg) ? "<b>" . $i . "</b>" : "<a href='" . $i . "'>" . $i . "</a>";
+			$xhtml[] = ($i == $this->page) ? "<b>" . $i . "</b>" : "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $i . ");\">" . $i . "</a>";
 		}
+		$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $this->pages . ");\">&raquo;&raquo;</a>";
 		$xhtml[] = "</div>";
 		return implode("&nbsp;", $xhtml);
 	}
 	
+	private function formNavigatorToXhtml()
+	{
+		$formName = $this->idName . "Form";
+		$formXhtml  = "\n<div class=\"" . strtolower(get_class($this)) . "Form\"><form name=\"" . $formName . "\" id=\"" . $formName . "\" method=\"post\">";
+		foreach ($this->formFields as $field)
+		{
+			$varField = (filter_input(INPUT_POST, $field) != null) ? filter_input(INPUT_POST, $field) : "";
+			$formXhtml .= "<input type=\"text\" class=\"\" name=\"" . $field ."\" value=\"" . $varField . "\">";
+		}
+		$formXhtml .= "<select name=\"sort\">";
+		foreach ($this->formFields as $field)
+		{
+			$selected = (filter_input(INPUT_POST, "sort") == $field) ? "selected" : "";
+			$formXhtml .= "<option value=\"" . $field . "\" " . $selected . ">" . $this->nameFields[$field] . "</option>";
+		}
+		$formXhtml .= "</select>";
+		$formXhtml .= "<input type=\"hidden\" name=\"pg\" value=\"" . $this->page . "\">";
+		$formXhtml .= "<input type=\"submit\" value=\"ok\">";
+		$formXhtml .= "</form></div>\n";
+		$formXhtml .= "<script type=\"text/javascript\">function " . strtolower(get_class($this)) . $this->idName . "FormPg(id){document." . $formName . ".pg.value = id; document." . $formName . ".submit();}</script>";
+		return $formXhtml;
+	}
+
 }
 ?>
