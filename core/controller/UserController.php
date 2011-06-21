@@ -11,19 +11,27 @@ class UserController extends CleanGabController {
 
 		// Arguments
 
-		if ($this->getUserInput("name")) {
+		if ($this->getUserInput("name")) 
+		{
 			$model->addArgumentData("name", $this->getUserInput("name"));
 		}
-		if ($this->getUserInput("user")) {
+		if ($this->getUserInput("user")) 
+		{
 			$model->addArgumentData("user", $this->getUserInput("user"));
 		}
-		if ($this->getUserInput("email")) {
+		if ($this->getUserInput("email")) 
+		{
 			$model->addArgumentData("email", $this->getUserInput("email"));
 		}
-		
-		if ($this->getUserInput("cgParam", "get"))
+		if ($this->getUserInput("sort")) 
 		{
-			$model->addArgumentData("pg", $this->getUserInput("cgParam", "get"));
+			$model->addArgumentData("sort", $this->getUserInput("sort"));
+		}
+		// Pagination
+		if ($this->getUserInput("pg"))
+		{
+			$model->addArgumentData("pg", $this->getUserInput("pg"));
+			CleanGab::debug($this->getUserInput("pg"));
 		}
 		
 		// Prepare List
