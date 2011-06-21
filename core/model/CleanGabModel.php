@@ -14,8 +14,8 @@ class CleanGabModel {
 	// Entity
 	protected $entity;
 	
-	// Descrições dos campos que irão em cabeçalhos de table list, por exemplo
-	// formato array: nome_campo=>descrição
+	// Descricoes dos campos que irao em cabecalhos de table list, por exemplo
+	// formato array: nome_campo=>descricao
 	protected $hintFields;
 	
 	// campos que devem ser exibidos em uma tablelist
@@ -42,9 +42,13 @@ class CleanGabModel {
 		$this->entity = null;
 		$this->recordset = null;
 	}
-	
+
 	public function getHintFields() {
 		return $this->hintFields;
+	}
+	
+	public function getListableFields() {
+		return $this->listableFields;
 	}
 	
 	public function setRecordset($recordset) {
