@@ -266,7 +266,7 @@ class Entity implements IDBEntity {
 		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_COUNT_ALL));
 		$rset = new Recordset($qr);
 		$record = $rset->get();
-		$this->total = $record['total'];
+		$this->total = $record->total;
 	}
 	
 	private function prepare($sql) 
@@ -300,28 +300,35 @@ class Entity implements IDBEntity {
 		
 		$sql = str_replace($old, $new, $sql);
 		$this->sqlAfterParser = $sql;
+		CleanGab::debug($sql);
 		return $sql;
 	}
 	
 	private function parseArgumentToSql($arArgument) 
 	{
 		$sqlPart  = $arArgument['key'];
-		$sqlPart .= " " . $arArgument['operation'] . " ";
-		if (in_array($this->fields[$arArgument['key']]['type'], $this->numericTypes)) 
-		{
-			$sqlPart .= $arArgument['search'];
-		} 
-		else 
-		{
-			if ($arArgument['operation'] == "LIKE") 
+ 
+
+			if (strtolower($arArgument['operation']) == strtolower("LIKE")) 
 			{
-				$sqlPart .= "'%" . $arArgument['search'] . "%'";
+				$sqlPart .= " LIKE '%" . $arArgument['search'] . "%' ";
+			} 
+			else if (strtolower($arArgument['operation']) == strtolower("MD5"))
+			{
+				$sqlPart .= " = MD5('" . $arArgument['search'] . "')";
 			} 
 			else 
 			{
-				$sqlPart .= "'" . $arArgument['search'] . "'";
-			}
-		}
+				if (in_array($this->fields[$arArgument['key']]['type'], $this->numericTypes)) 
+				{
+					$sqlPart .= " = " . $arArgument['search'];
+				}
+				else 
+				{
+					$sqlPart .= " = '" . $arArgument['search'] . "' ";
+				}
+			} 
+
 		return $sqlPart;
 	}
 	
