@@ -12,39 +12,49 @@ class Recordset {
 	private $records;
 	private $i;
 
-	function __construct($result) {
+	function __construct($result) 
+	{
 		$this->records = array();
 		$this->i = 0;
 		$this->setResult($result);
 		$this->ensamble();
 	}
 	
-	function hasNext() {
+	function hasNext() 
+	{
 		return ($i < (count($this->records)-1));
 	}
 
-	function goFirst() {
+	function goFirst() 
+	{
 		$this->i = 0;
 	}
 	
-	function goEnd() {
+	function goEnd() 
+	{
 		$this->i = (count($this->records)-1);
 	}
 	
-	function setResult($result) {
+	function setResult($result) 
+	{
 		$this->result = $result;
 	}
 	
-	public function get($p=null) {
-		if (count($this->records) == 0) {
+	public function get($p=null) 
+	{
+		if (count($this->records) == 0) 
+		{
 			throw new OutOfRangeException("Out of range exception");
 			return false;
 		}
-		if ($p != null) {
-			if ($p < count($this->records)) {
+		if ($p != null) 
+		{
+			if ($p < count($this->records)) 
+			{
 				return $this->records[$p];
 			}
-			else {
+			else 
+			{
 				throw new OutOfRangeException("Out of range exception");
 				return false;
 			} 
@@ -52,27 +62,33 @@ class Recordset {
 		return $this->records[$this->i];
 	}
 	
-	function ensamble() {
+	function ensamble() 
+	{
 		$this->records = array();
 		$this->i = 0;
-		if (!$this->result) {
+		if (!$this->result) 
+		{
 			throw new Exception("recordset dont have a valid resultset", "4");
 		}
-		while ($record = $this->result->fetch_object()) {
+		while ($record = $this->result->fetch_object()) 
+		{
 			$item = array();
-			foreach ($record as $property => $value) {
+			foreach ($record as $property => $value) 
+			{
 				$item[$property] = $value;
 			}
-			$this->records[] = $item;
+			$this->records[] = (object) $item;
 		}
 		$this->i = (count($this->records)-1);
 	}
 	
-	public function getRecords() {
+	public function getRecords() 
+	{
 		return $this->records;
 	}
 	
-	public function getI() {
+	public function getI() 
+	{
 		return $this->i;
 	}
 }

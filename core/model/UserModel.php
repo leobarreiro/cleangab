@@ -23,20 +23,27 @@ class UserModel extends CleanGabModel {
 
 		// Arguments
 		
-		if ($this->getArgumentData("user")) {
+		if ($this->getArgumentData("user"))
+		{
 			$this->entity->addArgument("user", $this->getArgumentData("user"), "LIKE");
 		}
-		if ($this->getArgumentData("name")) {
+		if ($this->getArgumentData("name")) 
+		{
 			$this->entity->addArgument("name", $this->getArgumentData("name"));
+		}
+		if ($this->getArgumentData("email")) 
+		{
+			$this->entity->addArgument("email", $this->getArgumentData("email"), "LIKE");
 		}
 		// pagination
 		if ($this->getArgumentData("pg"))
 		{
-			$this->entity->setOffset(($this->getArgumentData("pg")*$this->entity->getLimit())+1);
+			$pg = $this->getArgumentData("pg") - 1;
+			$this->entity->setOffset(($pg * $this->entity->getLimit()));
 		}
 		// order
-		if ($this->getArgumentData("order")) {
-			$this->entity->setOrderBy($this->getArgumentData("order"));
+		if ($this->getArgumentData("sort")) {
+			$this->entity->setOrderBy($this->getArgumentData("sort"));
 		}
 		$this->setRecordset($this->entity->retrieve());
 		Session::hostObject("user-entity", $this->entity);

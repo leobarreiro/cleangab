@@ -11,19 +11,27 @@ class UserController extends CleanGabController {
 
 		// Arguments
 
-		if ($this->getUserInput("name")) {
+		if ($this->getUserInput("name")) 
+		{
 			$model->addArgumentData("name", $this->getUserInput("name"));
 		}
-		if ($this->getUserInput("user")) {
+		if ($this->getUserInput("user")) 
+		{
 			$model->addArgumentData("user", $this->getUserInput("user"));
 		}
-		if ($this->getUserInput("email")) {
+		if ($this->getUserInput("email")) 
+		{
 			$model->addArgumentData("email", $this->getUserInput("email"));
 		}
-		
-		if ($this->getUserInput("cgParam", "get"))
+		if ($this->getUserInput("sort")) 
 		{
-			$model->addArgumentData("pg", $this->getUserInput("cgParam", "get"));
+			$model->addArgumentData("sort", $this->getUserInput("sort"));
+		}
+		// Pagination
+		if ($this->getUserInput("pg"))
+		{
+			$model->addArgumentData("pg", $this->getUserInput("pg"));
+			CleanGab::debug($this->getUserInput("pg"));
 		}
 		
 		// Prepare List
@@ -31,7 +39,8 @@ class UserController extends CleanGabController {
 		$model->prepareList();
 
 		// XHTMLComponent
-		$tableUsers = new TableList("users", $model);
+		$tableUsers = new TableList("users", get_class($this), $model);
+		//$tableUsers->setOperations(array("show", "edit"));
 
 		// View
 
@@ -50,17 +59,45 @@ class UserController extends CleanGabController {
 	public function login()
 	{
 		$view = new CleanGabEngineView("User", "login");
-		echo "Login";
+		$view->renderize();
 	}
-
-	public function authenticate() 
+	
+	public function logoff()
 	{
-		echo "Authenticate";
+		//TODO: destroy the data in SESSION...
+	}
+	
+	public function auth()
+	{
+		$user = $this->getUserInput("user");
+		$passwd = $this->getUserInput("passwd");
+		$authenticate = Session::login($user, $passwd);
+		if ($authenticate)
+		{
+			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/index");
+		}
+		else 
+		{
+			//TODO: Add an error message here. Maybe it can be in a message board on $_SESSION.
+			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
+		}
 	}
 
-	public function show() 
+	public function show($key) 
 	{
 		echo get_class($this);
+		echo "<br/>";
+		echo $key;
+	}
+	
+	public function newItem()
+	{
+		
+	}
+	
+	public function edit($key)
+	{
+		echo $key;
 	}
 }
 ?>

@@ -4,12 +4,10 @@ class CleanGab {
 	
 	static function debug($mixedVar) 
 	{
-		echo "<pre>";
-		echo print_r($mixedVar);
-		echo "</pre>";
 		$file = (defined("CLEANGAB_STACKTRACEDEBUG_FILE")) ? CLEANGAB_STACKTRACEDEBUG_FILE : "log" . SEPARATOR . "cleangab.log";
 		$handle = (is_writable($file)) ? fopen($file, "a") : false;
-		if ($handle) {
+		if ($handle) 
+		{
 			fwrite($handle, "\n[" . date("Y.m.d H:i:s") . "] CG-" . strtoupper(CLEANGAB_APP_ENV) . " ");
 			fwrite($handle, "\t" . serialize($mixedVar));
 		}

@@ -38,6 +38,8 @@ div.paginator {
 	text-align: right;
 }
 
-div.paginator a, div.paginator b {
-	margin-right: 6px;
+div.tablelistPaginator a, div.tablelistPaginator b {
+	display: inline-block;
+	margin: 4px;
+	border: 1px solid magenta;
 }
