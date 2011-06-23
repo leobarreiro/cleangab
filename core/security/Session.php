@@ -11,42 +11,39 @@ include_once("Entity.php");
 
 class Session {
 
-	public static function login() 
+	public static function login($username, $passwd) 
 	{
-		$username = filter_input(INPUT_POST, "username", FILTER_SANITIZE_STRING);
-		$passwd   = filter_input(INPUT_POST, "passwd", FILTER_SANITIZE_STRING);
 		try 
 		{
 			if ($username == null || $passwd == null) 
 			{
 				throw new Exception("username or password invalid", "1");
 			}
-			$entity = new Entity("usuario");
-			$entity->addArgs(array("username"=>$username, "password"=>$passwd));
+			$entity = new Entity("user");
+			$entity->init();
+			$entity->addArgument("user", $username);
+			$entity->addArgument("passwd", $passwd, "MD5");
 			$rs = $entity->retrieve(CLEANGAB_SQL_VERIFY_LOGIN);
+			Session::createIfNotExists();
 			if (count($rs->getRecords()) == 0) 
 			{
+				$_SESSION["CLEANGAB"]["user"] = array();
 				throw new Exception("login fail", "2");
 			} 
 			else 
 			{
-				if (!isset($_SESSION)) 
-				{
-					session_start();
-				}
-				if (!isset($_SESSION['CLEANGAB'])) 
-				{
-					$_SESSION["CLEANGAB"] = array();
-				}
+				
 				foreach ($rs->get() as $key=>$value) 
 				{
-					$_SESSION['CLEANGAB'][$key] = $value;
+					$_SESSION["CLEANGAB"]["user"][$key] = $value;
 				}
 			}
+			return (count($_SESSION["CLEANGAB"]["user"]) > 0); 
 		} 
 		catch (Exception $e) 
 		{
 			CleanGab::stackTraceDebug($e);
+			return false;
 		}
 	}
 	
@@ -118,15 +115,14 @@ class Session {
 		{
 			$_SESSION["CLEANGAB"] = array();
 		}
+		if (!isset($_SESSION["CLEANGAB"]["user"])) 
+		{
+			$_SESSION["CLEANGAB"]["user"] = array();
+		}
 		if (!isset($_SESSION["CLEANGAB"]["objects"]))
 		{
 			$_SESSION["CLEANGAB"]["objects"] = array();
 		}
-	}
-	
-	private function prepareComponentsHost() 
-	{
-		$this->createIfNotExists();
 		if (!isset($_SESSION['CLEANGAB']['xhtmlComponents'])) 
 		{
 			$_SESSION['CLEANGAB']['xhtmlComponents'] = array();
@@ -137,7 +133,7 @@ class Session {
 	{
 		if (is_object($component) && $component instanceof XHTMLComponent) 
 		{
-			$this->prepareComponentsHost();
+			Session::createIfNotExists();
 			$_SESSION["CLEANGAB"]["xhtmlComponents"][$component->getIdName()] = serialize($component);
 			return true;
 		}

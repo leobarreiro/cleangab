@@ -11,4 +11,14 @@
 		<name>Grant permissions for others users</name>
 		<key>permissions_to_others</key>
 	</permission>
+	<permission>
+		<module>Security</module>
+		<name>Add a new user</name>
+		<key>add_new_user</key>
+	</permission>
+	<permission>
+		<module>Security</module>
+		<name>Edit an user</name>
+		<key>edit_user</key>
+	</permission>
 </permissions>
