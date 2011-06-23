@@ -34,8 +34,8 @@ class CleanGabModel {
 	// formato array: nome_campo=>valor_do_input
 	public $argumentData;
 	
-	
-	public function __construct() {
+	public function __construct() 
+	{
 		$this->hintFields = array();
 		$this->listableFields = array();
 		$this->masks = array();
@@ -43,57 +43,77 @@ class CleanGabModel {
 		$this->recordset = null;
 	}
 
-	public function getHintFields() {
+	public function getHintFields() 
+	{
 		return $this->hintFields;
 	}
 	
-	public function getListableFields() {
+	public function getListableFields() 
+	{
 		return $this->listableFields;
 	}
 	
-	public function setRecordset($recordset) {
+	public function setRecordset($recordset) 
+	{
 		$this->recordset = $recordset;
 	}
 	
-	public function getRecordset() {
+	public function getRecordset() 
+	{
 		return $this->recordset;
 	}
 	
-	public function setEntity($objEntity) {
-		if (get_class($objEntity) == "Entity") {
+	public function setEntity($objEntity) 
+	{
+		if (get_class($objEntity) == "Entity") 
+		{
 			$this->entity = $objEntity;
 		}
 	}
 	
-	public function getEntity() {
+	public function getEntity()
+	{
 		return $this->entity;
 	}
 	
-	public function getMasks() {
+	public function getMasks() 
+	{
 		return $this->masks;
 	}
 	
-	public function addArgumentData($key, $value) {
-		if (isset($key) && is_string($key) && isset($value)) {
+	public function addArgumentData($key, $value) 
+	{
+		if (isset($key) && is_string($key) && isset($value)) 
+		{
 			$this->argumentData[$key] = $value;
 			return true;
 		}
 		return false;
 	}
 	
-	public function getArgumentData($key) {
-		if (isset($this->argumentData[$key])) {
+	public function getArgumentData($key) 
+	{
+		if (isset($this->argumentData[$key])) 
+		{
 			return $this->argumentData[$key];
-		} else {
+		}
+		else 
+		{
 			return false;
 		}
 	}
 	
 	// TODO: override
+	/** 
+	 * Prepare arguments to retrieve records
+	 */
 	public function prepareList() {}
 	
 	// TODO: override
 	public function prepareSave() {}
+	
+	// TODO: override
+	public function save() {}
 
 }
 ?>
