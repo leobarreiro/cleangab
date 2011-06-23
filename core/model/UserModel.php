@@ -31,6 +31,10 @@ class UserModel extends CleanGabModel {
 		{
 			$this->entity->addArgument("name", $this->getArgumentData("name"));
 		}
+		if ($this->getArgumentData("email")) 
+		{
+			$this->entity->addArgument("email", $this->getArgumentData("email"), "LIKE");
+		}
 		// pagination
 		if ($this->getArgumentData("pg"))
 		{
