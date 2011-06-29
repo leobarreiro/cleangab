@@ -1,4 +1,6 @@
 <?php
+require_once ("CleanGabModel.php");
+
 class UserModel extends CleanGabModel {
 
 	public function __construct() {
@@ -10,16 +12,8 @@ class UserModel extends CleanGabModel {
 	
 	public function prepareList() 
 	{
-		$recoveredEntity = Session::getHostedObject("user-entity");
-		if ($recoveredEntity)
-		{
-			$this->entity = $recoveredEntity;
-		}
-		else 
-		{
-			$this->entity = new Entity("user");
-			$this->entity->init();
-		}
+		$this->entity = new Entity("user");
+		$this->entity->init();
 
 		// Arguments
 		
@@ -46,7 +40,6 @@ class UserModel extends CleanGabModel {
 			$this->entity->setOrderBy($this->getArgumentData("sort"));
 		}
 		$this->setRecordset($this->entity->retrieve());
-		Session::hostObject("user-entity", $this->entity);
 	}
 	
 }

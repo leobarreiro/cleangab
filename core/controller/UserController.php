@@ -1,12 +1,14 @@
 <?php
-include ("model/UserModel.php");
+require_once ("CleanGabController.php");
+require_once ("UserModel.php");
+require_once ("TableListBase.php");
+require_once ("UIMessageBase.php");
 
 class UserController extends CleanGabController {
 
 	public function index() 
 	{
-		//Session::verify();
-
+		Session::verify();
 		$model = new UserModel();
 
 		// Arguments
@@ -31,7 +33,6 @@ class UserController extends CleanGabController {
 		if ($this->getUserInput("pg"))
 		{
 			$model->addArgumentData("pg", $this->getUserInput("pg"));
-			CleanGab::debug($this->getUserInput("pg"));
 		}
 		
 		// Prepare List
@@ -39,7 +40,7 @@ class UserController extends CleanGabController {
 		$model->prepareList();
 
 		// XHTMLComponent
-		$tableUsers = new TableList("users", get_class($this), $model);
+		$tableUsers = new TableListBase("users", get_class($this), $model);
 		//$tableUsers->setOperations(array("show", "edit"));
 
 		// View
@@ -58,26 +59,29 @@ class UserController extends CleanGabController {
 
 	public function login()
 	{
-		$view = new CleanGabEngineView("User", "login");
+		$lastMessage = new UIMessageBase("uimessage", Session::getLastUIMessage());
+		$view = new CleanGabEngineView("User", "login", $lastMessage);
 		$view->renderize();
 	}
 	
 	public function logoff()
 	{
-		//TODO: destroy the data in SESSION...
+		Session::logoff();
+		$this->login();
 	}
 	
-	public function auth()
+	public function authenticate()
 	{
-		$user = $this->getUserInput("user");
-		$passwd = $this->getUserInput("passwd");
-		$authenticate = Session::login($user, $passwd);
+		$user = $this->getUserInput("userlogin");
+		$passwd = $this->getUserInput("passwdlogin");
+		$authenticate = Session::authenticate($user, $passwd);
 		if ($authenticate)
 		{
 			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/index");
 		}
 		else 
 		{
+			Session::addUIMessage("Login or password invalid.");
 			//TODO: Add an error message here. Maybe it can be in a message board on $_SESSION.
 			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
 		}
@@ -97,6 +101,10 @@ class UserController extends CleanGabController {
 	
 	public function edit($key)
 	{
+		// View
+
+		$view = new CleanGabEngineView("User", "edit", null);
+		$view->renderize();
 		echo $key;
 	}
 }

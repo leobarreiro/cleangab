@@ -1,14 +1,15 @@
 <?php
 /**
- * Clean-Gab Framework
+ * CleanGab Framework
  * TableList.php
  * Date: 	2011-01-XX
  * Author: 	Leopoldo Barreiro
  */
 
-include ("XHTMLComponent.php");
+require_once ("XHTMLComponent.php");
+require_once ("DateTimeFormatter.php");
 
-class TableList implements XHTMLComponent {
+class TableListBase implements XHTMLComponent {
 
 	protected $idName;
 	protected $content;
@@ -20,7 +21,6 @@ class TableList implements XHTMLComponent {
 	protected $nameFields;
 	protected $nameController;
 	protected $operations;
-	protected $linkableFields;
 	protected $xhtml;
 
 	public function __construct($idName, $nameController, $objectModel)
@@ -42,7 +42,6 @@ class TableList implements XHTMLComponent {
 		$this->nameFields 	  = $objectModel->getHintFields();
 		$this->nameController = $nameController;
 		$this->operations     = array("show", "edit");
-		$this->linkableFields = array();
 	}
 	
 	public function setOperations($arOperations)
@@ -50,27 +49,6 @@ class TableList implements XHTMLComponent {
 		$this->operations = $arOperations;
 	}
 	
-	public function addLinkableFields($mixedFields)
-	{
-		if (is_array($mixedFields))
-		{
-			foreach ($mixedFields as $field)
-			{
-				if (!in_array($field, $this->linkableFields))
-				{
-					$this->linkableFields[] = $field;
-				}
-			}
-		}
-		else 
-		{
-			if (is_string($mixedFields))
-			{
-				$this->linkableFields[] = $mixedFields;
-			}
-		}
-	}
-
 	public function inject($mixedContent)
 	{
 		$this->content = $mixedContent;
@@ -79,30 +57,27 @@ class TableList implements XHTMLComponent {
 	public function ensamble()
 	{
 		$content = $this->content->getRecords();
-		$xhtml = "";
+		$xhtml = array();
 		if (count($this->content->getRecords()) == 0)
 		{
-			$xhtml = "No records found.";
+			$xhtml[] = "No records found.";
 		}
 		else 
 		{
-			$xhtml .= $this->formNavigatorToXhtml();
-			$xhtml .= $this->paginationToXhtml();
-			$xhtml .= "\n\t<table id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">\n";
-			$xhtml .= "\t\t<tr>\n";
+			$xhtml[] = $this->formActionToXhtml();
+			$xhtml[] = $this->formNavigatorToXhtml();
+			$xhtml[] = $this->paginationToXhtml();
+			$xhtml[] = "<table id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">";
+			$xhtml[] = "<tr>";
 			foreach ($this->header as $headCell)
 			{
-				$xhtml .= "\t\t\t<th>" . $headCell . "</th>\n";
+				$xhtml[] = "<th>" . $headCell . "</th>";
 			}
-			if (is_array($this->operations) && count($this->operations) > 0)
-			{
-				$xhtml .= "\t\t\t<th class=\"" . strtolower(get_class($this)) . "Operations\">Operations</th>\n";
-			}
-			$xhtml .= "\t\t</tr>\n";
+			$xhtml[] = "</tr>";
 			$headers = array_keys($this->header);
 			foreach ($content as $record)
 			{
-				$xhtml .= "\t\t<tr>\n";
+				$xhtml[] = "<tr class=\"records\" onclick=\"" . strtolower(get_class($this)) . $this->idName . "KeyActionForm(this,'" . $record->id . "')\">";
 				foreach ($headers as $headCell)
 				{
 					$cellContent = "";
@@ -117,24 +92,14 @@ class TableList implements XHTMLComponent {
 					{
 						$cellContent = $record->{$headCell};
 					}
-					$xhtml .= "\t\t\t<td class=\"" . $headCell . "\">" . $cellContent . "</td>\n";
+					$xhtml[] = "<td class=\"" . $headCell . "\">" . $cellContent . "</td>";
 				}
-				if (is_array($this->operations) && count($this->operations) > 0)
-				{
-					$xhtml .= "\t\t\t<td class=\"" . strtolower(get_class($this)) . "Operations\">";
-					foreach ($this->operations as $operation)
-					{
-						$xhtml .= "<a href=\"" . $this->prepareActionLink($operation, $record->id) . "\" class=\"" . $operation . "\">" . $operation . "</a>&nbsp;";
-					}
-					$xhtml .= "</td>\n";
-				}
-				
-				$xhtml .= "\t\t</tr>\n";
+				$xhtml[] = "</tr>";
 			}
-			$xhtml .= "\t</table>\n";
-			$xhtml .= $this->paginationToXhtml();
+			$xhtml[] = "</table>";
+			$xhtml[] = $this->paginationToXhtml();
 		}
-		$this->xhtml = $xhtml;
+		$this->xhtml = implode("", $xhtml);
 	}
 
 	public function toXhtml()
@@ -160,30 +125,25 @@ class TableList implements XHTMLComponent {
 	private function paginationToXhtml() 
 	{
 		$xhtml   = array();
+		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Tools\">";
+		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Actions\">";
+		foreach ($this->operations as $operation)
+		{
+			$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')" . "\" class=\"" . $operation . "\">" . $operation . "</a>&nbsp;";
+		}
+		$xhtml[] = "</div>";
+		
 		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Paginator\">";
 		if ($this->pages > 1)
 		{
-			if ($this->page != 1)
-			{
-				$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(1);\">&laquo;&laquo;</a>";
-			} 
-			else 
-			{
-				$xhtml[] = "<span>&laquo;&laquo;</span>";
-			}
+			$xhtml[] = ($this->page != 1) ? "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(1);\">&laquo;&laquo;</a>" : "<span>&laquo;&laquo;</span>";
 			for ($i=1; $i<=$this->pages; ++$i)
 			{
 				$xhtml[] = ($i == $this->page) ? "<b>" . $i . "</b>" : "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $i . ");\">" . $i . "</a>";
 			}
-			if ($this->page != $this->pages)
-			{
-				$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $this->pages . ");\">&raquo;&raquo;</a>";
-			}
-			else 
-			{
-				$xhtml[] = "<span>&raquo;&raquo;</span>";
-			}
+			$xhtml[] = ($this->page != $this->pages) ? "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $this->pages . ");\">&raquo;&raquo;</a>" : "<span>&raquo;&raquo;</span>";
 		}
+		$xhtml[] = "</div>";
 		$xhtml[] = "</div>";
 		return implode("&nbsp;", $xhtml);
 	}
@@ -199,11 +159,11 @@ class TableList implements XHTMLComponent {
 		}
 		$formXhtml[] = $this->ensambleSearchFormSortField();
 		$formXhtml[] = "<input type=\"hidden\" name=\"pg\" value=\"" . $this->page . "\">";
-		$formXhtml[] = "<input type=\"button\" value=\"ok\" onclick=\"this.form.pg.value=1;this.form.submit();\">";
+		$formXhtml[] = "<input type=\"button\" value=\"Search\" onclick=\"this.form.pg.value=1;this.form.submit();\">";
 		$formXhtml[] = "</form></div>\n";
 		$formXhtml[] = "<script type=\"text/javascript\">function " . strtolower(get_class($this)) . $this->idName . "FormPg(id){document." . $formName . ".pg.value = id; document." . $formName . ".submit();}</script>";
 		return implode("", $formXhtml);
-	}
+	}	
 	
 	private function ensambleSearchFormField($fieldName)
 	{
@@ -230,10 +190,29 @@ class TableList implements XHTMLComponent {
 		return $xhtml;
 	}
 	
-	private function prepareActionLink($action, $idKey)
+	private function formActionToXhtml()
 	{
-		$uriController = strtolower(str_replace("Controller", "", $this->nameController));
-		return CLEANGAB_URL_BASE_APP . "/" . $uriController . "/" . strtolower($action) . "/" . $idKey;
+		$formName = $this->idName . "ActionForm";
+		$frm = array();
+		$frm[] = "<form name=\"" . $formName . "\" id=\"" . $formName . "\" method=\"post\" action=\"\">";
+		$frm[] = "<input type=\"hidden\" name=\"key\" value=\"\">";
+		$frm[] = "</form>";
+		$frm[] = "<script type=\"text/javascript\">";
+		$frm[] = "function " . strtolower(get_class($this)) . $this->idName . "ActionForm(action) {";
+		$frm[] = "if (document." . $formName . ".key.value != '') {";
+		$frm[] = "var url = '" . CLEANGAB_URL_BASE_APP . "/" . strtolower(str_replace("Controller", "", $this->nameController)) . "/'+action+'/'+document." . $formName . ".key.value;";
+		$frm[] = "document." . $formName . ".action=url;";
+		$frm[] = "document." . $formName . ".submit();";
+		$frm[] = "}";
+		$frm[] = "}";
+		$frm[] = "function " . strtolower(get_class($this)) . $this->idName . "KeyActionForm(obj,key) {";
+		$frm[] = "document." . $this->idName . "ActionForm" . ".key.value=key;";
+		$frm[] = "$(\"tr\").removeClass('" . strtolower(get_class($this)) . "SelectedRecord');";
+		$frm[] = "$(obj).addClass('" . strtolower(get_class($this)) . "SelectedRecord');";
+		$frm[] = "$('." . strtolower(get_class($this)) . "Actions > a').addClass('active');";
+		$frm[] = "}";
+		$frm[] = "</script>";
+		return implode("", $frm);
 	}
 
 }

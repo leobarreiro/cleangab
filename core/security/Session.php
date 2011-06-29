@@ -1,17 +1,17 @@
 <?php
 /**
- * Clean-Gab Framework
+ * CleanGab Framework
  * Session.php
  * Date: 	2011-05-18
  * Author: 	Leopoldo Barreiro
  * 
  */
 
-include_once("Entity.php");
+require_once("Entity.php");
 
 class Session {
 
-	public static function login($username, $passwd) 
+	public static function authenticate($username, $passwd) 
 	{
 		try 
 		{
@@ -21,7 +21,7 @@ class Session {
 			}
 			$entity = new Entity("user");
 			$entity->init();
-			$entity->addArgument("user", $username);
+			$entity->addArgument("user", $username, "=");
 			$entity->addArgument("passwd", $passwd, "MD5");
 			$rs = $entity->retrieve(CLEANGAB_SQL_VERIFY_LOGIN);
 			Session::createIfNotExists();
@@ -32,7 +32,6 @@ class Session {
 			} 
 			else 
 			{
-				
 				foreach ($rs->get() as $key=>$value) 
 				{
 					$_SESSION["CLEANGAB"]["user"][$key] = $value;
@@ -45,6 +44,14 @@ class Session {
 			CleanGab::stackTraceDebug($e);
 			return false;
 		}
+	}
+	
+	public static function logoff()
+	{
+		$_SESSION['CLEANGAB'] = array();
+		$_SESSION['CLEANGAB']['uimessages'] = array();
+		Session::addUIMessage("Logoff performed correctly");
+		//header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
 	}
 	
 	public static function verify() 
@@ -107,10 +114,6 @@ class Session {
 	
 	private function createIfNotExists() 
 	{
-		if (!isset($_SESSION)) 
-		{
-			session_start();
-		}
 		if (!isset($_SESSION["CLEANGAB"])) 
 		{
 			$_SESSION["CLEANGAB"] = array();
@@ -126,6 +129,10 @@ class Session {
 		if (!isset($_SESSION['CLEANGAB']['xhtmlComponents'])) 
 		{
 			$_SESSION['CLEANGAB']['xhtmlComponents'] = array();
+		}
+		if (!isset($_SESSION['CLEANGAB']['uimessages'])) 
+		{
+			$_SESSION['CLEANGAB']['uimessages'] = array();
 		}
 	}
 	
@@ -149,6 +156,26 @@ class Session {
 	public static function getHostedObject($uniqueName)
 	{
 		return (isset($_SESSION["CLEANGAB"]["objects"][$uniqueName])) ? $_SESSION["CLEANGAB"]["objects"][$uniqueName] : false; 
+	}
+	
+	public static function addUIMessage($message)
+	{
+		Session::createIfNotExists();
+		$msg = filter_var($message, FILTER_SANITIZE_STRING);
+		$_SESSION['CLEANGAB']['uimessages'][] = (object) array('timestamp'=>time(), 'msg'=>$msg, 'read'=>false);
+	}
+	
+	public static function getLastUIMessage()
+	{
+		Session::createIfNotExists();
+		if (count($_SESSION['CLEANGAB']['uimessages']) == 0)
+		{
+			return false;
+		}
+		$lastMessage = $_SESSION['CLEANGAB']['uimessages'][count($_SESSION['CLEANGAB']['uimessages'])-1];
+		$lastMessage->read = true;
+		$_SESSION['CLEANGAB']['uimessages'][count($_SESSION['CLEANGAB']['uimessages'])-1] = $lastMessage;
+		return $lastMessage;
 	}
 	
 }

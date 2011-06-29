@@ -1,6 +1,6 @@
 <?php
 /**
- * Clean-Gab Framework
+ * CleanGab Framework
  * Entity.php
  * Date: 	2011-01-21
  * Author: 	Leopoldo Barreiro
@@ -300,35 +300,31 @@ class Entity implements IDBEntity {
 		
 		$sql = str_replace($old, $new, $sql);
 		$this->sqlAfterParser = $sql;
-		CleanGab::debug($sql);
 		return $sql;
 	}
 	
 	private function parseArgumentToSql($arArgument) 
 	{
 		$sqlPart  = $arArgument['key'];
- 
-
-			if (strtolower($arArgument['operation']) == strtolower("LIKE")) 
+		if (strtolower($arArgument['operation']) == strtolower("LIKE")) 
+		{
+			$sqlPart .= " LIKE '%" . $arArgument['search'] . "%' ";
+		} 
+		else if (strtolower($arArgument['operation']) == strtolower("MD5"))
+		{
+			$sqlPart .= " = MD5('" . $arArgument['search'] . "')";
+		} 
+		else 
+		{
+			if (in_array($this->fields[$arArgument['key']]['type'], $this->numericTypes)) 
 			{
-				$sqlPart .= " LIKE '%" . $arArgument['search'] . "%' ";
-			} 
-			else if (strtolower($arArgument['operation']) == strtolower("MD5"))
-			{
-				$sqlPart .= " = MD5('" . $arArgument['search'] . "')";
-			} 
+				$sqlPart .= " = " . $arArgument['search'];
+			}
 			else 
 			{
-				if (in_array($this->fields[$arArgument['key']]['type'], $this->numericTypes)) 
-				{
-					$sqlPart .= " = " . $arArgument['search'];
-				}
-				else 
-				{
-					$sqlPart .= " = '" . $arArgument['search'] . "' ";
-				}
-			} 
-
+				$sqlPart .= " = '" . $arArgument['search'] . "' ";
+			}
+		} 
 		return $sqlPart;
 	}
 	
