@@ -3,7 +3,8 @@ require_once ("CleanGabModel.php");
 
 class UserModel extends CleanGabModel {
 
-	public function __construct() {
+	public function __construct() 
+	{
 		parent::__construct();
 		$this->listableFields = array("id", "user", "name", "email", "created");
 		$this->masks = array("created"=>"DateTimeFormatter");
