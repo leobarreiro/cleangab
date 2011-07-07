@@ -1,5 +1,6 @@
 <?php
 require_once ("CleanGabController.php");
+require_once ("Session.php");
 require_once ("UserModel.php");
 require_once ("TableListBase.php");
 require_once ("UIMessageBase.php");
