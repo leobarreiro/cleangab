@@ -28,14 +28,20 @@ class Session {
 			if (count($rs->getRecords()) == 0) 
 			{
 				$_SESSION["CLEANGAB"]["user"] = array();
+				Session::addUIMessage("Login or password invalid.");
 				throw new Exception("login fail", "2");
-			} 
+			}
 			else 
 			{
-				foreach ($rs->get() as $key=>$value) 
-				{
-					$_SESSION["CLEANGAB"]["user"][$key] = $value;
-				}
+				Session::addUIMessage("Log in performed correctly");
+				$record = $rs->get();
+				$_SESSION["CLEANGAB"]["user"] = array();
+				$_SESSION["CLEANGAB"]["user"]["started"] = true;
+				$_SESSION["CLEANGAB"]["user"]["id"] = $record->id;
+				$_SESSION["CLEANGAB"]["user"]["user"] = $record->user;
+				$_SESSION["CLEANGAB"]["user"]["name"] = $record->name;
+				$_SESSION["CLEANGAB"]["user"]["email"] = $record->email;
+				$_SESSION["CLEANGAB"]["user"]["user"] = $record->user;
 			}
 			return (count($_SESSION["CLEANGAB"]["user"]) > 0); 
 		} 
@@ -48,17 +54,23 @@ class Session {
 	
 	public static function logoff()
 	{
-		$_SESSION['CLEANGAB'] = array();
-		$_SESSION['CLEANGAB']['uimessages'] = array();
+		$_SESSION["CLEANGAB"] = array();
+		$_SESSION["CLEANGAB"]["uimessages"] = array();
 		Session::addUIMessage("Logoff performed correctly");
-		//header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
+		header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
 	}
 	
 	public static function verify() 
 	{
-		$isValidSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && strlen($_SESSION['CLEANGAB']['user'] > 0));
-		if (!$isValidSession) 
+		$isValidSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && 
+							is_array($_SESSION['CLEANGAB']['user']) && isset($_SESSION['CLEANGAB']['user']['name']) && 
+							strlen($_SESSION['CLEANGAB']['user']['name']) > 0);
+		CleanGab::debug("Session::verify");
+		CleanGab::debug($_SESSION);
+		if (!$isValidSession)
 		{
+			Session::addUIMessage("Session is not valid. Please, proceed to log in");
+			CleanGab::debug("Session is not valid");
 			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
 		}
 	}
@@ -134,6 +146,10 @@ class Session {
 		{
 			$_SESSION['CLEANGAB']['uimessages'] = array();
 		}
+		if (!isset($_SESSION['CLEANGAB']['redir'])) 
+		{
+			$_SESSION['CLEANGAB']['redir'] = array();
+		}
 	}
 	
 	public function addToSession($component) 
@@ -178,5 +194,23 @@ class Session {
 		return $lastMessage;
 	}
 	
+	public static function addRedir($controller, $action)
+	{
+		Session::createIfNotExists();
+		$_SESSION["CLEANGAB"]["redir"][] = array("control"=>$controller, "action"=>$action);
+	}
+	
+	public static function getLastRedir()
+	{
+		if (is_array($_SESSION["CLEANGAB"]["redir"]) && count($_SESSION["CLEANGAB"]["redir"]) > 0)
+		{
+			$lastRedir = $_SESSION["CLEANGAB"]["redir"][count($_SESSION["CLEANGAB"]["redir"])-1];
+			return CLEANGAB_URL_BASE_APP . "/" . $lastRedir["control"] . "/" . $lastRedir["action"];
+		}
+		else 
+		{
+			return CLEANGAB_URL_BASE_APP . "/welcome.php";
+		}
+	}
 }
 ?>
