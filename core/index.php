@@ -3,7 +3,11 @@ if (isset($_SERVER['SCRIPT_NAME']) && (preg_match("/\/cleangab\/core\/index.php/
 {
 	exit();
 }
-
+if (!isset($_SESSION))
+{
+	session_start();
+	session_name("CleanGab");
+}
 $friendlyUrl 				 = array();
 $friendlyUrl['cgController'] = filter_input(INPUT_GET, "cgController", FILTER_SANITIZE_STRING);
 $friendlyUrl['cgAction'] 	 = filter_input(INPUT_GET, "cgAction", FILTER_SANITIZE_STRING);
