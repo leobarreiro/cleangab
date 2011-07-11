@@ -179,6 +179,11 @@ class Entity implements IDBEntity {
 		return true;
 	}
 	
+	public function getPk()
+	{
+		return $this->pk;
+	}
+	
 	public function setFk($args)
 	{
 		if (is_array($args))
@@ -300,6 +305,7 @@ class Entity implements IDBEntity {
 		
 		$sql = str_replace($old, $new, $sql);
 		$this->sqlAfterParser = $sql;
+		CleanGab::debug($this->sqlAfterParser);
 		return $sql;
 	}
 	
