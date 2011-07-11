@@ -9,7 +9,9 @@ class UserController extends CleanGabController {
 
 	public function index() 
 	{
+		Session::addRedir("user", "index");
 		Session::verify();
+		
 		$model = new UserModel();
 
 		// Arguments
@@ -47,6 +49,7 @@ class UserController extends CleanGabController {
 		// View
 
 		$view = new CleanGabEngineView("User", "index", $tableUsers);
+		$view->addObject($tableUsers->getIdName(), $tableUsers);
 		$view->renderize();
 
 	}
@@ -61,7 +64,8 @@ class UserController extends CleanGabController {
 	public function login()
 	{
 		$lastMessage = new UIMessageBase("uimessage", Session::getLastUIMessage());
-		$view = new CleanGabEngineView("User", "login", $lastMessage);
+		$view = new CleanGabEngineView("User", "login");
+		$view->addObject("uimessage", $lastMessage);
 		$view->renderize();
 	}
 	
@@ -78,21 +82,33 @@ class UserController extends CleanGabController {
 		$authenticate = Session::authenticate($user, $passwd);
 		if ($authenticate)
 		{
-			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/index");
+			CleanGab::debug(Session::getLastRedir());
+			header("Location: " . Session::getLastRedir());
+			//header("Location: " . CLEANGAB_URL_BASE_APP . "/" . CLEANGAB_WELCOME);
+			//include (CLEANGAB_WELCOME);
 		}
 		else 
 		{
-			Session::addUIMessage("Login or password invalid.");
 			//TODO: Add an error message here. Maybe it can be in a message board on $_SESSION.
+			Session::addUIMessage("Login or password invalid");
 			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
 		}
 	}
 
-	public function show($key) 
+	public function show($keyValue) 
 	{
-		echo get_class($this);
-		echo "<br/>";
-		echo $key;
+		if ($keyValue > 0)
+		{
+			$model = new UserModel();
+			$user = $model->get($keyValue);
+			$view = new CleanGabEngineView("User", "show");
+			$view->addObject("user", $user);
+			$view->renderize();
+		}
+		else
+		{
+			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/index");
+		}
 	}
 	
 	public function newItem()
