@@ -22,7 +22,7 @@ class Recordset {
 	
 	function hasNext() 
 	{
-		return ($i < (count($this->records)-1));
+		return ($this->i < (count($this->records)-1));
 	}
 
 	function goFirst() 
@@ -60,6 +60,20 @@ class Recordset {
 			} 
 		}
 		return $this->records[$this->i];
+	}
+	
+	public function getRecord()
+	{
+		if ($this->i < count($this->getRecords()))
+		{
+			$record = $this->records[$this->i];
+			$this->i = ($this->i + 1);
+		} 
+		else 
+		{
+			$record = false;
+		}
+		return $record;
 	}
 	
 	function ensamble() 
