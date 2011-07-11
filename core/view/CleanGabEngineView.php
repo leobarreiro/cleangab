@@ -19,24 +19,22 @@ class CleanGabEngineView {
 	protected $xhtmlFile;
 	protected $xhtmlContent;
 	protected $translated;
+	protected $navigator;
 	
-	public function __construct($nameController, $operationController, $objects=null) 
+	public function __construct($nameController, $operationController) 
 	{
 		$this->nameController 		= $nameController;
 		$this->operationController 	= $operationController;
 		$this->template 			= CLEANGAB_XHTML_TEMPLATE;
 		$this->objects 				= array();
-		if (is_array($objects)) 
-		{
-			foreach ($objects as $obj) 
-			{
-				$this->add($obj);
-			}
-		} 
-		else 
-		{
-			$this->add($objects);
-		}
+		
+		$this->navigator 			= new stdClass();
+		$this->navigator->referer 	= isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "#";
+		
+		$session = $_SESSION["CLEANGAB"];
+		$this->addObject("session", $session);
+		
+		$this->addObject("navigator", $this->navigator);
 		$this->xhtmlFile = "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
 		try 
 		{
@@ -79,12 +77,12 @@ class CleanGabEngineView {
 	{
 		$newContent = $this->xhtmlContent;
 		$tagNames   = $this->parserELTag($newContent);
+		CleanGab::debug($tagNames);
 		foreach ($tagNames as $tag) 
 		{
-			if (strpos($tag, ".")) 
+			if (strpos($tag, ".") > 0) 
 			{
 				$parts = explode(".", $tag);
-				$parts = array_shift($parts);
 				$methods = array();
 				for ($i=1;$i<count($parts);$i++) 
 				{
@@ -97,47 +95,54 @@ class CleanGabEngineView {
 				$methods = false;
 				$objectName = $tag;
 			}
-			$obj = $this->getXhtmlComponentByName($objectName);
+			$obj = $this->getObjectByName($objectName);
 			if ($obj) 
 			{
 				if ($methods) 
 				{
-					$eval = implode("->", $methods);
-					$newContent = str_replace("#{".$tag."}", eval($obj->$eval), $newContent);
-				} 
+					$eval = implode(".", $methods);
+					$newContent = str_replace("#{" . $tag . "}", $obj->{$eval}, $newContent);
+				}
 				else 
 				{
-					$newContent = str_replace("#{".$tag."}", $obj->toXhtml(), $newContent);
+					if ($obj instanceof XHTMLComponent)
+					{
+						$newContent = str_replace("#{" . $tag . "}", $obj->toXhtml(), $newContent);
+					}
+					else 
+					{
+						$newContent = str_replace("#{" . $tag . "}", (string)$obj, $newContent);
+					}
 				}
 			}
 		}
 		$this->translated = $newContent;
 	}
 	
-	public function add($object) 
+	public function addObject($identifier, $object)
 	{
-		if ($this->isXhtmlComponent($object)) 
+		if (!is_object($object))
 		{
-			if ($this->getXhtmlComponentByName($object->getIdName())) 
-			{
-				CleanGab::debug("Objects ja possui um membro com idName ".$object->getIdName());
-				return false;
-			}
-			$this->objects[] = $object;
-			return true;
+			return false;
 		}
-		CleanGab::debug("Objects so aceita objetos que implementam XhtmlComponent");
-		return false;
+		if ($this->getObjectByName($identifier)) 
+		{
+			CleanGab::debug("Objects ja possui um membro com idName " . $identifier);
+			return false;
+		}
+		$this->objects[$identifier] = $object;
+		return true;
 	}
 	
 	public function renderize() 
 	{
 		$this->inject();
 		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->template;
-		$content = (file_exists($templatePath)) ? file_get_contents($templatePath) : file_get_contents("../cleangab/core/" . $templatePath);
-		$content = $this->parserConstantsIntoTemplateBase($content);
-		$content = str_replace("#{content}", $this->translated, $content);
-		echo $content;
+		$templateContent = (file_exists($templatePath)) ? file_get_contents($templatePath) : file_get_contents("../cleangab/core/" . $templatePath);
+		$templateContent = $this->parserConstants($templateContent);
+		$viewContent = $this->parserConstants($this->translated);
+		$completeContent = str_replace("#{content}", $viewContent, $templateContent);
+		echo $completeContent;
 	}
 	
 	private function isXhtmlComponent($mixed) 
@@ -147,8 +152,9 @@ class CleanGabEngineView {
 
 	private function parserELTag($xhtml) 
 	{
-		//TODO: aprimorar esta expressao regular
-		$pattern = "%(\#{){1}.[a-zA-Z_]+.(\.+)*.([a-zA-Z]*).(}){1}%";
+		//$pattern = "%(\#{){1}.[a-zA-Z_ ]+.(\.+)*.([a-zA-Z]*).(}){1}%";
+		//$pattern = "%(\#{){1}.([a-zA-Z_]+)+.(\.+)*.([[:space:]]*)*.([a-zA-Z]+)+.(}){1}%";
+		$pattern = "%(\#{){1}.(.)+.(\}){1}%";
 		preg_match_all($pattern, $xhtml, $matches, PREG_PATTERN_ORDER);
 		if (is_array($matches)) 
 		{
@@ -161,33 +167,33 @@ class CleanGabEngineView {
 		return $tags;
 	}
 	
-	private function getXhtmlComponentByName($name) 
+	private function getObjectByName($name) 
 	{
-		foreach ($this->objects as $obj) 
+		if (isset($this->objects[$name]))
 		{
-			if ($obj->getIdName() == $name) 
-			{
-				return $obj;
-			}
+			return $this->objects[$name];
 		}
-		return false;
+		else 
+		{
+			return false;
+		}
 	}
 	
-	private function parserConstantsIntoTemplateBase($templateContent)
+	private function parserConstants($content)
 	{
-		$tagsTemplateBase = $this->parserELTag($templateContent);
+		$tags = $this->parserELTag($content);
 		$constantPatter = '/^CLEANGAB_/';
-		foreach ($tagsTemplateBase as $tag)
+		foreach ($tags as $tag)
 		{
 			if (preg_match($constantPatter, $tag))
 			{
 				if (defined($tag))
 				{
-					$templateContent = str_replace("#{" . $tag . "}", constant($tag), $templateContent);
+					$content = str_replace("#{" . $tag . "}", constant($tag), $content);
 				}
 			}
 		}
-		return $templateContent;
+		return $content;
 	}
 }
 ?>
