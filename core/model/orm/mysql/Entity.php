@@ -28,24 +28,28 @@ class Entity implements IDBEntity {
 	public  $args;
 	private $stringTypes;
 	private $numericTypes;
+	private $dateTypes;
+	public  $objectToPersist;
 	
 	public function __construct($tableName, $dataBase=CLEANGAB_DB_DB)
 	{
-		$this->connection = null;
-		$this->stringTypes  = unserialize(CLEANGAB_SQL_STRING_TYPES);
-		$this->numericTypes = unserialize(CLEANGAB_SQL_NUMERIC_TYPES);
+		$this->connection 		= null;
+		$this->stringTypes  	= unserialize(CLEANGAB_SQL_STRING_TYPES);
+		$this->numericTypes 	= unserialize(CLEANGAB_SQL_NUMERIC_TYPES);
+		$this->dateTypes 		= unserialize(CLEANGAB_SQL_DATE_TYPES);
 		$this->setDataBase($dataBase);
 		$this->setTableName($tableName);
-		$this->fields 	= array();
-		$this->pk 		= array();
-		$this->fk 		= array();
-		$this->uk 		= array();
-		$this->total 	= 0;
-		$this->args 	= array();
-		$this->offset 	= 0;
-		$this->limit  	= CLEANGAB_DEFAULT_SQL_LIMIT;
-		$this->sqlBeforeParser = null;
-		$this->sqlAfterParser = null;
+		$this->fields 			= array();
+		$this->pk 				= array();
+		$this->fk 				= array();
+		$this->uk 				= array();
+		$this->total 			= 0;
+		$this->args 			= array();
+		$this->offset 			= 0;
+		$this->limit  			= CLEANGAB_DEFAULT_SQL_LIMIT;
+		$this->sqlBeforeParser 	= null;
+		$this->sqlAfterParser 	= null;
+		$this->objectToPersist 	= null;
 	}
 	
 	private function connectIfNull() 
@@ -54,6 +58,32 @@ class Entity implements IDBEntity {
 		{
 			$this->connection = new Connection();
 		}
+	}
+	
+	public function setObjectToPersist($mixed)
+	{
+		$this->objectToPersist = $this->createObjectToPersist($mixed);
+	}
+	
+	public function createObjectToPersist($mixed=null)
+	{
+		$dateTypes = unserialize(CLEANGAB_SQL_DATE_TYPES);
+		$mixed = (array) $mixed;
+		foreach (array_keys($this->fields) as $field)
+		{
+			if (!isset($mixed[$field]))
+			{
+				if (in_array(strtoupper($this->fields[$field]['type']), $this->dateTypes))
+				{
+					$mixed[$field] = date("Y-m-d H:i:s");
+				}
+				else 
+				{
+					$mixed[$field] = "";
+				}
+			}
+		}
+		return (object) $mixed;
 	}
 	
 	public function setConnection($conn) 
@@ -204,16 +234,18 @@ class Entity implements IDBEntity {
 	
 	public function save()
 	{
-		if ((isset($this->fields[$this->pk])) && ($this->fields[$this->pk]['value'] != ''))
-		{
-			$sql = $this->prepare(CLEANGAB_SQL_INSERT);
-		}
-		else
-		{
-			$sql = $this->prepare(CLEANGAB_SQL_UPDATE);
-		}
-		mysql_query($sql);
-		return mysql_affected_rows();
+		//if ((isset($this->fields[$this->pk])) && ($this->fields[$this->pk]['value'] != ''))
+		//{
+		$sql = $this->prepare(CLEANGAB_SQL_INSERT);
+		//}
+		//else
+		//{
+		//	$sql = $this->prepare(CLEANGAB_SQL_UPDATE);
+		//}
+		$this->sqlBeforeParser = $sql;
+		$this->connectIfNull();
+		$this->connection->resource->query($this->prepare($this->sqlBeforeParser));
+		return $this->connection->resource->affected_rows;
 	}
 	
 	public function setValue($fieldName, $value)
@@ -286,6 +318,20 @@ class Entity implements IDBEntity {
 		{
 			$old[] = "[listable_fields]";
 			$new[] = implode(", ", array_keys($this->fields));
+			if (is_object($this->objectToPersist))
+			{
+				$old[] = "[insert_fields]";
+				$new[] = implode(", ", array_keys($this->fields));
+				$insert_values = "";
+				$insert = array();
+				foreach (array_keys($this->fields) as $field)
+				{
+					$insert[] = " '" . $this->objectToPersist->{$field} . "' ";
+				}
+				$insert_values .= implode(", ", $insert);
+				$old[] = "[insert_values]";
+				$new[] = $insert_values;
+			}
 		}
 		
 		$sqlArguments = array();
@@ -305,7 +351,6 @@ class Entity implements IDBEntity {
 		
 		$sql = str_replace($old, $new, $sql);
 		$this->sqlAfterParser = $sql;
-		CleanGab::debug($this->sqlAfterParser);
 		return $sql;
 	}
 	

@@ -22,7 +22,7 @@ class Recordset {
 	
 	function hasNext() 
 	{
-		return ($this->i < (count($this->records)-1));
+		return ($this->i < count($this->records));
 	}
 
 	function goFirst() 
@@ -64,11 +64,11 @@ class Recordset {
 	
 	public function getRecord()
 	{
-		if ($this->i < count($this->getRecords()))
+		if ($this->hasNext())
 		{
 			$record = $this->records[$this->i];
 			$this->i = ($this->i + 1);
-		} 
+		}
 		else 
 		{
 			$record = false;
@@ -93,7 +93,6 @@ class Recordset {
 			}
 			$this->records[] = (object) $item;
 		}
-		$this->i = (count($this->records)-1);
 	}
 	
 	public function getRecords() 
