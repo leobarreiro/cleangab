@@ -41,6 +41,7 @@ class CleanGabModel {
 		$this->masks = array();
 		$this->entity = null;
 		$this->recordset = null;
+		$this->argumentData = array();
 	}
 
 	public function getHintFields() 
@@ -101,6 +102,26 @@ class CleanGabModel {
 		{
 			return false;
 		}
+	}
+	
+	public function clearArgumentData()
+	{
+		$this->argumentData = array();
+	}
+	
+	public function get($keyValue)
+	{
+		$this->entity = new Entity("user");
+		$this->entity->init();
+		$pk = $this->entity->getPk();
+		CleanGab::debug($pk[0]);
+		CleanGab::debug($keyValue);
+		$this->addArgumentData($pk[0], $keyValue);
+		$this->entity->addArgument($pk[0], $keyValue, "=");
+		$this->entity->setOffset(0);
+		$this->entity->setLimit(1);
+		$this->recordset = $this->entity->retrieve();
+		return $this->recordset->get(0);
 	}
 	
 	// TODO: override
