@@ -29,6 +29,16 @@ class CleanGabController {
 		}
 		return false;
 	}
+	
+	public function getInputCLI($strKey) 
+	{
+		$input = filter_input(INPUT_ENV, $strKey, FILTER_SANITIZE_STRING);
+		if ($input != null) 
+		{
+			return $input;
+		}
+		return false;
+	}
 
 	public function index() {}
 	
