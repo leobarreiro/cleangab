@@ -24,6 +24,11 @@ class Recordset {
 	{
 		return ($this->i < count($this->records));
 	}
+	
+	public function hasRecords()
+	{
+		return (count($this->records) > 0);
+	}
 
 	function goFirst() 
 	{
