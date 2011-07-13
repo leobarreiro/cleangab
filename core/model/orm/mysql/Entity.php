@@ -40,7 +40,7 @@ class Entity implements IDBEntity {
 		$this->setDataBase($dataBase);
 		$this->setTableName($tableName);
 		$this->fields 			= array();
-		$this->pk 				= array();
+		$this->pk 				= null;
 		$this->fk 				= array();
 		$this->uk 				= array();
 		$this->total 			= 0;
@@ -73,13 +73,14 @@ class Entity implements IDBEntity {
 		{
 			if (!isset($mixed[$field]))
 			{
-				if (in_array(strtoupper($this->fields[$field]['type']), $this->dateTypes))
+				if (in_array(strtoupper($this->fields[$field]['type']), $this->dateTypes) 
+					 && strtoupper($this->fields[$field]['null']) == "NO")
 				{
 					$mixed[$field] = date("Y-m-d H:i:s");
 				}
 				else 
 				{
-					$mixed[$field] = "";
+					$mixed[$field] = null;
 				}
 			}
 		}
@@ -139,7 +140,6 @@ class Entity implements IDBEntity {
 	public function init()
 	{
 		$fields 	 = array();
-		$primaryKeys = array();
 		$foreignKeys = array();
 		$uniqueKeys  = array();
 		$this->connectIfNull();
@@ -172,7 +172,7 @@ class Entity implements IDBEntity {
 												'value'=>'');
 				if ($record->Key == 'PRI') 
 				{
-					$primaryKeys[] = $record->Field;
+					$this->pk = $record->Field;
 				}
 				if ($record->Key == 'MUL') 
 				{
@@ -190,22 +190,14 @@ class Entity implements IDBEntity {
 			CleanGab::stackTraceDebug($e);
 		}
 		$this->fields  = $fields;
-		$this->pk      = $primaryKeys;
 		$this->fk      = $foreignKeys;
 		$this->uk      = $uniqueKeys;
-		$this->orderBy = implode(", ", $this->pk);
+		$this->orderBy = $this->pk;
 	}
 	
-	public function setPk($args)
+	public function setPk($arg)
 	{
-		if (is_array($args))
-		{
-			$this->pk = $args;
-		}
-		else
-		{
-			$this->pk = array($args);
-		}
+		$this->pk = $arg;
 		return true;
 	}
 	
@@ -234,18 +226,24 @@ class Entity implements IDBEntity {
 	
 	public function save()
 	{
-		//if ((isset($this->fields[$this->pk])) && ($this->fields[$this->pk]['value'] != ''))
-		//{
-		$sql = $this->prepare(CLEANGAB_SQL_INSERT);
-		//}
-		//else
-		//{
-		//	$sql = $this->prepare(CLEANGAB_SQL_UPDATE);
-		//}
-		$this->sqlBeforeParser = $sql;
+		if ($this->objectToPersist->{$this->pk} != 0)
+		{
+			$sql = CLEANGAB_SQL_UPDATE;
+		}
+		else 
+		{
+			$sql = CLEANGAB_SQL_INSERT;
+		}
 		$this->connectIfNull();
-		$this->connection->resource->query($this->prepare($this->sqlBeforeParser));
-		return $this->connection->resource->affected_rows;
+		$this->connection->resource->query($this->prepare($sql));
+		if ($this->connection->resource->affected_rows > 0)
+		{
+			return $this->connection->resource->affected_rows;
+		}
+		else 
+		{
+			return false;
+		}
 	}
 	
 	public function setValue($fieldName, $value)
@@ -291,14 +289,13 @@ class Entity implements IDBEntity {
 	public function retrieve($sql=CLEANGAB_SQL_RETRIEVE_ALL) 
 	{
 		$this->connectIfNull();
-		$this->sqlBeforeParser = $sql;
-		$qr = $this->connection->resource->query($this->prepare($this->sqlBeforeParser));
+		$qr = $this->connection->resource->query($this->prepare($sql));
 		$recordset = new Recordset($qr);
 		$this->countRecords();
 		return $recordset;
 	}
 	
-	private function countRecords() 
+	private function countRecords()
 	{
 		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_COUNT_ALL));
 		$rset = new Recordset($qr);
@@ -308,11 +305,12 @@ class Entity implements IDBEntity {
 	
 	private function prepare($sql) 
 	{
+		$this->sqlBeforeParser = $sql;
 		$old = array("[database]", "[table]");
 		$new = array($this->dataBase, $this->tableName);
 		
 		$old[] = "[pk]";
-		$new[] = implode (", ", $this->pk);
+		$new[] = $this->pk;
 		
 		if ($this->fields != null) 
 		{
@@ -320,17 +318,48 @@ class Entity implements IDBEntity {
 			$new[] = implode(", ", array_keys($this->fields));
 			if (is_object($this->objectToPersist))
 			{
-				$old[] = "[insert_fields]";
-				$new[] = implode(", ", array_keys($this->fields));
-				$insert_values = "";
-				$insert = array();
-				foreach (array_keys($this->fields) as $field)
+				if ($this->objectToPersist->{$this->pk} != 0)
 				{
-					$insert[] = " '" . $this->objectToPersist->{$field} . "' ";
+					//$old[] = "[update_fields]";
+					//$new[] = "";
+					$statement = array();
+					$update = array();
+					foreach (array_keys($this->fields) as $field)
+					{
+						$update[$field] = ($this->objectToPersist->{$field} == null) ? " NULL " : " '" . $this->objectToPersist->{$field} . "' ";
+					}
+					foreach ($update as $field=>$value)
+					{
+						$statement[] = " " . $field . " = " . $value;
+					}
+					
+					$old[] = "[update_values]";
+					if (count($statement) > 0)
+					{
+						$new[] = " " . implode(", ", $statement) . " ";
+					}
+					else 
+					{
+						$new[] = "";
+					}
+					
+					$old[] = "[update_conditions]";
+					$new[] = " " . $this->pk . " = " . $this->objectToPersist->{$this->pk};
 				}
-				$insert_values .= implode(", ", $insert);
-				$old[] = "[insert_values]";
-				$new[] = $insert_values;
+				else 
+				{
+					$old[] = "[insert_fields]";
+					$new[] = implode(", ", array_keys($this->fields));
+					$insert_values = "";
+					$insert = array();
+					foreach (array_keys($this->fields) as $field)
+					{
+						$insert[] = ($this->objectToPersist->{$field} == null) ? " NULL " : " '" . $this->objectToPersist->{$field} . "' ";
+					}
+					$insert_values .= implode(", ", $insert);
+					$old[] = "[insert_values]";
+					$new[] = $insert_values;
+				}
 			}
 		}
 		
@@ -351,6 +380,7 @@ class Entity implements IDBEntity {
 		
 		$sql = str_replace($old, $new, $sql);
 		$this->sqlAfterParser = $sql;
+		
 		return $sql;
 	}
 	
