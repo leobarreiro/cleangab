@@ -27,13 +27,13 @@ class CleanGabEngineView {
 		$this->operationController 	= $operationController;
 		$this->template 			= CLEANGAB_XHTML_TEMPLATE;
 		$this->objects 				= array();
-		
 		$this->navigator 			= new stdClass();
 		$this->navigator->referer 	= isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "#";
-		
-		$session = $_SESSION["CLEANGAB"];
-		$this->addObject("session", $session);
-		
+		if (isset($_SESSION))
+		{
+			$session = $_SESSION["CLEANGAB"];
+			$this->addObject("session", $session);
+		}
 		$this->addObject("navigator", $this->navigator);
 		$this->xhtmlFile = "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
 		try 
@@ -121,17 +121,18 @@ class CleanGabEngineView {
 	
 	public function addObject($identifier, $object)
 	{
-		if (!is_object($object))
-		{
-			return false;
-		}
 		if ($this->getObjectByName($identifier)) 
 		{
 			CleanGab::debug("Objects ja possui um membro com idName " . $identifier);
 			return false;
 		}
-		$this->objects[$identifier] = $object;
+		$this->objects[$identifier] = (is_object($object)) ? $object : (object)$object;
 		return true;
+	}
+	
+	public function getTranslated()
+	{
+		return $this->translated;
 	}
 	
 	public function renderize() 
