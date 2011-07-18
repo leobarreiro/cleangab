@@ -238,7 +238,7 @@ class Entity implements IDBEntity {
 		$this->connection->resource->query($this->prepare($sql));
 		if ($this->connection->resource->affected_rows > 0)
 		{
-			return $this->connection->resource->affected_rows;
+			return $this->connection->resource->insert_id;
 		}
 		else 
 		{
@@ -320,8 +320,6 @@ class Entity implements IDBEntity {
 			{
 				if ($this->objectToPersist->{$this->pk} != 0)
 				{
-					//$old[] = "[update_fields]";
-					//$new[] = "";
 					$statement = array();
 					$update = array();
 					foreach (array_keys($this->fields) as $field)
@@ -362,48 +360,46 @@ class Entity implements IDBEntity {
 				}
 			}
 		}
-		
 		$sqlArguments = array();
 		foreach ($this->args as $arg) 
 		{
 			$sqlArguments[] = $this->parseArgumentToSql($arg);
 		}
-
 		$old[] = "[args]";
 		$new[] = (count($sqlArguments) >0) ? " WHERE " . implode (" AND ", $sqlArguments) : "";
-		
 		$old[] = "[order]";
 		$new[] = " ORDER BY " . $this->orderBy;
-		
 		$old[] = "[limit]";
 		$new[] = "LIMIT " . $this->offset . ", " . $this->limit;
-		
 		$sql = str_replace($old, $new, $sql);
 		$this->sqlAfterParser = $sql;
-		
 		return $sql;
 	}
 	
-	private function parseArgumentToSql($arArgument) 
+	private function parseArgumentToSql($arg) 
 	{
-		$sqlPart  = $arArgument['key'];
-		if (strtolower($arArgument['operation']) == strtolower("LIKE")) 
+		$sqlPart  = $arg['key'];
+		if (strtoupper($arg['operation']) == "LIKE") 
 		{
-			$sqlPart .= " LIKE '%" . $arArgument['search'] . "%' ";
+			$sqlPart .= " LIKE '%" . $arg['search'] . "%' ";
 		} 
-		else if (strtolower($arArgument['operation']) == strtolower("MD5"))
+		else if (strtoupper($arg['operation']) == "MD5")
 		{
-			$sqlPart .= " = MD5('" . $arArgument['search'] . "')";
-		} 
+			$sqlPart .= " = MD5('" . $arg['search'] . "')";
+		}
 		else 
 		{
-			if (in_array($this->fields[$arArgument['key']]['type'], $this->numericTypes)) 
+			if ($arg['search'] == null)
 			{
-				$sqlPart .= " = " . $arArgument['search'];
+				$sqlPart .= " " . $arg['operation'] . " NULL ";
+			}
+			else if (in_array($this->fields[$arg['key']]['type'], $this->numericTypes)) 
+			{
+				$sqlPart .= " " . strtolower($arg['operation']) . " " . $arg['search'];
 			}
 			else 
 			{
-				$sqlPart .= " = '" . $arArgument['search'] . "' ";
+				$sqlPart .= " " . strtolower($arg['operation']) . " '" . $arg['search'] . "' ";
 			}
 		} 
 		return $sqlPart;
