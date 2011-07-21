@@ -226,9 +226,11 @@ class Entity implements IDBEntity {
 	
 	public function save()
 	{
+		$update = false;
 		if ($this->objectToPersist->{$this->pk} != 0)
 		{
 			$sql = CLEANGAB_SQL_UPDATE;
+			$update = true;
 		}
 		else 
 		{
@@ -238,7 +240,14 @@ class Entity implements IDBEntity {
 		$this->connection->resource->query($this->prepare($sql));
 		if ($this->connection->resource->affected_rows > 0)
 		{
-			return $this->connection->resource->insert_id;
+			if ($update)
+			{
+				return $this->connection->resource->affected_rows;
+			}
+			else 
+			{
+				return $this->connection->resource->insert_id;
+			}
 		}
 		else 
 		{
