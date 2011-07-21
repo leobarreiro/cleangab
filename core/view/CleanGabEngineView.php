@@ -35,7 +35,7 @@ class CleanGabEngineView {
 			$this->addObject("session", $session);
 		}
 		$this->addObject("navigator", $this->navigator);
-		$this->xhtmlFile = "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
+		$this->xhtmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
 		try 
 		{
 			if (file_exists($this->xhtmlFile)) 
@@ -77,7 +77,6 @@ class CleanGabEngineView {
 	{
 		$newContent = $this->xhtmlContent;
 		$tagNames   = $this->parserELTag($newContent);
-		CleanGab::debug($tagNames);
 		foreach ($tagNames as $tag) 
 		{
 			if (strpos($tag, ".") > 0) 
