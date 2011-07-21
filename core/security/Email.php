@@ -28,7 +28,7 @@ class Email {
 	public function addHeader($key, $value)
 	{
 		// TODO ver outros headers suportados
-		$headersAllowed = array('To', 'From', 'Subject', 'X-Priority', 'Reply-To', 'Errors-To', 'Content-Type');
+		$headersAllowed = array('To', 'From', 'Cc', 'Cco', 'Subject', 'X-Priority', 'Reply-To', 'Errors-To', 'Content-Type');
 		if (in_array($key, $headersAllowed))
 		{
 			$this->headers[$key] = $value;
@@ -61,7 +61,7 @@ class Email {
 	
 	public function addParam($key, $value)
 	{
-		$paramsAllowed = array('auth', 'host', 'username', 'password');
+		$paramsAllowed = array("auth", "host", "username", "password", "port", "debug", "localhost", "timeout", "verp", "persist", "pipelining");
 		if (in_array($key, $paramsAllowed))
 		{
 			$this->params[$key] = $value;
@@ -100,13 +100,22 @@ class Email {
 		}
 	}
 	
+	public function getRecipient($i=0)
+	{
+		if ($i < count($this->recipients))
+		{
+			return $this->recipients[$i];
+		}
+		return false;
+	}
+	
 	public function send()
 	{
 		$this->mailPear = &Mail::factory('smtp', $this->params);
 		$result = $this->mailPear->send($this->recipients, $this->headers, $this->body);
 		if (PEAR::IsError($result))
 		{
-			echo $result->getMessage();
+			CleanGab::debug($result->getMessage());
 			return false;
 		}
 		return true;
