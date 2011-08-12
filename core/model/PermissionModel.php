@@ -28,7 +28,6 @@ class PermissionModel extends CleanGabModel {
 		$entity = new Entity("permission");
 		$entity->init();
 		$entity->setCountThis(false);
-		$entity->setSql("SELECT [fields] [table] [args] [limit]");
 		$entity->setLimit(1);
 		$entity->addArgument("user_id", $idUser, "=");
 		$entity->addArgument("permission", $permissionKey);
