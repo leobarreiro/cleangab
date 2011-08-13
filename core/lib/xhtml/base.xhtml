@@ -6,6 +6,7 @@
 	<link rel="SHORTCUT ICON" href="/cleangab/core/favicon.ico" />
 	<link rel="stylesheet" href="/cleangab/core/lib/css/base.css" type="text/css" /> 
 	<script src="/cleangab/core/lib/js/jquery.js"></script>
+	<script src="/cleangab/core/lib/js/jquery.maskedinput.js"></script>
 </head>
 <body>
 	<div id="page-title">
@@ -17,5 +18,14 @@
 	<div id="workarea">
 		#{content}
 	</div>
+	
+<script type="text/javascript">
+jQuery(document).ready(function() {
+   $(".dateformatter").mask("99/99/9999");
+   $(".datetimeformatter").mask("99/99/9999 99:99");
+   $(".phoneformatter").mask("(99) 9999.9999");
+   $(".cpformatter").mask("99999-999");
+});
+</script>
 </body>
 </html>
