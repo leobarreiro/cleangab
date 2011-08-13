@@ -19,8 +19,9 @@ class Entity implements IDBEntity {
 	private $offset;
 	private $limit;
 	private $total;
-	private $sqlBeforeParser;
-	private $sqlAfterParser;
+	private $sql;
+	private $countThis;
+	private $sqlCount;
 	private $pk;
 	private $fk;
 	private $uk;
@@ -47,8 +48,9 @@ class Entity implements IDBEntity {
 		$this->args 			= array();
 		$this->offset 			= 0;
 		$this->limit  			= CLEANGAB_DEFAULT_SQL_LIMIT;
-		$this->sqlBeforeParser 	= null;
-		$this->sqlAfterParser 	= null;
+		$this->sql 				= null;
+		$this->countThis 		= true;
+		$this->sqlCount 		= null;
 		$this->objectToPersist 	= null;
 	}
 	
@@ -96,10 +98,7 @@ class Entity implements IDBEntity {
 	
 	public function addArgument($key, $search, $operation='LIKE') 
 	{
-		if (array_key_exists($key, $this->fields)) 
-		{
-			$this->args[] = array('key'=>$key, 'search'=>$search, 'operation'=>$operation);
-		}
+		$this->args[] = array('key'=>$key, 'search'=>$search, 'operation'=>$operation);
 	}
 	
 	public function setOrderBy($strOrder) 
@@ -187,12 +186,32 @@ class Entity implements IDBEntity {
 		} 
 		catch (Exception $e) 
 		{
-			CleanGab::stackTraceDebug($e);
+			CleanGab::debug($e);
 		}
 		$this->fields  = $fields;
 		$this->fk      = $foreignKeys;
 		$this->uk      = $uniqueKeys;
 		$this->orderBy = $this->pk;
+	}
+	
+	public function setSql($sql)
+	{
+		$this->sql = $sql;
+	}
+	
+	public function setSqlCount($sqlCount)
+	{
+		$this->sqlCount = $sqlCount;
+	}
+	
+	public function getSql()
+	{
+		return $this->sql;
+	}
+	
+	public function getSqlCount()
+	{
+		return $this->sqlCount;
 	}
 	
 	public function setPk($arg)
@@ -224,6 +243,26 @@ class Entity implements IDBEntity {
 		return $this->fields;
 	}
 	
+	public function execute($sql)
+	{
+		if ($this->isUpdate($sql) || $this->isInsert($sql) || $this->isDelete($sql))
+		{
+			$this->connectIfNull();
+			if ($this->connection->resource->query($this->prepare($sql)))
+			{
+				return $this->connection->resource->affected_rows;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else 
+		{
+			return false;
+		}
+	}
+	
 	public function save()
 	{
 		$update = false;
@@ -253,6 +292,21 @@ class Entity implements IDBEntity {
 		{
 			return false;
 		}
+	}
+	
+	private function isUpdate($sql)
+	{
+		return (strpos(strtoupper($sql), "UPDATE") !== false);
+	}
+	
+	private function isInsert($sql)
+	{
+		return (strpos(strtoupper($sql), "INSERT") !== false);
+	}
+	
+	private function isDelete($sql)
+	{
+		return (strpos(strtoupper($sql), "DELETE") !== false);
 	}
 	
 	public function setValue($fieldName, $value)
@@ -300,13 +354,17 @@ class Entity implements IDBEntity {
 		$this->connectIfNull();
 		$qr = $this->connection->resource->query($this->prepare($sql));
 		$recordset = new Recordset($qr);
-		$this->countRecords();
+		if ($this->countThis)
+		{
+			$this->countRecords();
+		}
 		return $recordset;
 	}
 	
 	private function countRecords()
 	{
-		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_COUNT_ALL));
+		$sql = ($this->getSqlCount() == null) ? CLEANGAB_SQL_COUNT_ALL : $this->getSqlCount();
+		$qr = $this->connection->resource->query($this->prepare($sql));
 		$rset = new Recordset($qr);
 		$record = $rset->get();
 		$this->total = $record->total;
@@ -314,7 +372,7 @@ class Entity implements IDBEntity {
 	
 	private function prepare($sql) 
 	{
-		$this->sqlBeforeParser = $sql;
+		$this->setSql($sql);
 		$old = array("[database]", "[table]");
 		$new = array($this->dataBase, $this->tableName);
 		
@@ -381,7 +439,8 @@ class Entity implements IDBEntity {
 		$old[] = "[limit]";
 		$new[] = "LIMIT " . $this->offset . ", " . $this->limit;
 		$sql = str_replace($old, $new, $sql);
-		$this->sqlAfterParser = $sql;
+		$sql = str_replace(array("\n", "\r", "\t"), array("", "", ""), $sql);
+		//CleanGab::debug($sql);
 		return $sql;
 	}
 	
@@ -402,7 +461,7 @@ class Entity implements IDBEntity {
 			{
 				$sqlPart .= " " . $arg['operation'] . " NULL ";
 			}
-			else if (in_array($this->fields[$arg['key']]['type'], $this->numericTypes)) 
+			else if ((isset($this->fields[$arg['key']])) && (in_array($this->fields[$arg['key']]['type'], $this->numericTypes))) 
 			{
 				$sqlPart .= " " . strtolower($arg['operation']) . " " . $arg['search'];
 			}
@@ -412,6 +471,11 @@ class Entity implements IDBEntity {
 			}
 		} 
 		return $sqlPart;
+	}
+	
+	public function setCountThis($boolean)
+	{
+		$this->countThis = $boolean;
 	}
 	
 }
