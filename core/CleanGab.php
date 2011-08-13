@@ -4,12 +4,31 @@ class CleanGab {
 	
 	static function debug($mixedVar) 
 	{
-		$file = (defined("CLEANGAB_STACKTRACEDEBUG_FILE")) ? CLEANGAB_STACKTRACEDEBUG_FILE : "log" . SEPARATOR . "cleangab.log";
-		$handle = (is_writable($file)) ? fopen($file, "a") : false;
-		if ($handle) 
+		switch (strtoupper(CLEANGAB_APP_ENV))
 		{
-			fwrite($handle, "\n[" . date("Y.m.d H:i:s") . "] CG-" . strtoupper(CLEANGAB_APP_ENV) . " ");
-			fwrite($handle, "\t" . serialize($mixedVar));
+			case "DEV":
+			case "TEST":
+				$file = (defined("CLEANGAB_STACKTRACEDEBUG_FILE")) ? CLEANGAB_STACKTRACEDEBUG_FILE : "log" . SEPARATOR . "cleangab.log";
+				$handle = (is_writable($file)) ? fopen($file, "a") : false;
+				if ($handle) 
+				{
+					fwrite($handle, "\n[" . date("Y.m.d H:i:s") . "] " . strtoupper(CLEANGAB_APP_ENV) . " ");
+					fwrite($handle, "\t" . serialize($mixedVar));
+				}
+				echo "<pre class=\"cleangab-debug\">\n";
+				echo gettype($mixedVar) . "\n";
+				if (gettype($mixedVar) == "boolean")
+				{
+					var_dump($mixedVar);
+				}
+				else 
+				{
+					print_r($mixedVar);
+				}
+				echo "</pre>\n";
+			break;
+			default: //PROD
+			break;
 		}
 	}
 	
