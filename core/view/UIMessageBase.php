@@ -28,20 +28,23 @@ class UIMessageBase implements XHTMLComponent {
 	public function ensamble()
 	{
 		$xhtml = array();
-		$xhtml[] = "<div id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">";
+		
 		if (is_string($this->content) && strlen($this->content) > 0)
 		{
+			$xhtml[] = "<div id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">";
 			$xhtml[] = $this->content;
+			$xhtml[] = "</div>\n";
 		}
 		else if (is_object($this->content))
 		{
+			$xhtml[] = "<div id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">";
 			$xhtml[] = $this->content->msg;
+			$xhtml[] = "</div>\n";
 		}
 		else 
 		{
-			$xhtml[] = "Empty message.";
+			$xhtml[] = "";
 		}
-		$xhtml[] = "</div>";
 		$this->xhtml = implode("", $xhtml);
 	}
 
