@@ -6,7 +6,7 @@
  * Author: 	Leopoldo Barreiro
  */
 
-include ("DateFormatter.php");
+require_once ("DateFormatter.php");
 
 class DateTimeFormatter extends DateFormatter {
 	
