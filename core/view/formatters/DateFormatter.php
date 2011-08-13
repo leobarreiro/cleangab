@@ -26,5 +26,17 @@ class DateFormatter extends Formatter {
 		$translated = $parts[2] . "/" . $parts[1] . "/" . $parts[0];
 		$this->screenContent = $translated; 
 	}
+	
+	public function toFormField($nameField, $idField)
+	{
+		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
+		$xhtml  = "<input type=\"text\" name=\"" . $nameField . "\"";
+		if ($idField != null) {
+			$xhtml .= " id='" . $idField . "' ";
+		}
+		$xhtml .= " value=\"" . $this->screenContent . "\" ";
+		$xhtml .= " class=\"" . strtolower(get_class($this)) . "\" />";
+		return $xhtml;
+	}
 }
 ?>
