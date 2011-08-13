@@ -11,111 +11,66 @@ require_once("Entity.php");
 
 class Session {
 
-	public static function authenticate($username, $passwd) 
+	public static function authenticate($entity, $sql=CLEANGAB_SQL_VERIFY_LOGIN) 
 	{
-		try 
+		Session::createIfNotExists();
+		$rs = $entity->retrieve($sql);
+		if ($rs->hasRecords()) 
 		{
-			if ($username == null || $passwd == null) 
-			{
-				throw new Exception("username or password invalid", "1");
-			}
-			$entity = new Entity("user");
-			$entity->init();
-			$entity->addArgument("user", $username, "=");
-			$entity->addArgument("passwd", $passwd, "MD5");
-			$rs = $entity->retrieve(CLEANGAB_SQL_VERIFY_LOGIN);
-			Session::createIfNotExists();
-			if (count($rs->getRecords()) == 0) 
-			{
-				$_SESSION["CLEANGAB"]["user"] = array();
-				Session::addUIMessage("Login or password invalid.");
-				throw new Exception("login fail", "2");
-			}
-			else 
-			{
-				Session::addUIMessage("Log in performed correctly");
-				$record = $rs->get();
-				$_SESSION["CLEANGAB"]["user"] = array();
-				$_SESSION["CLEANGAB"]["user"]["started"] = true;
-				$_SESSION["CLEANGAB"]["user"]["id"] = $record->id;
-				$_SESSION["CLEANGAB"]["user"]["user"] = $record->user;
-				$_SESSION["CLEANGAB"]["user"]["name"] = $record->name;
-				$_SESSION["CLEANGAB"]["user"]["email"] = $record->email;
-				$_SESSION["CLEANGAB"]["user"]["user"] = $record->user;
-			}
-			return (count($_SESSION["CLEANGAB"]["user"]) > 0); 
-		} 
-		catch (Exception $e) 
-		{
-			CleanGab::stackTraceDebug($e);
-			return false;
+			$_SESSION["CLEANGAB"]["user"] = (array) $rs->getRecord();
 		}
+		else 
+		{
+			$_SESSION["CLEANGAB"]["user"] = array();
+		}
+		return $rs->hasRecords();
 	}
 	
+	/**
+	 * logoff()
+	 * Limpa a Sessao
+	 * Utiliza o ultimo redir ao final da operacao
+	 * Modo de utilizar:
+	 * 
+	 * Session::addRedir($controller, $action);
+	 * Session::logoff();
+	 */
 	public static function logoff()
 	{
 		$_SESSION["CLEANGAB"] = array();
 		$_SESSION["CLEANGAB"]["uimessages"] = array();
 		Session::addUIMessage("Logoff performed correctly");
-		header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
+		header("Location: " . Session::getLastRedir());
+		die();
 	}
 	
 	public static function verify() 
 	{
 		$isValidSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && 
-							is_array($_SESSION['CLEANGAB']['user']) && isset($_SESSION['CLEANGAB']['user']['name']) && 
-							strlen($_SESSION['CLEANGAB']['user']['name']) > 0);
-		CleanGab::debug("Session::verify");
-		CleanGab::debug($_SESSION);
+							is_array($_SESSION['CLEANGAB']['user']) && count($_SESSION['CLEANGAB']['user']) > 0);
 		if (!$isValidSession)
 		{
 			Session::addUIMessage("Session is not valid. Please, proceed to log in");
-			CleanGab::debug("Session is not valid");
-			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
+			Session::goToRedir();
 		}
 	}
 	
-	public function getUser() 
+	public static function getUser() 
 	{
-		return $_SESSION['CLEANGAB']['user'];
+		return (object) $_SESSION['CLEANGAB']['user'];
 	}
 	
-	public function getName() 
-	{
-		return $_SESSION['CLEANGAB']['name'];
-	}
-	
-	public function getPermissions() 
+	public static function getPermissions() 
 	{
 		return $this->permissions;
 	}
 	
-	public function setUser($usr="") 
-	{
-		$this->user = $usr;
-	}
-	
-	public function setName($nam="") 
-	{
-		$this->name = $nam;
-	}
-	
-	public function setEmail($email="") 
-	{
-		$this->email = $email;
-	}
-	
-	public function setPermissions($perms) 
+	public static function setPermissions($perms) 
 	{
 		$this->permissions = $perm;
 	}
 	
-	public function setInitDate($dtIni) 
-	{
-		$this->initDate = $dtIni;
-	}
-	
-	public function hasPermission($key) 
+	public static function hasPermission($key) 
 	{
 		if (in_array(strtolower($key), $this->permissions)) 
 		{
@@ -138,10 +93,6 @@ class Session {
 		{
 			$_SESSION["CLEANGAB"]["objects"] = array();
 		}
-		if (!isset($_SESSION['CLEANGAB']['xhtmlComponents'])) 
-		{
-			$_SESSION['CLEANGAB']['xhtmlComponents'] = array();
-		}
 		if (!isset($_SESSION['CLEANGAB']['uimessages'])) 
 		{
 			$_SESSION['CLEANGAB']['uimessages'] = array();
@@ -150,17 +101,6 @@ class Session {
 		{
 			$_SESSION['CLEANGAB']['redir'] = array();
 		}
-	}
-	
-	public function addToSession($component) 
-	{
-		if (is_object($component) && $component instanceof XHTMLComponent) 
-		{
-			Session::createIfNotExists();
-			$_SESSION["CLEANGAB"]["xhtmlComponents"][$component->getIdName()] = serialize($component);
-			return true;
-		}
-		return false;
 	}
 	
 	public static function hostObject($uniqueName, $mixedObject)
@@ -189,9 +129,16 @@ class Session {
 			return false;
 		}
 		$lastMessage = $_SESSION['CLEANGAB']['uimessages'][count($_SESSION['CLEANGAB']['uimessages'])-1];
-		$lastMessage->read = true;
-		$_SESSION['CLEANGAB']['uimessages'][count($_SESSION['CLEANGAB']['uimessages'])-1] = $lastMessage;
-		return $lastMessage;
+		if ($lastMessage->read == true)
+		{
+			return false;
+		}
+		else 
+		{
+			$lastMessage->read = true;
+			$_SESSION['CLEANGAB']['uimessages'][count($_SESSION['CLEANGAB']['uimessages'])-1] = $lastMessage;
+			return $lastMessage;
+		}
 	}
 	
 	public static function addRedir($controller, $action)
@@ -210,6 +157,21 @@ class Session {
 		else 
 		{
 			return CLEANGAB_URL_BASE_APP . "/welcome.php";
+		}
+	}
+	
+	public static function goToRedir()
+	{
+		if (is_array($_SESSION["CLEANGAB"]["redir"]) && count($_SESSION["CLEANGAB"]["redir"]) > 0)
+		{
+			$lastRedir = $_SESSION["CLEANGAB"]["redir"][count($_SESSION["CLEANGAB"]["redir"])-1];
+			header("Location: " . CLEANGAB_URL_BASE_APP . "/" . $lastRedir["control"] . "/" . $lastRedir["action"]);
+			die();
+		}
+		else 
+		{
+			header ("Location: " . CLEANGAB_URL_BASE_APP . "/welcome.php");
+			die();
 		}
 	}
 }
