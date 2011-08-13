@@ -29,7 +29,7 @@ class CleanGabEngineView {
 		$this->objects 				= array();
 		$this->navigator 			= new stdClass();
 		$this->navigator->referer 	= isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "#";
-		if (isset($_SESSION))
+		if (isset($_SESSION) && isset($_SESSION["CLEANGAB"]))
 		{
 			$session = $_SESSION["CLEANGAB"];
 			$this->addObject("session", $session);
