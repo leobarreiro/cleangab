@@ -7,7 +7,6 @@
  */
 
 require_once ("XHTMLComponent.php");
-require_once ("DateTimeFormatter.php");
 
 class TableListBase implements XHTMLComponent {
 
@@ -18,6 +17,7 @@ class TableListBase implements XHTMLComponent {
 	protected $header;
 	protected $masks;
 	protected $formFields;
+	protected $renderForm;
 	protected $nameFields;
 	protected $nameController;
 	protected $operations;
@@ -36,9 +36,10 @@ class TableListBase implements XHTMLComponent {
 		$actualRecord 		  = ($objectModel->getEntity()->getOffset() > $totalRecords) ? $totalRecords : $objectModel->getEntity()->getOffset();
 		$recordsPerPage 	  = $objectModel->getEntity()->getLimit();
 		
-		$this->pages 		  = floor($totalRecords / $recordsPerPage);
+		$this->pages 		  = ceil($totalRecords / $recordsPerPage);
 		$this->page  		  = $this->getActualPage($totalRecords, $recordsPerPage, $actualRecord);
 		$this->formFields 	  = $objectModel->getListableFields();
+		$this->renderForm 	  = true;
 		$this->nameFields 	  = $objectModel->getHintFields();
 		$this->nameController = $nameController;
 		$this->operations     = array("show", "edit");
@@ -134,14 +135,28 @@ class TableListBase implements XHTMLComponent {
 		$xhtml[] = "</div>";
 		
 		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Paginator\">";
+		
 		if ($this->pages > 1)
 		{
-			$xhtml[] = ($this->page != 1) ? "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(1);\">&laquo;&laquo;</a>" : "<span>&laquo;&laquo;</span>";
-			for ($i=1; $i<=$this->pages; ++$i)
+			$xhtml[] = "P&aacute;ginas: \n";
+			if ($this->pages > 10)
 			{
-				$xhtml[] = ($i == $this->page) ? "<b>" . $i . "</b>" : "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $i . ");\">" . $i . "</a>";
+				$xhtml[] = "<select name=\"" . strtolower(get_class($this)) . "PageSelector\" onchange=\"" . strtolower(get_class($this)) . $this->idName . "FormPg(this.value)\">";
+				for ($i=1; $i<=$this->pages;$i++)
+				{
+					$xhtml[] = ($i == $this->page) ? "<option value=\"" . $i . "\" selected>" . $i . "</option>" : "<option value=\"" . $i . "\">" . $i . "</option>";
+				}
+				$xhtml[] = "</select>";
 			}
-			$xhtml[] = ($this->page != $this->pages) ? "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $this->pages . ");\">&raquo;&raquo;</a>" : "<span>&raquo;&raquo;</span>";
+			else 
+			{
+				$xhtml[] = ($this->page != 1) ? "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(1);\">&laquo;&laquo;</a>" : "<span>&laquo;&laquo;</span>";
+				for ($i=1; $i<=$this->pages; ++$i)
+				{
+					$xhtml[] = ($i == $this->page) ? "<b>" . $i . "</b>" : "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $i . ");\">" . $i . "</a>";
+				}
+				$xhtml[] = ($this->page != $this->pages) ? "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "FormPg(" . $this->pages . ");\">&raquo;&raquo;</a>" : "<span>&raquo;&raquo;</span>";	
+			}
 		}
 		$xhtml[] = "</div>";
 		$xhtml[] = "</div>";
@@ -150,18 +165,21 @@ class TableListBase implements XHTMLComponent {
 	
 	private function formNavigatorToXhtml()
 	{
-		$formName    = $this->idName . "Form";
 		$formXhtml 	 = array();
-		$formXhtml[] = "\n<div class=\"" . strtolower(get_class($this)) . "Form\"><form name=\"" . $formName . "\" id=\"" . $formName . "\" method=\"post\">";
-		foreach ($this->formFields as $field)
+		if ($this->renderForm)
 		{
-			$formXhtml[] = $this->ensambleSearchFormField($field);
+			$formName    = $this->idName . "Form";
+			$formXhtml[] = "\n<div class=\"" . strtolower(get_class($this)) . "Form\"><form name=\"" . $formName . "\" id=\"" . $formName . "\" method=\"post\">";
+			foreach ($this->formFields as $field)
+			{
+				$formXhtml[] = $this->ensambleSearchFormField($field);
+			}
+			$formXhtml[] = $this->ensambleSearchFormSortField();
+			$formXhtml[] = "<input type=\"hidden\" name=\"pg\" value=\"" . $this->page . "\">";
+			$formXhtml[] = "<input type=\"button\" value=\"Pesquisar\" onclick=\"this.form.pg.value=1;this.form.submit();\">";
+			$formXhtml[] = "</form></div>\n";
+			$formXhtml[] = "<script type=\"text/javascript\">function " . strtolower(get_class($this)) . $this->idName . "FormPg(id){document." . $formName . ".pg.value = id; document." . $formName . ".submit();}</script>";
 		}
-		$formXhtml[] = $this->ensambleSearchFormSortField();
-		$formXhtml[] = "<input type=\"hidden\" name=\"pg\" value=\"" . $this->page . "\">";
-		$formXhtml[] = "<input type=\"button\" value=\"Search\" onclick=\"this.form.pg.value=1;this.form.submit();\">";
-		$formXhtml[] = "</form></div>\n";
-		$formXhtml[] = "<script type=\"text/javascript\">function " . strtolower(get_class($this)) . $this->idName . "FormPg(id){document." . $formName . ".pg.value = id; document." . $formName . ".submit();}</script>";
 		return implode("", $formXhtml);
 	}	
 	
@@ -178,7 +196,7 @@ class TableListBase implements XHTMLComponent {
 	private function ensambleSearchFormSortField()
 	{
 		$xhtml  = "<div class=\"sort\">";
-		$xhtml .= "<span>Order by</span>";
+		$xhtml .= "<span>Organizar por</span>";
 		$xhtml .= "<select name=\"sort\">";
 		foreach ($this->formFields as $field)
 		{
@@ -192,8 +210,8 @@ class TableListBase implements XHTMLComponent {
 	
 	private function formActionToXhtml()
 	{
-		$formName = $this->idName . "ActionForm";
 		$frm = array();
+		$formName = $this->idName . "ActionForm";
 		$frm[] = "<form name=\"" . $formName . "\" id=\"" . $formName . "\" method=\"post\" action=\"\">";
 		$frm[] = "<input type=\"hidden\" name=\"key\" value=\"\">";
 		$frm[] = "</form>";
@@ -213,6 +231,11 @@ class TableListBase implements XHTMLComponent {
 		$frm[] = "}";
 		$frm[] = "</script>";
 		return implode("", $frm);
+	}
+	
+	public function setRenderForm($render)
+	{
+		$this->renderForm = $render;
 	}
 
 }
