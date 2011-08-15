@@ -180,6 +180,15 @@ class Session {
 		}
 	}
 	
+	public static function goBack()
+	{
+		if (isset($_SERVER["HTTP_REFERER"]))
+		{
+			header("Location: " . $_SERVER["HTTP_REFERER"]);
+		}
+		die();
+	}
+	
 	public function loadPermissions()
 	{
 		$model = new PermissionModel();
