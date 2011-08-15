@@ -51,7 +51,7 @@ class Formatter {
 		}
 	}
 	
-	public function toFormField($nameField, $idField=null) {
+	public function toFormField($nameField, $idField=null, $mixedValue) {
 		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
 		$xhtml  = "<input type='text' name='" . $nameField . "'";
 		if ($idField != null) {
@@ -66,10 +66,10 @@ class Formatter {
 		return $this->screenContent;
 	}
 	
-	// TODO Escrever a lógica de cada Formatter
+	// TODO Escrever a logica de cada Formatter
 	protected function translateToDataBase() { }
 	
-	// TODO Escrever a lógica de cada Formatter
+	// TODO Escrever a logica de cada Formatter
 	protected function translateToScreen() { }
 	
 	

@@ -47,16 +47,27 @@ class TinyIntFormatter extends Formatter {
 		}
 	}
 	
-	public function toFormField($nameField, $idField)
+	public function toFormField($nameField, $idField, $mixedValue)
 	{
 		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
-		$xhtml  = "<input type=\"text\" name=\"" . $nameField . "\"";
-		if ($idField != null) {
-			$xhtml .= " id='" . $idField . "' ";
+		$xhtml = array();
+		foreach ($this->options as $key=>$value)
+		{
+			$xhtml[] = "<span class=\"" . strtolower(get_class($this)) . "\">";
+			$xhtml[] = "<label>";
+			$xhtml[] = "<input type=\"radio\" name=\"" . $nameField . "\"";
+			$xhtml[] = " id=\"" . $idField . "\" ";
+			$xhtml[] = " value=\"" . $key . "\" ";
+			if ($mixedValue == $key)
+			{
+				$xhtml[] = " checked ";
+			}
+			$xhtml[] = "/>";
+			$xhtml[] = $value;
+			$xhtml[] = "</label>";
+			$xhtml[] = "</span>";
 		}
-		$xhtml .= " value=\"" . $this->screenContent . "\" ";
-		$xhtml .= " class=\"" . strtolower(get_class($this)) . "\" />";
-		return $xhtml;
+		return implode("", $xhtml);
 	}
 	
 }
