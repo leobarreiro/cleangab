@@ -9,8 +9,9 @@ class UserController extends CleanGabController {
 
 	public function index() 
 	{
-		Session::addRedir("user", "index");
+		Session::addRedir("user", "login");
 		Session::verify();
+		Session::hasPermission("list_users");
 		
 		$model = new UserModel();
 
@@ -51,7 +52,6 @@ class UserController extends CleanGabController {
 		$view = new CleanGabEngineView("User", "index", $tableUsers);
 		$view->addObject($tableUsers->getIdName(), $tableUsers);
 		$view->renderize();
-
 	}
 
 	public function add() 
@@ -71,28 +71,32 @@ class UserController extends CleanGabController {
 	
 	public function logoff()
 	{
+		Session::addRedir("user", "login");
 		Session::logoff();
-		$this->login();
 	}
 	
 	public function authenticate()
 	{
 		$user = $this->getUserInput("userlogin");
 		$passwd = $this->getUserInput("passwdlogin");
-		$authenticate = Session::authenticate($user, $passwd);
-		if ($authenticate)
+		
+		$model = new UserModel();
+		$model->addArgumentData("user", $user);
+		$model->addArgumentData("passwd", $passwd);
+		$auth = $model->authenticate();
+		if ($auth)
 		{
-			CleanGab::debug(Session::getLastRedir());
-			header("Location: " . Session::getLastRedir());
-			//header("Location: " . CLEANGAB_URL_BASE_APP . "/" . CLEANGAB_WELCOME);
-			//include (CLEANGAB_WELCOME);
+			Session::addUIMessage("Log in performed correctly");
+			// TODO: verificar permissoes do usuario para definir qual sera sua pagina inicial apos o login
+			$user = (object) $_SESSION['CLEANGAB']['user'];			
+			Session::addRedir("user", "index");
 		}
-		else 
+		else
 		{
-			//TODO: Add an error message here. Maybe it can be in a message board on $_SESSION.
-			Session::addUIMessage("Login or password invalid");
-			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
+			Session::addRedir("user", "login");
+			Session::addUIMessage("User or password invalid");
 		}
+		header("Location:" . Session::getLastRedir());
 	}
 
 	public function show($keyValue) 
