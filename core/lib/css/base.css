@@ -1,112 +1,232 @@
 @CHARSET "ISO-8859-1";
 
 body {
-	font-family: Arial, Verdana, Helvetica;
+	font-family: Trebuchet MS, Arial, Verdana, Helvetica;
 	font-size: 12px;
+	background: #000;
+	padding: 0px;
+	margin: 0px;
+	height: 100%;
 }
 
 h1 {
-	color: magenta;
+	color: #000066;
 	font-size: 24px;
 }
 
-div#workarea {
+h2 {
+	color: #000066;
+	font-size: 18px;
+	margin-left: 20px;
+}
+
+div.header {
 	position: relative;
-	top: 4px;
 	left: 50%;
-	background-color: #CCCCCC;
-	border: 1px solid #000066;
-	margin: 0px 0px 0px -500px;
+	margin-left: -500px;
 	width: 1000px;
-}
-
-div#page-title {
-	position: relative;
-	top: 0px;
-	left: 50%;
-	width: 1000px;
-	height: 50px;
-	margin: 0px 0px 0px -500px;
-	padding: 0px;
-	border: 1px solid #006;
-	background: #000;
-}
-
-div#page-title h1 {
-	display: inline-block;
-	width: 700px;
-	height: 30px;
-	float: left;
-	border: 1px solid orange;
-	color: #fff;
-	margin: 10px 2px 2px 12px;
-}
-
-div#page-title div.toolbar-top {
-	display: inline-block;
-	width: 200px;
-	height: 30px;
-	float: right;
-	border: 1px solid green;
-	color: #fff;
-	margin: 10px 12px 2px 2px;
-	vertical-align: bottom;
-	text-align: right;
-}
-
-div.uimessagebase {
 	display: block;
-	font-size: 14px;
-	font-weight: bold;
-	margin: 12px;
-	background: #9999CC;
-	color: #666699;
-	padding: 6px;
-	border: 1px solid #666699;
+	border-bottom: 1px solid #000;
+	height: 90px;
+	background-position: 12px left top;
 }
 
-form div.login {
-	width: 400px;
-	margin: 40px;
+div.header a.logo-link {
+	display: block;
+	border: none;
+	margin: 6px;
+	width: 325px;
+	height: 80px;
+	text-decoration: none;
+	background: url("img/logo.png") no-repeat top left;
 }
 
-form div.login div span {
+div.top-menu {
+	position: relative;
+	left: 50%;
+	margin-left: -500px;
+	width: 1000px;
+	display: block;
+	height: 20px;
+	border-top: 1px solid #000;
+	border-bottom: 1px solid #000;
+	background: #cecece;
+	padding: 0px;
+	margin-top: 2px;
+}
+
+div.top-menu div.toolbar-top {
+	margin-left: 20px;
+}
+
+div.top-menu div.toolbar-top a {
+	margin: 0px;
+	height: 20px;
+	padding: 0px 6px 0px 6px;
 	display: inline-block;
-	width: 120px;
-	text-align: left;
-	vertical-align: middle;
 }
 
-table.tablelistbase {
-	margin: 12px 0px 12px 0px;
+div.top-menu div.toolbar-top a.spacer {
+	border-right: 1px solid #000;
+}
+
+div.footer {
+	position: relative;
+	left: 50%;
+	margin-left: -500px;
+	width: 1000px;
+	display: block;
+	height: 20px;
+	background: #000066;
+	border-top: 1px solid #000;
+	padding: 0px;
+	margin-top: 2px;
+}
+
+div.footer ul {
+	color: #fff;
+	list-style: none;
+	font-size: 9px;
+}
+
+div.workarea {
+	position: relative;
+	left: 50%;
+	margin-left: -500px;
+	width: 980px;
+	border: 1px solid green;
+	display: block;
+	vertical-align: top;
+	background-color: #fff;
+	padding: 10px;
+}
+
+div.page-title {
+	font-weight: bold;
+	font-size: 18px;
+	margin: 4px 4px 2px 2px;
+	padding: 4px;
+}
+
+.tablelistbase {
 	width: 100%;
 	padding: 2px;
+	font-family: Arial, Verdana, Helvetica;
 }
 
-table.tablelistbase tbody tr.records:hover {
-	background: #cec;
-}
-
-table.tablelistbase tr td {
+.tablelistbase tr td {
 	border: 1px solid #fff;
 	padding: 1px;
 }
 
-table.tablelistbase tr th {
-	border-width: 4px 1px 4px 1px;
-	border-style: solid;
-	border-color: #fff;
-	background: magenta;
-	padding: 1px;
+.tablelistbase tr.tablelistbaseSelectedRecord td {
+	background: #D8DFEE;
 }
 
-tr.tablelistbaseSelectedRecord td {
-	background: aliceblue;
+table.tablelistbase tbody tr td.id {
+	text-align: right;
+}
+
+table.tablelistbase tbody tr td a {
+	text-decoration: none;
+}
+
+div.tablelistbasePaginator {
+	text-align: right;
+	padding: 4px;
+}
+
+div.tablelistbasePaginator a {
+	display: inline-block;
+	padding: 2px 6px 2px 6px;
+	margin: 2px;
+	border: 1px solid #000066;
+	background: #cecece;
+	color: blue;
+	border-radius: 4px;
+	text-decoration: none;
+}
+
+div.tablelistbasePaginator b {
+	display: inline-block;
+	padding: 2px 6px 2px 6px;
+	margin: 2px;
+	border: 1px solid #000;
+	background: #000066;
+	color: #fff;
+	font-size: 12px;
+	border-radius: 4px;
+}
+
+div.tablelistbasePaginator span {
+	display: inline-block;
+	padding: 2px 6px 2px 6px;
+	margin: 2px;
+	border: 1px solid #999;
+	background: #cecece;
+	color: #999;
+	border-radius: 4px;
+}
+
+div.tablelistbasePaginator a:hover {
+	background: orange;
+}
+
+div.tablelistbasePaginator span {
+	font-weight: bold;
 }
 
 div.tablelistbaseForm {
-	padding: 8px;
+	display: inline-block;
+	width: 100%;
 }
+
+div.tablelistbaseForm form div {
+	display: inline-block;
+	border: none;
+	padding: 2px;
+	margin: 2px;
+}
+
+div.tablelistbaseForm form div span {
+	display: inline-block;
+	font-size: 11px;
+	text-align: right;
+	text-indent: 8px;
+}
+
+div.tablelistbaseForm form div input, div.tablelistbaseForm form div select {
+	padding: 4px;
+	font-size: 11px;
+	border: 1px solid #999999;
+	border-radius: 4px;
+	margin: 4px;
+}
+
+table.tablelistbase tbody tr:hover {
+	background: #cecece;
+}
+
+div table.tablelistbase tbody tr th {
+	background: #666666;
+}
+
+table.tablelistbase tbody tr td.tablelistbaseOperations {
+	padding-left: 12px;
+	border-left: 1px solid #cecece;
+} 
+
+table.tablelistbase tbody tr td.tablelistbaseOperations a {
+	display: inline-block;
+	background: #cecece;
+	color: #000;
+	padding: 1px 4px 1px 4px;
+	margin: 1px;
+	border: 1px solid #000066;
+	border-radius: 4px;
+	text-decoration: none;
+}
+
 
 div.tablelistbaseTools {
 	display: inline-block;
@@ -148,7 +268,7 @@ div.tablelistbaseTools div.tablelistbaseActions a {
 	filter: alpha(opacity=40);
 }
 
-div.tablelistbaseTools div.tablelistbaseActions a.show {
+div.tablelistbaseTools div.tablelistbaseActions a.show  {
 	background: url("img/view.png") no-repeat center;
 }
 
@@ -162,38 +282,108 @@ div.tablelistbaseTools div.tablelistbaseActions a.active {
 	filter: alpha(opacity=100);
 }
 
-div.tablelistbasePaginator a, div.tablelistbasePaginator b {
+div.login {
+	display: block;
+	margin: 60px 30px 30px 30px;
+	padding: 12px;
+	width: 300px;
+	border: 1px solid gray;
+	border-radius: 8px;
+}
+
+div.login div {
+	padding: 4px;
+}
+
+div.login div span {
+	display: inline-block;
+	width: 120px;
+	text-align: left;
+}
+
+div.uimessagebase {
+	background: url("img/info.png") no-repeat left middle;
+	font-size: 14px;
+	margin: 12px;
+	color: #666699;
+	padding: 6px;
+	text-indent: 30px;
+}
+
+div.workarea div.show div span {
+	display: inline-block;
+	width: 120px;
+	padding: 4px;
+}
+
+div.tools {
+	display: block;
+	height: 40px;
+	padding: 4px;
+	margin: 2px;
+	border-top: 2px dotted #cecece;
+}
+
+div.tools a {
 	display: inline-block;
 	margin: 2px;
 	padding: 2px;
 	border: 1px solid #3A5E83;
-	background: #BCD0E5;
-	width: 16px;
-	height: 16px;
+	font-size: 0px;
+	background: #999;
+	width: 24px;
+	height: 24px;
 	text-align: center;
 	vertical-align: middle;
-	border-radius: 6px;
+	border-radius: 4px;
 	text-decoration: none;
 }
 
-div.tablelistbasePaginator a:hover {
-	background: #FFA94D;
-	color: #fff;
+div.tools a.go-back {
+	background: url("img/go-back.png") no-repeat center;
 }
 
-div.tablelistbasePaginator b {
-	background: #446E9A;
-	color: #fff;
+div.edit-form {
+	width: 400px;
+	display: block;
+	border: none;
+	margin-left: 20px;
 }
 
-div.tablelistbaseForm form#usersForm div {
-	display: inline-block;
-	width: 50%;
-}
-
-div.tablelistbaseForm form#usersForm div span {
-	display: inline-block;
-	width: 120px;
+div.edit-form div.field {
+	display: block;
+	height: 30px;
+	vertical-align: middle;
 	text-align: left;
-	margin: 2px;
+	padding: 2px;
+}
+
+div.edit-form div.field span {
+	display: inline-block;
+	width: 160px;
+	text-align: left;
+	padding-left: 20px;
+}
+
+div.edit-form div.buttons {
+	display: block;
+	height: 30px;
+	padding: 4px;
+	text-align: center;
+}
+
+div.edit-form div.field input[type=text] {
+	width: 200px;
+	font-size: 11px;
+	padding: 2px;
+}
+
+div.edit-form div.field input[type=password] {
+	width: 100px;
+	font-size: 11px;
+	padding: 2px;
+}
+
+div.edit-form div.field span.tinyintformatter {
+	width: 60px;
 }
