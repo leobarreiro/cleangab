@@ -35,5 +35,14 @@ class PermissionModel extends CleanGabModel {
 		return $recordSet->hasRecords();
 	}
 	
+	public function loadPermissions($idUser=null)
+	{
+		$userToLoad = ($idUser == null) ? $_SESSION["CLEANGAB"]["user"]["id"] : $idUser;
+		$entity = new Entity("permission");
+		$entity->init();
+		$entity->addArgument("user_id", $userToLoad, "=");
+		return $entity->retrieve();
+	}
+	
 }
 ?>
