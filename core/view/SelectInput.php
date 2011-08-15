@@ -28,7 +28,7 @@ class SelectInput extends Input {
 		$this->options = $arOptions;
 	}
 	
-	public function ensamble() 
+	public function assemble() 
 	{
 		$xhtml = array();
 		$xhtml[] = "<select";
@@ -48,9 +48,11 @@ class SelectInput extends Input {
 		}
 		$xhtml[] = ">";
 		
+		$xhtml[] = "<option value=\"\">Selecione...</option>";
+		
 		foreach ($this->options as $opt)
 		{
-			$option = array();
+			$option = array();	
 			$option[] = "<option value=\"" . $opt->k . "\"";
 			if ($this->value == $opt->v)
 			{

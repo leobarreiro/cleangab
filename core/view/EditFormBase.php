@@ -43,7 +43,7 @@ class EditFormBase implements XHTMLComponent {
 		$this->content = $mixedContent;
 	}
 
-	public function ensamble()
+	public function assemble()
 	{
 		$content = $this->content->getRecords();
 		$xhtml = array();
@@ -56,7 +56,7 @@ class EditFormBase implements XHTMLComponent {
 			$xhtml[] = "<div id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">";
 			foreach ($this->formFields as $field)
 			{
-				$xhtml[] = $this->ensambleFormField($field);
+				$xhtml[] = $this->assembleFormField($field);
 			}
 			$xhtml[] = "</div>";
 		}
@@ -67,7 +67,7 @@ class EditFormBase implements XHTMLComponent {
 	{
 		if (strlen($this->xhtml) == 0)
 		{
-			$this->ensamble();
+			$this->assemble();
 		}
 		return $this->xhtml;
 	}
@@ -77,7 +77,7 @@ class EditFormBase implements XHTMLComponent {
 		return $this->idName;
 	}
 	
-	private function ensambleFormField()
+	private function assembleFormField()
 	{
 		
 		$cellContent = "";
