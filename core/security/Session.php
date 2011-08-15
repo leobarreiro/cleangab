@@ -18,6 +18,7 @@ class Session {
 		if ($rs->hasRecords()) 
 		{
 			$_SESSION["CLEANGAB"]["user"] = (array) $rs->getRecord();
+			$_SESSION["CLEANGAB"]["user"]["permissions"] = Session::loadPermissions();
 		}
 		else 
 		{
@@ -37,11 +38,10 @@ class Session {
 	 */
 	public static function logoff()
 	{
-		$_SESSION["CLEANGAB"] = array();
+		$_SESSION["CLEANGAB"]["user"] = array();
 		$_SESSION["CLEANGAB"]["uimessages"] = array();
 		Session::addUIMessage("Logoff performed correctly");
-		header("Location: " . Session::getLastRedir());
-		die();
+		Session::goToRedir();
 	}
 	
 	public static function verify() 
@@ -72,11 +72,16 @@ class Session {
 	
 	public static function hasPermission($key) 
 	{
-		if (in_array(strtolower($key), $this->permissions)) 
+		if (in_array(strtolower($key), $_SESSION["CLEANGAB"]["user"]["permissions"])) 
 		{
 			return true;
 		}
-		return false;
+		else 
+		{
+			Session::addUIMessage("You don´t have permissions to access this content. Please, proceed to log in");
+			Session::goToRedir();
+			return false;
+		}
 	}
 	
 	private function createIfNotExists() 
@@ -174,5 +179,19 @@ class Session {
 			die();
 		}
 	}
+	
+	public function loadPermissions()
+	{
+		$model = new PermissionModel();
+		$recordSet = $model->loadPermissions();
+		$permissions = array();
+		while ($recordSet->hasNext())
+		{
+			$obPermission = $recordSet->getRecord();
+			$permissions[] = strtolower($obPermission->permission);
+		}
+		return $permissions;
+	}
+	
 }
 ?>
