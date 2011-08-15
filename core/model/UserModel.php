@@ -43,5 +43,18 @@ class UserModel extends CleanGabModel {
 		$this->setRecordset($this->entity->retrieve());
 	}
 	
+	public function authenticate() 
+	{
+		$entity = new Entity("user");
+		$entity->init();
+		$entity->setCountThis(false);
+		$entity->addArgument("user", $this->getArgumentData("user"), "=");
+		$entity->addArgument("passwd", $this->getArgumentData("passwd"), "MD5");
+		$entity->addArgument("active", "1", "=");
+		$entity->setLimit(1);
+		$entity->setSql(CLEANGAB_SQL_VERIFY_LOGIN);
+		return Session::authenticate($entity, CLEANGAB_SQL_VERIFY_LOGIN);
+	}
+	
 }
 ?>
