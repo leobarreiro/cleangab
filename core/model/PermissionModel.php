@@ -2,7 +2,7 @@
 
 require_once ("CleanGabModel.php");
 
-class PermissionModel extends CleanGabModel {
+class ParameterModel extends CleanGabModel {
 	
 	public function __construct() 
 	{
