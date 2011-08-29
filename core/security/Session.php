@@ -202,5 +202,45 @@ class Session {
 		return $permissions;
 	}
 	
+	public static function getParameter($parameterName)
+	{
+		$model = new ParameterModel();
+		$param = $model->getParameter($parameterName);
+		switch (strtolower($param->type))
+		{
+			case "integer":
+				$value = intval($param->value);
+				break;
+			
+			case "float":
+				$value = floatval($param->value);
+				break;
+				
+			default:
+				$value = $param->value;
+				break;
+		}
+		return $value;
+	}
+	
+	public static function getWPOption($optionName)
+	{
+		$entity = new Entity("wp_options");
+		$entity->init();
+		$entity->setCountThis(false);
+		$entity->setLimit(1);
+		$entity->addArgument("option_name", $optionName, "=");
+		$recordset = $entity->retrieve();
+		if ($recordset->hasRecords())
+		{
+			$record = $recordset->getRecord();
+			return unserialize($record->option_value);
+		}
+		else 
+		{
+			return false;
+		}
+	}
+	
 }
 ?>
