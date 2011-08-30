@@ -18,6 +18,7 @@ class Session {
 		if ($rs->hasRecords()) 
 		{
 			$_SESSION["CLEANGAB"]["user"] = (array) $rs->getRecord();
+			$_SESSION["CLEANGAB"]["user"]["permissions"] = Session::loadPermissions();
 		}
 		else 
 		{
@@ -37,11 +38,10 @@ class Session {
 	 */
 	public static function logoff()
 	{
-		$_SESSION["CLEANGAB"] = array();
+		$_SESSION["CLEANGAB"]["user"] = array();
 		$_SESSION["CLEANGAB"]["uimessages"] = array();
 		Session::addUIMessage("Logoff performed correctly");
-		header("Location: " . Session::getLastRedir());
-		die();
+		Session::goToRedir();
 	}
 	
 	public static function verify() 
@@ -72,11 +72,16 @@ class Session {
 	
 	public static function hasPermission($key) 
 	{
-		if (in_array(strtolower($key), $this->permissions)) 
+		if (in_array(strtolower($key), $_SESSION["CLEANGAB"]["user"]["permissions"])) 
 		{
 			return true;
 		}
-		return false;
+		else 
+		{
+			Session::addUIMessage("You don´t have permissions to access this content. Please, proceed to log in");
+			Session::goToRedir();
+			return false;
+		}
 	}
 	
 	private function createIfNotExists() 
@@ -174,5 +179,68 @@ class Session {
 			die();
 		}
 	}
+	
+	public static function goBack()
+	{
+		if (isset($_SERVER["HTTP_REFERER"]))
+		{
+			header("Location: " . $_SERVER["HTTP_REFERER"]);
+		}
+		die();
+	}
+	
+	public function loadPermissions()
+	{
+		$model = new PermissionModel();
+		$recordSet = $model->loadPermissions();
+		$permissions = array();
+		while ($recordSet->hasNext())
+		{
+			$obPermission = $recordSet->getRecord();
+			$permissions[] = strtolower($obPermission->permission);
+		}
+		return $permissions;
+	}
+	
+	public static function getParameter($parameterName)
+	{
+		$model = new ParameterModel();
+		$param = $model->getParameter($parameterName);
+		switch (strtolower($param->type))
+		{
+			case "integer":
+				$value = intval($param->value);
+				break;
+			
+			case "float":
+				$value = floatval($param->value);
+				break;
+				
+			default:
+				$value = $param->value;
+				break;
+		}
+		return $value;
+	}
+	
+	public static function getWPOption($optionName)
+	{
+		$entity = new Entity("wp_options");
+		$entity->init();
+		$entity->setCountThis(false);
+		$entity->setLimit(1);
+		$entity->addArgument("option_name", $optionName, "=");
+		$recordset = $entity->retrieve();
+		if ($recordset->hasRecords())
+		{
+			$record = $recordset->getRecord();
+			return unserialize($record->option_value);
+		}
+		else 
+		{
+			return false;
+		}
+	}
+	
 }
 ?>

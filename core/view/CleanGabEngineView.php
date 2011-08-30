@@ -35,19 +35,24 @@ class CleanGabEngineView {
 			$this->addObject("session", $session);
 		}
 		$this->addObject("navigator", $this->navigator);
-		$this->xhtmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
+		$relativePath = "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
+		//$this->xhtmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
 		try 
 		{
-			if (file_exists($this->xhtmlFile)) 
+			if (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $relativePath)) 
 			{
+				$this->xhtmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $relativePath;
 				$this->xhtmlContent = file_get_contents($this->xhtmlFile);
 			} 
-			elseif (file_exists("../cleangab/core/" . $this->xhtmlFile))
+			elseif (file_exists(CLEANGAB_FWK_ROOT .  DIRECTORY_SEPARATOR . $relativePath))
 			{
-				$this->xhtmlContent = file_get_contents("../cleangab/core/" . $this->xhtmlFile);
+				$this->xhtmlFile = CLEANGAB_FWK_ROOT .  DIRECTORY_SEPARATOR . $relativePath;
+				$this->xhtmlContent = file_get_contents($this->xhtmlFile);
 			}
 			else 
 			{
+				$this->xhtmlFile = "";
+				$this->xhtmlContent = "";
 				include (CLEANGAB_501);
 				die();
 			}

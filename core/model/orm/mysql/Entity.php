@@ -391,7 +391,10 @@ class Entity implements IDBEntity {
 					$update = array();
 					foreach (array_keys($this->fields) as $field)
 					{
-						$update[$field] = ($this->objectToPersist->{$field} == null) ? " NULL " : " '" . $this->objectToPersist->{$field} . "' ";
+						if ($this->objectToPersist->{$field})
+						{
+							$update[$field] = ($this->objectToPersist->{$field} == null) ? " NULL " : " '" . $this->objectToPersist->{$field} . "' ";
+						}
 					}
 					foreach ($update as $field=>$value)
 					{
@@ -440,7 +443,6 @@ class Entity implements IDBEntity {
 		$new[] = "LIMIT " . $this->offset . ", " . $this->limit;
 		$sql = str_replace($old, $new, $sql);
 		$sql = str_replace(array("\n", "\r", "\t"), array("", "", ""), $sql);
-		//CleanGab::debug($sql);
 		return $sql;
 	}
 	

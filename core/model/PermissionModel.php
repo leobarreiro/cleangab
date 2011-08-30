@@ -2,7 +2,7 @@
 
 require_once ("CleanGabModel.php");
 
-class PermissionModel extends CleanGabModel {
+class ParameterModel extends CleanGabModel {
 	
 	public function __construct() 
 	{
@@ -33,6 +33,15 @@ class PermissionModel extends CleanGabModel {
 		$entity->addArgument("permission", $permissionKey);
 		$recordSet = $entity->retrieve($entity->getSql());
 		return $recordSet->hasRecords();
+	}
+	
+	public function loadPermissions($idUser=null)
+	{
+		$userToLoad = ($idUser == null) ? $_SESSION["CLEANGAB"]["user"]["id"] : $idUser;
+		$entity = new Entity("permission");
+		$entity->init();
+		$entity->addArgument("user_id", $userToLoad, "=");
+		return $entity->retrieve();
 	}
 	
 }

@@ -43,5 +43,65 @@ class UserModel extends CleanGabModel {
 		$this->setRecordset($this->entity->retrieve());
 	}
 	
+	public function authenticate() 
+	{
+		$entity = new Entity("user");
+		$entity->init();
+		$entity->setCountThis(false);
+		$entity->addArgument("user", $this->getArgumentData("user"), "=");
+		$entity->addArgument("passwd", $this->getArgumentData("passwd"), "MD5");
+		$entity->addArgument("active", "1", "=");
+		$entity->setLimit(1);
+		$entity->setSql(CLEANGAB_SQL_VERIFY_LOGIN);
+		return Session::authenticate($entity, CLEANGAB_SQL_VERIFY_LOGIN);
+	}
+	
+	
+	public function getUserById($idUser) 
+	{
+		$entity = new Entity("user");
+		$entity->init();
+		$entity->addArgument("id", $idUser, "=");
+		$entity->setLimit(1);
+		$entity->setCountThis(false);
+		$recordSet = $entity->retrieve();
+		if ($recordSet->hasRecords())
+		{
+			return $recordSet->getRecord();
+		}
+		else 
+		{
+			return false;
+		}
+	}
+	
+	public function save()
+	{
+		$objUser = new stdClass();
+		$objUser->id = $this->getArgumentData("iduser");
+		$objUser->name = $this->getArgumentData("name");
+		$objUser->user = $this->getArgumentData("user");
+		$objUser->email = $this->getArgumentData("email");
+		$objUser->passwd = md5($this->getArgumentData("senha"));
+		$objUser->senha = $this->getArgumentData("senha");
+		$objUser->repitaSenha = $this->getArgumentData("repitaSenha");
+		$objUser->active = $this->getArgumentData("active");
+		$objUser->renew_passwd = $this->getArgumentData("renew");
+		
+		if ($objUser->senha && $objUser->repitaSenha)
+		{
+			if ($objUser->senha != $objUser->repitaSenha)
+			{
+				Session::addUIMessage("A Senha n&atilde;o foi confirmada corretamente");
+				Session::goBack();
+			}
+		}
+		
+		$entity = new Entity("user");
+		$entity->init();
+		$entity->setObjectToPersist($objUser);
+		return $entity->save();
+	}
+	
 }
 ?>

@@ -9,49 +9,27 @@ class UserController extends CleanGabController {
 
 	public function index() 
 	{
-		Session::addRedir("user", "index");
+		Session::addRedir("user", "login");
 		Session::verify();
-		
+		Session::hasPermission("list_users");
 		$model = new UserModel();
-
 		// Arguments
-
-		if ($this->getUserInput("name")) 
-		{
-			$model->addArgumentData("name", $this->getUserInput("name"));
-		}
-		if ($this->getUserInput("user")) 
-		{
-			$model->addArgumentData("user", $this->getUserInput("user"));
-		}
-		if ($this->getUserInput("email")) 
-		{
-			$model->addArgumentData("email", $this->getUserInput("email"));
-		}
-		if ($this->getUserInput("sort")) 
-		{
-			$model->addArgumentData("sort", $this->getUserInput("sort"));
-		}
+		$model->addArgumentData("name", $this->getUserInput("name"));
+		$model->addArgumentData("user", $this->getUserInput("user"));
+		$model->addArgumentData("email", $this->getUserInput("email"));
+		// Sort
+		$model->addArgumentData("sort", $this->getUserInput("sort"));
 		// Pagination
-		if ($this->getUserInput("pg"))
-		{
-			$model->addArgumentData("pg", $this->getUserInput("pg"));
-		}
-		
+		$model->addArgumentData("pg", $this->getUserInput("pg"));
 		// Prepare List
-
 		$model->prepareList();
-
-		// XHTMLComponent
-		$tableUsers = new TableListBase("users", get_class($this), $model);
-		//$tableUsers->setOperations(array("show", "edit"));
-
 		// View
-
-		$view = new CleanGabEngineView("User", "index", $tableUsers);
+		$tableUsers = new TableListBase("users", get_class($this), $model);
+		$tableUsers->setFormFields(array("user", "email", "name"));
+		$view = new CleanGabEngineView("User", "index");
+		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$view->addObject($tableUsers->getIdName(), $tableUsers);
 		$view->renderize();
-
 	}
 
 	public function add() 
@@ -71,28 +49,32 @@ class UserController extends CleanGabController {
 	
 	public function logoff()
 	{
+		Session::addRedir("user", "login");
 		Session::logoff();
-		$this->login();
 	}
 	
 	public function authenticate()
 	{
 		$user = $this->getUserInput("userlogin");
 		$passwd = $this->getUserInput("passwdlogin");
-		$authenticate = Session::authenticate($user, $passwd);
-		if ($authenticate)
+		
+		$model = new UserModel();
+		$model->addArgumentData("user", $user);
+		$model->addArgumentData("passwd", $passwd);
+		$auth = $model->authenticate();
+		if ($auth)
 		{
-			CleanGab::debug(Session::getLastRedir());
-			header("Location: " . Session::getLastRedir());
-			//header("Location: " . CLEANGAB_URL_BASE_APP . "/" . CLEANGAB_WELCOME);
-			//include (CLEANGAB_WELCOME);
+			Session::addUIMessage("Log in performed correctly");
+			// TODO: verificar permissoes do usuario para definir qual sera sua pagina inicial apos o login
+			$user = (object) $_SESSION['CLEANGAB']['user'];			
+			Session::addRedir("user", "index");
 		}
-		else 
+		else
 		{
-			//TODO: Add an error message here. Maybe it can be in a message board on $_SESSION.
-			Session::addUIMessage("Login or password invalid");
-			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/login");
+			Session::addRedir("user", "login");
+			Session::addUIMessage("User or password invalid");
 		}
+		header("Location:" . Session::getLastRedir());
 	}
 
 	public function show($keyValue) 
@@ -118,11 +100,53 @@ class UserController extends CleanGabController {
 	
 	public function edit($key)
 	{
+		Session::addRedir("user", "login");
+		Session::verify();
+		Session::hasPermission("edit_user");
+		
+		$model = new UserModel();
+		$objUser = $model->getUserById($key);
+		
+		$arOpt = array("0"=>"N&atilde;o", "1"=>"Sim");
+		
+		$tinyActive = new TinyIntFormatter();
+		$tinyActive->setOptions($arOpt);
+		$objUser->activeoptions = $tinyActive->toFormField("active", "active", $objUser->active);
+		
+		$tinyRenew = new TinyIntFormatter();
+		$tinyRenew->setOptions($arOpt);
+		$objUser->renewoptions = $tinyRenew->toFormField("renew", "renew", $objUser->renew_passwd);
+		
 		// View
-
-		$view = new CleanGabEngineView("User", "edit", null);
+		$view = new CleanGabEngineView("User", "edit");
+		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
+		$view->addObject("user", $objUser);
 		$view->renderize();
-		echo $key;
+	}
+	
+	public function save()
+	{
+		$model = new UserModel();
+		$model->addArgumentData("iduser", $this->getUserInput("iduser"));
+		$model->addArgumentData("name", $this->getUserInput("name"));
+		$model->addArgumentData("user", $this->getUserInput("user"));
+		$model->addArgumentData("email", $this->getUserInput("email"));
+		$model->addArgumentData("senha", $this->getUserInput("senha"));
+		$model->addArgumentData("repitaSenha", $this->getUserInput("repitaSenha"));
+		$model->addArgumentData("active", $this->getUserInput("active"));
+		$model->addArgumentData("renew", $this->getUserInput("renew"));
+		
+		if ($model->save())
+		{
+			Session::addRedir("user", "index");
+			Session::addUIMessage("Registro salvo corretamente");
+			Session::goToRedir();
+		} 
+		else 
+		{
+			Session::addUIMessage("Registro n&atilde;o salvo ou nada a alterar.");
+			Session::goBack();
+		}
 	}
 }
 ?>

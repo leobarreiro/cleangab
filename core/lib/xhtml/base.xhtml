@@ -3,29 +3,44 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<title></title>
-	<link rel="SHORTCUT ICON" href="/cleangab/core/favicon.ico" />
-	<link rel="stylesheet" href="/cleangab/core/lib/css/base.css" type="text/css" /> 
+	<link rel="SHORTCUT ICON" href="/intranet/favicon.ico" />
+	<link rel="stylesheet" href="/intranet/lib/css/base.css" type="text/css" /> 
 	<script src="/cleangab/core/lib/js/jquery.js"></script>
-	<script src="/cleangab/core/lib/js/jquery.maskedinput.js"></script>
 </head>
 <body>
-	<div id="page-title">
-		<h1>CleanGab Framework - Basic Template</h1>
+
+	<div class="header">
+		<a href="#{CLEANGAB_URL_BASE_APP}" class="logo-link" target="_top">&nbsp;</a>
+	</div>
+	
+	<div class="top-menu">
 		<div class="toolbar-top">
+			#{menu}
+			<a href="#{CLEANGAB_URL_BASE_APP}/user/index" class="spacer">users</a>
 			<a href="#{CLEANGAB_URL_BASE_APP}/user/logoff">logoff</a>
 		</div>
 	</div>
-	<div id="workarea">
+
+	<div class="workarea">
+
 		#{content}
+
 	</div>
-	
-<script type="text/javascript">
-jQuery(document).ready(function() {
-   $(".dateformatter").mask("99/99/9999");
-   $(".datetimeformatter").mask("99/99/9999 99:99");
-   $(".phoneformatter").mask("(99) 9999.9999");
-   $(".cpformatter").mask("99999-999");
-});
-</script>
+
+	<div class="footer">
+		<ul>
+			<li>DISYS.com</li>
+		</ul>
+	</div>
+
+	<script type="text/javascript">
+	jQuery(document).ready(function() {
+	   $(".dateformatter").mask("99/99/9999");
+	   $(".datetimeformatter").mask("99/99/9999 99:99");
+	   $(".phoneformatter").mask("(99) 9999.9999");
+	   $(".cpformatter").mask("99999-999");
+	});
+	</script>
+
 </body>
 </html>
