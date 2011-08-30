@@ -15,46 +15,64 @@ class Formatter {
 	
 	public function __construct() {}
 	
-	protected function matchDataBasePattern() {
-		if (preg_match($this->dataBasePattern, $this->dataBaseContent) == 1) {
+	protected function matchDataBasePattern() 
+	{
+		if (preg_match($this->dataBasePattern, $this->dataBaseContent) == 1) 
+		{
 			return true;
-		} else {
+		} 
+		else 
+		{
 			return false;
 		}
 	}
 
-	protected function matchScreenPattern() {
-		if (preg_match($this->screenPattern, $this->screenContent) == 1) {
+	protected function matchScreenPattern() 
+	{
+		if (preg_match($this->screenPattern, $this->screenContent) == 1) 
+		{
 			return true;
-		} else {
+		} 
+		else 
+		{
 			return false;
 		}
 	}
 	
-	public function toScreen($mixedDataBaseContent) {
+	public function toScreen($mixedDataBaseContent) 
+	{
 		$this->dataBaseContent = $mixedDataBaseContent;
-		if ($this->matchDataBasePattern()) {
+		if ($this->matchDataBasePattern()) 
+		{
 			$this->translateToScreen();
 			return $this->screenContent;
-		} else {
+		} 
+		else 
+		{
 			return false;
 		}
 	}
 	
-	public function toDataBase($mixedScreenContent) {
+	public function toDataBase($mixedScreenContent) 
+	{
 		$this->screenContent = $mixedScreenContent;
-		if ($this->matchScreenPattern()) {
+		if ($this->matchScreenPattern()) 
+		{
 			$this->translateToDataBase();
 			return $this->dataBaseContent;
-		} else {
+		} 
+		else 
+		{
 			return false;
 		}
 	}
 	
-	public function toFormField($nameField, $idField=null) {
+	public function toFormField($nameField, $idField=null) 
+	{
 		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
 		$xhtml  = "<input type='text' name='" . $nameField . "'";
-		if ($idField != null) {
+		if ($idField != null) 
+		{
 			$xhtml .= " id='" . $idField . "' ";
 		}
 		$xhtml .= " value='" . $this->screenContent . "' ";
@@ -62,7 +80,8 @@ class Formatter {
 		return $xhtml;
 	}
 	
-	public function toListField($nameField=null, $idField=null) {
+	public function toListField($nameField=null, $idField=null) 
+	{
 		return $this->screenContent;
 	}
 	
