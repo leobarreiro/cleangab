@@ -50,12 +50,17 @@ class TableListBase implements XHTMLComponent {
 		$this->operations = $arOperations;
 	}
 	
+	public function setFormFields($arFormFields)
+	{
+		$this->formFields = $arFormFields;
+	}
+	
 	public function inject($mixedContent)
 	{
 		$this->content = $mixedContent;
 	}
 
-	public function ensamble()
+	public function assemble()
 	{
 		$content = $this->content->getRecords();
 		$xhtml = array();
@@ -107,7 +112,7 @@ class TableListBase implements XHTMLComponent {
 	{
 		if (strlen($this->xhtml) == 0)
 		{
-			$this->ensamble();
+			$this->assemble();
 		}
 		return $this->xhtml;
 	}
@@ -172,9 +177,9 @@ class TableListBase implements XHTMLComponent {
 			$formXhtml[] = "\n<div class=\"" . strtolower(get_class($this)) . "Form\"><form name=\"" . $formName . "\" id=\"" . $formName . "\" method=\"post\">";
 			foreach ($this->formFields as $field)
 			{
-				$formXhtml[] = $this->ensambleSearchFormField($field);
+				$formXhtml[] = $this->assembleSearchFormField($field);
 			}
-			$formXhtml[] = $this->ensambleSearchFormSortField();
+			$formXhtml[] = $this->assembleSearchFormSortField();
 			$formXhtml[] = "<input type=\"hidden\" name=\"pg\" value=\"" . $this->page . "\">";
 			$formXhtml[] = "<input type=\"button\" value=\"Pesquisar\" onclick=\"this.form.pg.value=1;this.form.submit();\">";
 			$formXhtml[] = "</form></div>\n";
@@ -183,7 +188,7 @@ class TableListBase implements XHTMLComponent {
 		return implode("", $formXhtml);
 	}	
 	
-	private function ensambleSearchFormField($fieldName)
+	private function assembleSearchFormField($fieldName)
 	{
 		$varField = (filter_input(INPUT_POST, $fieldName) != null) ? filter_input(INPUT_POST, $fieldName) : "";
 		$xhtml    = "<div class=\"" . $fieldName . "\">";
@@ -193,12 +198,14 @@ class TableListBase implements XHTMLComponent {
 		return $xhtml;
 	}
 	
-	private function ensambleSearchFormSortField()
+	private function assembleSearchFormSortField()
 	{
 		$xhtml  = "<div class=\"sort\">";
 		$xhtml .= "<span>Organizar por</span>";
 		$xhtml .= "<select name=\"sort\">";
-		foreach ($this->formFields as $field)
+		$sortableFields = array_keys($this->nameFields);
+		
+		foreach ($sortableFields as $field)
 		{
 			$selected    = (filter_input(INPUT_POST, "sort") == $field) ? "selected" : "";
 			$xhtml .= "<option value=\"" . $field . "\" " . $selected . ">" . $this->nameFields[$field] . "</option>";
