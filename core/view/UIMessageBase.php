@@ -25,7 +25,7 @@ class UIMessageBase implements XHTMLComponent {
 		$this->content = $mixedContent;
 	}
 
-	public function ensamble()
+	public function assemble()
 	{
 		$xhtml = array();
 		
@@ -50,7 +50,7 @@ class UIMessageBase implements XHTMLComponent {
 
 	public function toXhtml()
 	{
-		$this->ensamble();
+		$this->assemble();
 		return $this->xhtml;
 	}
 

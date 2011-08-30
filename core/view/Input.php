@@ -64,7 +64,7 @@ class Input implements XHTMLComponent {
 		$this->value = (string) $mixedContent;
 	}
 	
-	public function ensamble() 
+	public function assemble() 
 	{
 		$xhtml = array();
 		$xhtml[] = "<input type=\"" . $this->type . "\"";
@@ -89,7 +89,7 @@ class Input implements XHTMLComponent {
 	
 	public function toXhtml() 
 	{
-		$this->ensamble();
+		$this->assemble();
 		return $this->xhtml;
 	}
 	
