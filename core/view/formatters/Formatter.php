@@ -1,8 +1,8 @@
 <?php
 /**
- * Clean-Gab Framework
+ * CleanGab Framework
  * Formatter.php
- * Date: 	2011-01-XX
+ * Date: 	2011-01-02
  * Author: 	Leopoldo Barreiro
  */
 
@@ -67,12 +67,8 @@ class Formatter {
 		}
 	}
 	
-<<<<<<< HEAD
 	public function toFormField($nameField, $idField=null) 
 	{
-=======
-	public function toFormField($nameField, $idField=null, $mixedValue) {
->>>>>>> branch 'refs/heads/master' of https://leobarreiro@github.com/leobarreiro/cleangab.git
 		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
 		$xhtml  = "<input type='text' name='" . $nameField . "'";
 		if ($idField != null) 
