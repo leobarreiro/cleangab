@@ -1,8 +1,8 @@
 <?php
 /**
- * Clean-Gab Framework
+ * CleanGab Framework
  * Recordset.php
- * Date: 	2011-01-XX
+ * Date: 	2011-01-02
  * Author: 	Leopoldo Barreiro
  */
 
@@ -81,7 +81,7 @@ class Recordset {
 		return $record;
 	}
 	
-	function ensamble() 
+	function assemble() 
 	{
 		$this->records = array();
 		$this->i = 0;
