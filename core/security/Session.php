@@ -19,7 +19,6 @@ class Session {
 		if ($rs->hasRecords()) 
 		{
 			$_SESSION["CLEANGAB"]["user"] = (array) $rs->getRecord();
-			$_SESSION["CLEANGAB"]["user"]["permissions"] = Session::loadPermissions();
 		}
 		else 
 		{
@@ -200,6 +199,7 @@ class Session {
 			$obPermission = $recordSet->getRecord();
 			$permissions[] = strtolower($obPermission->permission);
 		}
+		$_SESSION["CLEANGAB"]["user"]["permissions"] = $permissions;
 		return $permissions;
 	}
 	
