@@ -7,7 +7,8 @@
  * 
  */
 
-require_once("Entity.php");
+require_once ("Entity.php");
+require_once ("PermissionModel.php");
 
 class Session {
 
@@ -78,7 +79,7 @@ class Session {
 		}
 		else 
 		{
-			Session::addUIMessage("You don´t have permissions to access this content. Please, proceed to log in");
+			Session::addUIMessage("You donï¿½t have permissions to access this content. Please, proceed to log in");
 			Session::goToRedir();
 			return false;
 		}
