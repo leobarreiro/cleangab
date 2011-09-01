@@ -50,19 +50,21 @@ class SelectInput extends Input {
 		
 		$xhtml[] = "<option value=\"\">Selecione...</option>";
 		
-		foreach ($this->options as $opt)
+		if (is_array($this->options) && count($this->options) > 0)
 		{
-			$option = array();	
-			$option[] = "<option value=\"" . $opt->k . "\"";
-			if ($this->value == $opt->v)
+			foreach ($this->options as $opt)
 			{
-				$option[] = " selected";
+				$option = array();	
+				$option[] = "<option value=\"" . $opt->k . "\"";
+				if ($this->value == $opt->v)
+				{
+					$option[] = " selected";
+				}
+				$option[] = ">";
+				$option[] = $opt->v . "</option>";
+				$xhtml[] = implode("", $option);
 			}
-			$option[] = ">";
-			$option[] = $opt->v . "</option>";
-			$xhtml[] = implode("", $option);
 		}
-		
 		$xhtml[] = "</select>";
 		$this->xhtml = implode("", $xhtml);
 	}
