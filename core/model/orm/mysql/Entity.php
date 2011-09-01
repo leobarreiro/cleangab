@@ -440,7 +440,7 @@ class Entity implements IDBEntity {
 		$old[] = "[order]";
 		$new[] = " ORDER BY " . $this->orderBy;
 		$old[] = "[limit]";
-		$new[] = "LIMIT " . $this->offset . ", " . $this->limit;
+		$new[] = ($this->limit > 0) ? "LIMIT " . $this->offset . ", " . $this->limit : "";
 		$sql = str_replace($old, $new, $sql);
 		$sql = str_replace(array("\n", "\r", "\t"), array("", "", ""), $sql);
 		return $sql;
