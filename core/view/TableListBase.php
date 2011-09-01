@@ -90,6 +90,10 @@ class TableListBase implements XHTMLComponent {
 					if (is_array($this->masks) && isset($this->masks[$headCell]))
 					{
 						$mask = $this->masks[$headCell];
+						if (!class_exists($mask))
+						{
+							require_once ($mask . ".php");
+						}
 						$formatter = new $mask();
 						$formatter->toScreen($record->{$headCell});
 						$cellContent = $formatter->toListField();
