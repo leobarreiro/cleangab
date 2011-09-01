@@ -64,6 +64,7 @@ class UserController extends CleanGabController {
 		$auth = $model->authenticate();
 		if ($auth)
 		{
+			Session::loadPermissions();
 			Session::addUIMessage("Log in performed correctly");
 			// TODO: verificar permissoes do usuario para definir qual sera sua pagina inicial apos o login
 			$user = (object) $_SESSION['CLEANGAB']['user'];			
