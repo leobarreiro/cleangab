@@ -17,7 +17,7 @@ class Recordset {
 		$this->records = array();
 		$this->i = 0;
 		$this->setResult($result);
-		$this->ensamble();
+		$this->assemble();
 	}
 	
 	function hasNext() 
