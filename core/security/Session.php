@@ -78,7 +78,8 @@ class Session {
 		}
 		else 
 		{
-			Session::addUIMessage("You don�t have permissions to access this content. Please, proceed to log in");
+			Session::addUIMessage("You don't have permissions to access this content. Please, proceed to log in");
+			CleanGab::log("The user `" . $_SESSION["CLEANGAB"]["user"]["user"] . "` tried to access the permission `" . $key . "`");
 			Session::goToRedir();
 			return false;
 		}
@@ -189,7 +190,7 @@ class Session {
 		die();
 	}
 	
-	public function loadPermissions()
+	public static function loadPermissions()
 	{
 		$model = new PermissionModel();
 		$recordSet = $model->loadPermissions();
