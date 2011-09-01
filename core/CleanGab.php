@@ -21,8 +21,8 @@ class CleanGab {
 	
 	static function log($msg)
 	{
-		$file = (defined("CLEANGAB_STACKTRACEDEBUG_FILE")) ? CLEANGAB_STACKTRACEDEBUG_FILE : "log" . SEPARATOR . "cleangab.log";
-		$handle = (is_writable($file)) ? fopen($file, "a") : false;
+		$file = (defined("CLEANGAB_LOG_FILE")) ? CLEANGAB_LOG_FILE : "log" . SEPARATOR . "cleangab.log";
+		$handle = (file_exists($file)) ? fopen($file, "a") : false;
 		if ($handle) 
 		{
 			fwrite($handle, "\n[" . date("Y.m.d H:i:s") . "] " . strtoupper(CLEANGAB_APP_ENV) . " ");
@@ -33,7 +33,7 @@ class CleanGab {
 	
 	static function stackTraceDebug($exception) 
 	{
-		$file = (defined("CLEANGAB_STACKTRACEDEBUG_FILE")) ? CLEANGAB_STACKTRACEDEBUG_FILE : "log" . SEPARATOR . "cleangab.log";
+		$file = (defined("CLEANGAB_LOG_FILE")) ? CLEANGAB_LOG_FILE : "log" . SEPARATOR . "cleangab.log";
 		$handle = (is_writable($file)) ? fopen($file, "a") : false;
 		if ($handle) 
 		{
