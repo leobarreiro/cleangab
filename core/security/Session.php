@@ -48,7 +48,7 @@ class Session {
 				else 
 				{
 					$_SESSION["CLEANGAB"]["user"] = array("user"=>$user);
-					Session::addUIMessage("You don´t have a user record in the System. Please contact your manager to grant permissions for you");
+					Session::addUIMessage("You don't have a user record in the System. Please contact your manager to grant permissions for you");
 					CleanGab::log("The user `" . $user . "` was logged in MS-AD but not registered in the database system.");
 				}
 			}
