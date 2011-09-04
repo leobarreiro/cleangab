@@ -112,7 +112,7 @@ div.workarea div.toolbar {
 	text-align: right;
 	clear: right;
 }
-
+div.workarea div.user-menu, 
 div.workarea div.user-login {
 	border: 1px solid magenta;
 	display: inline-block;
@@ -133,6 +133,31 @@ div.workarea div.user-login form input[type=text], div.workarea div.user-login f
 div.workarea div.user-login form input[type=submit] {
 	border: 1px solid #cecece;
 	width: 40px;
+}
+
+html body div.workarea div.user-menu ul.menuoptions {
+	position: relative;
+	display:none;
+	width: 220px;
+	border: 1px solid #cecece;
+	background: #cecece;
+	margin: 4px 2px 2px 2px;
+	z-index: 4px;
+}
+
+html body div.workarea div.user-menu ul.menuoptions li {
+	list-style: none;
+}
+
+html body div.workarea div.user-menu ul.menuoptions li a {
+	padding: 10px; 
+	display: block;
+}
+
+html body div.workarea div.user-menu ul.menuoptions li a:hover {
+	padding:10px;
+	font-weight:bold;
+	color: #F00880;
 }
 
 html body div.workarea div.content-text {

@@ -1,20 +1,9 @@
 
 	<div class="user-menu">
-		<div class="user" onclick="showUserMenu()">#{user.name}</div>
-		<div class="menu-options" id="menuoptions">
-			<ul>
-				<li><a class="options" href="#{CLEANGAB_URL_BASE_APP}/user/options">options</a></li>
-				<li><a class="log-off" href="#{CLEANGAB_URL_BASE_APP}/user/logoff">logoff</a></li>
-			</ul>
-		</div>
+		<div class="user">#{user.name}</div>
+		<ul class="menuoptions">
+			<li><a class="options" href="#{CLEANGAB_URL_BASE_APP}/user/options">options</a></li>
+			<li><a class="log-off" href="#{CLEANGAB_URL_BASE_APP}/user/logoff">logoff</a></li>
+		</ul>
 	</div>
-	<script type="text/javascript">
-	function showUserMenu() {
-		try {
-			var dsp = document.getElementById("menuoptions").style.display;
-			alert(dsp);
-		} catch (e) {
-			alert(e.getMessage());
-		}
-	}
-	</script>
+	
