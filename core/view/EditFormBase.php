@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 /**
  * CleanGab Framework
@@ -94,14 +93,6 @@ class EditFormBase implements XHTMLComponent {
 			$cellContent = $record->{$headCell};
 		}
 		$xhtml[] = "<td class=\"" . $headCell . "\">" . $cellContent . "</td>";
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		$xhtml  = "<div class=\"sort\">";
 		$xhtml .= "<span>Order by</span>";

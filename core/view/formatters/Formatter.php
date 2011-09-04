@@ -12,6 +12,7 @@ class Formatter {
 	protected $dataBasePattern;
 	protected $screenContent;
 	protected $screenPattern;
+	protected $disabled;
 	
 	public function __construct() {}
 	
@@ -98,6 +99,14 @@ class Formatter {
 	
 	public function getDataBaseContent() {
 		return $this->dataBaseContent;
+	}
+	
+	public function setDisabled($boolean) {
+		$this->disabled = $boolean;
+	}
+	
+	public function getDisabled() {
+		return $this->disabled;
 	}
 	
 }

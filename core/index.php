@@ -1,4 +1,7 @@
 <?php
+require_once ("CleanGab.php");
+require_once ("Session.php");
+
 if (isset($_SERVER['SCRIPT_NAME']) && (preg_match("/\/cleangab\/core\/index.php/", $_SERVER['SCRIPT_NAME']) > 0)) 
 {
 	exit();
@@ -19,15 +22,11 @@ if ($friendlyUrl['cgController'] != null &&
 	strlen($friendlyUrl['cgController']) > 0) 
 {
 	$controllerClass = ucfirst($_GET['cgController']) . "Controller";
-	if (in_array($controllerClass, get_declared_classes())) 
+	if (!class_exists($controllerClass))
 	{
-		$controller = new $controllerClass;
-	} 
-	else 
-	{
-		include (CLEANGAB_404);
-		die();
+		require_once ($controllerClass . ".php");
 	}
+	$controller = new $controllerClass;
 } 
 else 
 {

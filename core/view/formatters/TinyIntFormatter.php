@@ -62,6 +62,10 @@ class TinyIntFormatter extends Formatter {
 			{
 				$xhtml[] = " checked ";
 			}
+			if ($this->disabled)
+			{
+				$xhtml[] = " disabled=\"disabled\" ";
+			}
 			$xhtml[] = "/>";
 			$xhtml[] = $value;
 			$xhtml[] = "</label>";

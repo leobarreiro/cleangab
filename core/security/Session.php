@@ -27,6 +27,39 @@ class Session {
 		return $rs->hasRecords();
 	}
 	
+	public static function authenticate_ldap($user, $password)
+	{
+		Session::createIfNotExists();
+		$ad = @ldap_connect(CLEANGAB_AD_HOST);
+		if ($ad)
+		{
+			$adUser = CLEANGAB_AD_DOMAIN . "\\" . $user;
+			$auth = @ldap_bind($ad, $adUser, $password);
+			if ($auth)
+			{
+				$entity = new Entity("user");
+				$entity->init();
+				$entity->addArgument("user", $user, "=");
+				$rs = $entity->retrieve();
+				if ($rs->hasRecords()) 
+				{
+					$_SESSION["CLEANGAB"]["user"] = (array) $rs->getRecord();
+				}
+				else 
+				{
+					$_SESSION["CLEANGAB"]["user"] = array("user"=>$user);
+					Session::addUIMessage("You don´t have a user record in the System. Please contact your manager to grant permissions for you");
+					CleanGab::log("The user `" . $user . "` was logged in MS-AD but not registered in the database system.");
+				}
+			}
+			return $auth;
+		}
+		else 
+		{
+			return false;
+		}
+	}
+	
 	/**
 	 * logoff()
 	 * Limpa a Sessao
@@ -46,9 +79,7 @@ class Session {
 	
 	public static function verify() 
 	{
-		$isValidSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && 
-							is_array($_SESSION['CLEANGAB']['user']) && count($_SESSION['CLEANGAB']['user']) > 0);
-		if (!$isValidSession)
+		if (!Session::isUserLogged())
 		{
 			Session::addUIMessage("Session is not valid. Please, proceed to log in");
 			Session::goToRedir();
@@ -242,6 +273,12 @@ class Session {
 		{
 			return false;
 		}
+	}
+	
+	public static function isUserLogged() {
+		$isValidSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && 
+							is_array($_SESSION['CLEANGAB']['user']) && count($_SESSION['CLEANGAB']['user']) > 0);
+		return $isValidSession;
 	}
 	
 }

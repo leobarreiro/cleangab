@@ -1,11 +1,12 @@
-<h1>Show User</h1>
-<div class="show">
-	<div><span>Id</span>#{user.id}</div>
-	<div><span>User</span>#{user.user}</div>
-	<div><span>Name</span>#{user.name}</div>
-	<div><span>Email</span>#{user.email}</div>
-	<div><span>Created</span>#{user.created}</div>
-	<div><span>Active</span>#{user.active}</div>
+
+#{uimessage}
+<h2>Visualizar Usu&aacute;rio</h2>
+<input type="hidden" name="iduser" value="#{user.id}" />
+<div class="edit-form">
+	<div class="field"><span>Nome</span><input type="text" name="name" id="name" value="#{user.name}"  disabled="disabled" /></div>
+	<div class="field"><span>Nome de Usu&aacute;rio</span><input type="text" name="user" id="user" value="#{user.user}" readonly="readonly"  disabled="disabled" /></div>
+	<div class="field"><span>E-mail</span><input type="text" name="email" id="email" value="#{user.email}"  disabled="disabled" /></div>
+	<div class="field"><span>Ativo</span>#{user.activeoptions}</div>
 </div>
 <div class="tools">
 	<a href="#{navigator.referer}" class="go-back">Go back</a>

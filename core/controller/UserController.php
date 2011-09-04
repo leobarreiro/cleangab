@@ -1,9 +1,9 @@
 <?php
 require_once ("CleanGabController.php");
-require_once ("Session.php");
 require_once ("UserModel.php");
 require_once ("TableListBase.php");
 require_once ("UIMessageBase.php");
+require_once ("TinyIntFormatter.php");
 
 class UserController extends CleanGabController {
 
@@ -58,10 +58,18 @@ class UserController extends CleanGabController {
 		$user = $this->getUserInput("userlogin");
 		$passwd = $this->getUserInput("passwdlogin");
 		
-		$model = new UserModel();
-		$model->addArgumentData("user", $user);
-		$model->addArgumentData("passwd", $passwd);
-		$auth = $model->authenticate();
+		if (strtoupper(CLEANGAB_AUTH_METHOD) == "AD")
+		{
+			$auth = Session::authenticate_ldap($user, $passwd);
+		}
+		else 
+		{
+			$model = new UserModel();
+			$model->addArgumentData("user", $user);
+			$model->addArgumentData("passwd", $passwd);
+			$auth = $model->authenticate();
+		}
+
 		if ($auth)
 		{
 			Session::loadPermissions();
@@ -78,12 +86,20 @@ class UserController extends CleanGabController {
 		header("Location:" . Session::getLastRedir());
 	}
 
-	public function show($keyValue) 
+	public function show($key) 
 	{
-		if ($keyValue > 0)
+		Session::addRedir("user", "login");
+		Session::verify();
+		Session::hasPermission("show_user");
+		if ($key > 0)
 		{
 			$model = new UserModel();
-			$user = $model->get($keyValue);
+			$user = $model->get($key);
+			$arOpt = array("0"=>"N&atilde;o", "1"=>"Sim");
+			$tinyActive = new TinyIntFormatter();
+			$tinyActive->setOptions($arOpt);
+			$tinyActive->setDisabled(true);
+			$user->activeoptions = $tinyActive->toFormField("active", "active", $user->active);
 			$view = new CleanGabEngineView("User", "show");
 			$view->addObject("user", $user);
 			$view->renderize();
@@ -109,7 +125,6 @@ class UserController extends CleanGabController {
 		$objUser = $model->getUserById($key);
 		
 		$arOpt = array("0"=>"N&atilde;o", "1"=>"Sim");
-		
 		$tinyActive = new TinyIntFormatter();
 		$tinyActive->setOptions($arOpt);
 		$objUser->activeoptions = $tinyActive->toFormField("active", "active", $objUser->active);

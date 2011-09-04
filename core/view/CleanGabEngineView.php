@@ -8,64 +8,70 @@
 
 //header("Content-Type: text/html; charset=ISO-8859-1");
 
-include_once ("Validate.php");
+require_once ("Validate.php");
+require_once ("UserToolsMenu.php");
 
 class CleanGabEngineView {
 	
-	protected $nameController;
-	protected $operationController;
+	protected $controller;
+	protected $operation;
 	protected $objects;
-	protected $template;
-	protected $xhtmlFile;
-	protected $xhtmlContent;
-	protected $translated;
-	protected $navigator;
+	protected $templateFile;
+	protected $templateXhtml;
+	protected $file;
+	protected $xhtml;
+	protected $parsed;
 	
-	public function __construct($nameController, $operationController) 
+	public function __construct($controller, $operation) 
 	{
-		$this->nameController 		= $nameController;
-		$this->operationController 	= $operationController;
-		$this->template 			= CLEANGAB_XHTML_TEMPLATE;
-		$this->objects 				= array();
-		$this->navigator 			= new stdClass();
-		$this->navigator->referer 	= isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "#";
+		$this->controller 	= $controller;
+		$this->operation 	= $operation;
+		$this->templateFile	= CLEANGAB_XHTML_TEMPLATE;
+		$this->objects 		= array();
+		
+		$navigator 			= new stdClass();
+		$navigator->referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "#";
+		$this->addObject("navigator", $navigator);
 		if (isset($_SESSION) && isset($_SESSION["CLEANGAB"]))
 		{
 			$session = $_SESSION["CLEANGAB"];
 			$this->addObject("session", $session);
+			if (Session::isUserLogged())
+			{
+				$user = (object)$_SESSION["CLEANGAB"]["user"];
+				$this->addObject("user", $user);
+			}
 		}
-		$this->addObject("navigator", $this->navigator);
-		$relativePath = "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
-		//$this->xhtmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "view" . DIRECTORY_SEPARATOR . strtolower($this->nameController) . DIRECTORY_SEPARATOR . strtolower($this->operationController) . ".xhtml";
-		try 
+		$userToolsMenu = new UserToolsMenu();
+		$this->addObject($userToolsMenu->getIdName(), $userToolsMenu);
+		
+		// Template XHTML
+		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->templateFile;
+		$this->templateFile 	= (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath)) ? CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath : CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $templatePath;
+		$this->templateContent  = file_get_contents($this->templateFile);
+		
+		// XHTML Page
+		$relativePath = "view" . DIRECTORY_SEPARATOR . strtolower($this->controller) . DIRECTORY_SEPARATOR . strtolower($this->operation) . ".xhtml";
+		if (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $relativePath)) 
 		{
-			if (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $relativePath)) 
-			{
-				$this->xhtmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $relativePath;
-				$this->xhtmlContent = file_get_contents($this->xhtmlFile);
-			} 
-			elseif (file_exists(CLEANGAB_FWK_ROOT .  DIRECTORY_SEPARATOR . $relativePath))
-			{
-				$this->xhtmlFile = CLEANGAB_FWK_ROOT .  DIRECTORY_SEPARATOR . $relativePath;
-				$this->xhtmlContent = file_get_contents($this->xhtmlFile);
-			}
-			else 
-			{
-				$this->xhtmlFile = "";
-				$this->xhtmlContent = "";
-				include (CLEANGAB_501);
-				die();
-			}
+			$this->file  = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $relativePath;
+			$this->xhtml = file_get_contents($this->file);
 		} 
-		catch (Exception $e) 
+		elseif (file_exists(CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $relativePath))
 		{
-			CleanGab::stackTraceDebug($e);
+			$this->file  = CLEANGAB_FWK_ROOT .  DIRECTORY_SEPARATOR . $relativePath;
+			$this->xhtml = file_get_contents($this->file);
+		}
+		else 
+		{
+			$this->file  = $relativePath;
+			$this->xhtml = file_get_contents(CLEANGAB_501);
 		}
 	}
 	
-	public function getNameController() 
+	public function getController() 
 	{
-		return $this->nameController;
+		return $this->controller;
 	}
 	
 	public function setTemplate($template) 
@@ -78,10 +84,12 @@ class CleanGabEngineView {
 		return $this->template;
 	}
 	
-	final function inject() 
+	final function parse() 
 	{
-		$newContent = $this->xhtmlContent;
-		$tagNames   = $this->parserELTag($newContent);
+		// TODO: revisar conteudo geral. Traduzir template, conteudo e blocos.
+		$content = str_replace("#{content}", $this->xhtml, $this->templateContent);
+		$tagNames   = $this->parserELTag($content);
+		$content = $this->parseConstants($tagNames, $content);
 		foreach ($tagNames as $tag) 
 		{
 			if (strpos($tag, ".") > 0) 
@@ -105,22 +113,27 @@ class CleanGabEngineView {
 				if ($methods) 
 				{
 					$eval = implode(".", $methods);
-					$newContent = str_replace("#{" . $tag . "}", $obj->{$eval}, $newContent);
+					$content = str_replace("#{" . $tag . "}", $obj->{$eval}, $content);
 				}
 				else 
 				{
 					if ($obj instanceof XHTMLComponent)
 					{
-						$newContent = str_replace("#{" . $tag . "}", $obj->toXhtml(), $newContent);
+						$content = str_replace("#{" . $tag . "}", $obj->toXhtml(), $content);
 					}
 					else 
 					{
-						$newContent = str_replace("#{" . $tag . "}", (string)$obj, $newContent);
+						$content = str_replace("#{" . $tag . "}", (string)$obj, $content);
 					}
 				}
 			}
 		}
-		$this->translated = $newContent;
+		$this->parsed = $content;
+	}
+	
+	public function getParsed()
+	{
+		return $this->parsed;
 	}
 	
 	public function addObject($identifier, $object)
@@ -134,20 +147,12 @@ class CleanGabEngineView {
 		return true;
 	}
 	
-	public function getTranslated()
-	{
-		return $this->translated;
-	}
-	
 	public function renderize() 
 	{
-		$this->inject();
-		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->template;
-		$templateContent = (file_exists($templatePath)) ? file_get_contents($templatePath) : file_get_contents("../cleangab/core/" . $templatePath);
-		$templateContent = $this->parserConstants($templateContent);
-		$viewContent = $this->parserConstants($this->translated);
-		$completeContent = str_replace("#{content}", $viewContent, $templateContent);
-		echo $completeContent;
+		$this->parse();
+		//$templateContent = $this->parserConstants($templateContent);
+		//$viewContent = $this->parserConstants($this->parsed);
+		echo $this->parsed;
 	}
 	
 	private function isXhtmlComponent($mixed) 
@@ -157,8 +162,6 @@ class CleanGabEngineView {
 
 	private function parserELTag($xhtml) 
 	{
-		//$pattern = "%(\#{){1}.[a-zA-Z_ ]+.(\.+)*.([a-zA-Z]*).(}){1}%";
-		//$pattern = "%(\#{){1}.([a-zA-Z_]+)+.(\.+)*.([[:space:]]*)*.([a-zA-Z]+)+.(}){1}%";
 		$pattern = "%(\#{){1}.(.)+.(\}){1}%";
 		preg_match_all($pattern, $xhtml, $matches, PREG_PATTERN_ORDER);
 		if (is_array($matches)) 
@@ -184,9 +187,9 @@ class CleanGabEngineView {
 		}
 	}
 	
-	private function parserConstants($content)
+	private function parseConstants($tags, $content)
 	{
-		$tags = $this->parserELTag($content);
+		//$tags = $this->parserELTag($content);
 		$constantPatter = '/^CLEANGAB_/';
 		foreach ($tags as $tag)
 		{
@@ -200,5 +203,6 @@ class CleanGabEngineView {
 		}
 		return $content;
 	}
+	
 }
 ?>

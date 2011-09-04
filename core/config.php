@@ -8,7 +8,7 @@
  */
 // Constants
 
-define ("CLEANGAB_FWK_ROOT", __DIR__);
+define ("CLEANGAB_FWK_ROOT", dirname(__FILE__));
 define ("CLEANGAB_FWK_MODEL", CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . "model");
 define ("CLEANGAB_FWK_ORM", CLEANGAB_FWK_MODEL . DIRECTORY_SEPARATOR . "orm");
 define ("CLEANGAB_FWK_CONTROL", CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . "controller");

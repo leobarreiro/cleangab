@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="cleangab" basedir="." default="deploy">
-	<property name="source" value="/home/efaber/projetos/cleangab/" />
-	<property name="dest" value="/var/www/cleangab/" />
-	<target name="deploy" description="deploy do projeto ${ant.file.cleangab}">
+	<property name="source" value="C:\\Dev\\projetos\\cleangab\\" />
+	<property name="dest" value="C:\\Dev\\apps\\apache\\htdocs\\cleangab\\" />
+	<target name="deploy" description="deploy do projeto">
 		<delete dir="${dest}" includeemptydirs="true" failonerror="false" />
 		<copy todir="${dest}" overwrite="true">
 			<fileset dir="${source}" id="source">

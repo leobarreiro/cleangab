@@ -109,19 +109,22 @@ class CleanGabModel {
 		$this->argumentData = array();
 	}
 	
-	public function get($keyValue)
+	public function get($key)
 	{
-		$this->entity = new Entity("user");
+		$tableName = str_replace("model", "", strtolower(get_class($this)));
+		$this->entity = new Entity($tableName);
 		$this->entity->init();
-		$pk = $this->entity->getPk();
-		CleanGab::debug($pk[0]);
-		CleanGab::debug($keyValue);
-		$this->addArgumentData($pk[0], $keyValue);
-		$this->entity->addArgument($pk[0], $keyValue, "=");
-		$this->entity->setOffset(0);
+		$this->entity->addArgument($this->entity->getPk(), $key, "=");
 		$this->entity->setLimit(1);
 		$this->recordset = $this->entity->retrieve();
-		return $this->recordset->get(0);
+		if ($this->recordset->hasRecords())
+		{
+			return $this->recordset->getRecord();
+		}
+		else 
+		{
+			return false;
+		}
 	}
 	
 	// TODO: override
