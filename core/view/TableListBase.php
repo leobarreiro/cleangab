@@ -19,11 +19,12 @@ class TableListBase implements XHTMLComponent {
 	protected $formFields;
 	protected $renderForm;
 	protected $nameFields;
-	protected $nameController;
+	protected $controller;
+	protected $operation;
 	protected $operations;
 	protected $xhtml;
 
-	public function __construct($idName, $nameController, $objectModel)
+	public function __construct($idName, $controllerName, $operationName, $objectModel)
 	{
 		Validate::notNull($idName, "ID can not be null");
 		$this->idName 		  = $idName;
@@ -41,7 +42,8 @@ class TableListBase implements XHTMLComponent {
 		$this->formFields 	  = $objectModel->getListableFields();
 		$this->renderForm 	  = true;
 		$this->nameFields 	  = $objectModel->getHintFields();
-		$this->nameController = $nameController;
+		$this->controller 	  = $controllerName;
+		$this->operation  	  = $operationName;
 		$this->operations     = array("show", "edit");
 	}
 	
@@ -107,7 +109,7 @@ class TableListBase implements XHTMLComponent {
 				$xhtml[] = "</tr>";
 			}
 			$xhtml[] = "</table>";
-			$xhtml[] = $this->paginationToXhtml();
+			//$xhtml[] = $this->paginationToXhtml();
 		}
 		$this->xhtml = implode("", $xhtml);
 	}
@@ -139,6 +141,12 @@ class TableListBase implements XHTMLComponent {
 		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Actions\">";
 		foreach ($this->operations as $operation)
 		{
+			$id = strtolower(get_class($this)) . $this->idName . $operation;
+			$key = strtolower($operation . "_" . $this->controller);
+			$uri = "javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')";
+			$tbBt = new ToolbarButton($id, $uri, $key, $operation);
+			$tbBt->setControllerAction($this->controller, $this->operation);
+			Session::addToolbarButton($tbBt);
 			$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')" . "\" class=\"" . $operation . "\">" . $operation . "</a>&nbsp;";
 		}
 		$xhtml[] = "</div>";
@@ -229,7 +237,7 @@ class TableListBase implements XHTMLComponent {
 		$frm[] = "<script type=\"text/javascript\">";
 		$frm[] = "function " . strtolower(get_class($this)) . $this->idName . "ActionForm(action) {";
 		$frm[] = "if (document." . $formName . ".key.value != '') {";
-		$frm[] = "var url = '" . CLEANGAB_URL_BASE_APP . "/" . strtolower(str_replace("Controller", "", $this->nameController)) . "/'+action+'/'+document." . $formName . ".key.value;";
+		$frm[] = "var url = '" . CLEANGAB_URL_BASE_APP . "/" . $this->controller . "/'+action+'/'+document." . $formName . ".key.value;";
 		$frm[] = "document." . $formName . ".action=url;";
 		$frm[] = "document." . $formName . ".submit();";
 		$frm[] = "}";

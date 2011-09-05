@@ -45,28 +45,13 @@ div.top-menu {
 	padding: 4px;
 }
 
-div.top-menu div.toolbar-top {
-	margin-left: 20px;
-}
-
-div.top-menu div.toolbar-top a {
-	margin: 0px;
-	height: 20px;
-	padding: 0px 6px 0px 6px;
-	display: inline-block;
-}
-
-div.top-menu div.toolbar-top a.spacer {
-	border-right: 1px solid #000;
-}
-
 div.footer {
 	position: relative;
 	left: 50%;
 	margin-left: -500px;
 	width: 998px;
 	display: block;
-	height: 20px;
+	height: 30px;
 	background: #1B2A54;
 	border: 1px solid #2F3C94;
 	padding: 0px;
@@ -103,21 +88,32 @@ div.workarea {
 }
 
 div.workarea div.toolbar {
-	border: 1px solid green;
+	border: 1px solid #C2C2C6;
 	display: inline-block;
 	float: left;
-	width: 700px;
-	height: 30px;
+	width: 978px;
+	height: 28px;
 	padding: 4px;
-	text-align: right;
+	text-align: left;
 	clear: right;
+	background: #EEEEEE;
 }
-div.workarea div.user-menu, 
+
 div.workarea div.user-login {
-	border: 1px solid magenta;
+	border: 1px solid #C2C2C6;
 	display: inline-block;
 	float: right;
 	width: 260px;
+	height: 30px;
+	padding: 4px;
+	text-align: right;
+	vertical-align: middle;
+}
+
+div.workarea div.user-menu {
+	display: inline-block;
+	float: right;
+	width: 160px;
 	height: 30px;
 	padding: 4px;
 	text-align: right;
@@ -135,12 +131,25 @@ div.workarea div.user-login form input[type=submit] {
 	width: 40px;
 }
 
+html body div.workarea div.content-text {
+	display: inline-block;
+	width: 100%;
+	border: 1px solid blue;
+}
+
+html body div.workarea div.user-menu div.user {
+	border: none;
+	text-align: right;
+	padding: 0px 20px 0px 0px;
+}
+
 html body div.workarea div.user-menu ul.menuoptions {
 	position: relative;
 	display:none;
-	width: 220px;
-	border: 1px solid #cecece;
-	background: #cecece;
+	width: 160px;
+	border-width: 0px 1px 1px 1px;
+	border-color: #C2C2C6;
+	border-style: solid;
 	margin: 4px 2px 2px 2px;
 	z-index: 4px;
 }
@@ -173,10 +182,12 @@ div.page-title {
 	padding: 4px;
 }
 
-.tablelistbase {
+table.tablelistbase {
+	display: block;
 	width: 100%;
 	padding: 2px;
-	font-family: Arial, Verdana, Helvetica;
+	margin: 0px;
+	border: 1px solid #C2C2C6;
 }
 
 .tablelistbase tr td {
@@ -460,4 +471,73 @@ div.edit-form div.field input[type=password] {
 
 div.edit-form div.field span.tinyintformatter {
 	width: 60px;
+}
+
+ul.menu {
+	list-style: none; 
+	margin: 0; 
+	padding: 0;
+	background: #EDEDED;
+}
+
+ul.menu * {
+	margin: 0; 
+	padding: 0;
+}
+
+ul.menu a {
+	display: block; 
+	color: #000; 
+	text-decoration: none;
+}
+
+ul.menu li {
+	position: relative; 
+	float: left; 
+	margin-right: 2px;
+}
+
+ul.menu ul {
+	position: absolute; 
+	top: 26px; 
+	left: 0; 
+	background: #EEE; 
+	display: none; 
+	opacity: 0; 
+	list-style: none;
+}
+
+ul.menu ul li {
+	position: relative; 
+	border: 1px solid #aaa; 
+	border-top: none; 
+	width: 148px; 
+	margin: 0;
+}
+
+ul.menu ul li a {
+	display: block; 
+	padding: 3px 7px 5px; 
+	background-color: #EEE;
+}
+
+ul.menu ul li a:hover {
+	background-color: #c5c5c5;
+}
+
+ul.menu ul ul {
+	left: 148px; 
+	top:-1px;
+}
+
+ul.menu .menulink {
+	border: 1px solid #aaa; 
+	padding: 5px 7px 7px; 
+	font-weight: bold; 
+	width: 134px;
+	background: url("img/arrow_user.png") no-repeat center right #EEEEEE;
+}
+
+ul.menu .topline {
+	border-top: 1px solid #aaa;
 }

@@ -10,6 +10,7 @@
 
 require_once ("Validate.php");
 require_once ("UserToolsMenu.php");
+require_once ("Toolbar.php");
 
 class CleanGabEngineView {
 	
@@ -24,8 +25,8 @@ class CleanGabEngineView {
 	
 	public function __construct($controller, $operation) 
 	{
-		$this->controller 	= $controller;
-		$this->operation 	= $operation;
+		$this->controller 	= strtolower($controller);
+		$this->operation 	= strtolower($operation);
 		$this->templateFile	= CLEANGAB_XHTML_TEMPLATE;
 		$this->objects 		= array();
 		
@@ -37,15 +38,21 @@ class CleanGabEngineView {
 		{
 			$session = $_SESSION["CLEANGAB"];
 			$this->addObject("session", $session);
-			if (Session::isUserLogged())
-			{
-				$user = (object)$_SESSION["CLEANGAB"]["user"];
-				$this->addObject("user", $user);
-			}
 		}
-		$userToolsMenu = new UserToolsMenu();
-		$this->addObject($userToolsMenu->getIdName(), $userToolsMenu);
-		
+
+		if (Session::isUserLogged())
+		{
+			$user = (object)$_SESSION["CLEANGAB"]["user"];
+			$this->addObject("user", $user);
+			$toolbar = new Toolbar($this->controller, $this->operation);
+			$this->addObject($toolbar->getIdName(), $toolbar);
+		}
+		else 
+		{
+			$userToolsMenu = new UserToolsMenu();
+			$this->addObject($userToolsMenu->getIdName(), $userToolsMenu);
+		}
+
 		// Template XHTML
 		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->templateFile;
 		$this->templateFile 	= (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath)) ? CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath : CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $templatePath;
@@ -164,6 +171,7 @@ class CleanGabEngineView {
 	{
 		$this->parse();
 		echo $this->parsed;
+		//CleanGab::debug($_SESSION["CLEANGAB"]["toolbarButtons"]);
 	}
 	
 	private function isXhtmlComponent($mixed) 

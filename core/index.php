@@ -1,5 +1,7 @@
 <?php
 require_once ("CleanGab.php");
+require_once ("Toolbar.php");
+require_once ("ToolbarButton.php");
 require_once ("Session.php");
 
 if (isset($_SERVER['SCRIPT_NAME']) && (preg_match("/\/cleangab\/core\/index.php/", $_SERVER['SCRIPT_NAME']) > 0)) 

@@ -71,8 +71,10 @@ class Session {
 	 */
 	public static function logoff()
 	{
-		$_SESSION["CLEANGAB"]["user"] = array();
-		$_SESSION["CLEANGAB"]["uimessages"] = array();
+		$_SESSION["CLEANGAB"]["user"] 			= array();
+		$_SESSION["CLEANGAB"]["uimessages"] 	= array();
+		$_SESSION["CLEANGAB"]["toolbarButtons"] = array();
+		//$_SESSION["CLEANGAB"]["redir"] 			= array();
 		Session::addUIMessage("Logoff performed correctly");
 		Session::goToRedir();
 	}
@@ -114,6 +116,11 @@ class Session {
 			Session::goToRedir();
 			return false;
 		}
+	}
+	
+	public static function permissionExists($key)
+	{
+		return (in_array(strtolower($key), $_SESSION["CLEANGAB"]["user"]["permissions"]));
 	}
 	
 	private function createIfNotExists() 
@@ -279,6 +286,36 @@ class Session {
 		$isValidSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) && 
 							is_array($_SESSION['CLEANGAB']['user']) && count($_SESSION['CLEANGAB']['user']) > 0);
 		return $isValidSession;
+	}
+	
+	public static function addToolbarButton($actButton) 
+	{
+		if (!isset($_SESSION["CLEANGAB"]["toolbarButtons"]))
+		{
+			$_SESSION["CLEANGAB"]["toolbarButtons"] = array();
+		}
+		foreach ($_SESSION["CLEANGAB"]["toolbarButtons"] as $tbBt)
+		{
+			if ($tbBt->getIdName() == $actButton->getIdName())
+			{
+				return false;
+			}
+		}
+		$_SESSION["CLEANGAB"]["toolbarButtons"][] = $actButton;
+		return true;
+	}
+	
+	public static function getToolbarButtons($controller, $operation)
+	{
+		$btns = array();
+		foreach ($_SESSION["CLEANGAB"]["toolbarButtons"] as $button)
+		{
+			if ($button->getController() == $controller && $button->getOperation() == $operation)
+			{
+				$btns[] = $button;
+			}
+		}
+		return $btns;
 	}
 	
 }

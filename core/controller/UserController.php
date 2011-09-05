@@ -11,7 +11,7 @@ class UserController extends CleanGabController {
 	{
 		Session::addRedir("user", "login");
 		Session::verify();
-		Session::hasPermission("list_users");
+		Session::hasPermission("user_list");
 		$model = new UserModel();
 		// Arguments
 		$model->addArgumentData("name", $this->getUserInput("name"));
@@ -24,9 +24,9 @@ class UserController extends CleanGabController {
 		// Prepare List
 		$model->prepareList();
 		// View
-		$tableUsers = new TableListBase("users", get_class($this), $model);
+		$tableUsers = new TableListBase("users", "user", "index", $model);
 		$tableUsers->setFormFields(array("user", "email", "name"));
-		$view = new CleanGabEngineView("User", "index");
+		$view = new CleanGabEngineView("user", "index");
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$view->addObject($tableUsers->getIdName(), $tableUsers);
 		$view->renderize();
@@ -90,7 +90,7 @@ class UserController extends CleanGabController {
 	{
 		Session::addRedir("user", "login");
 		Session::verify();
-		Session::hasPermission("show_user");
+		Session::hasPermission("user_show");
 		if ($key > 0)
 		{
 			$model = new UserModel();
@@ -101,7 +101,7 @@ class UserController extends CleanGabController {
 			$tinyActive->setDisabled(true);
 			$user->activeoptions = $tinyActive->toFormField("active", "active", $user->active);
 			$view = new CleanGabEngineView("User", "show");
-			$view->addObject("user", $user);
+			$view->addObject("visibleuser", $user);
 			$view->renderize();
 		}
 		else
@@ -119,7 +119,7 @@ class UserController extends CleanGabController {
 	{
 		Session::addRedir("user", "login");
 		Session::verify();
-		Session::hasPermission("edit_user");
+		Session::hasPermission("user_edit");
 		
 		$model = new UserModel();
 		$objUser = $model->getUserById($key);
@@ -136,7 +136,7 @@ class UserController extends CleanGabController {
 		// View
 		$view = new CleanGabEngineView("User", "edit");
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
-		$view->addObject("user", $objUser);
+		$view->addObject("editableuser", $objUser);
 		$view->renderize();
 	}
 	

@@ -2,15 +2,15 @@
 	#{uimessage}
 <h2>Editar Usu&aacute;rio</h2>
 <form name="show" action="#{CLEANGAB_URL_BASE_APP}/user/save/" method="post">
-<input type="hidden" name="iduser" value="#{user.id}" />
+<input type="hidden" name="iduser" value="#{editableuser.id}" />
 <div class="edit-form">
-	<div class="field"><span>Nome</span><input type="text" name="name" id="name" value="#{user.name}" /></div>
-	<div class="field"><span>Nome de Usu&aacute;rio</span><input type="text" name="user" id="user" value="#{user.user}" readonly="readonly"/></div>
-	<div class="field"><span>E-mail</span><input type="text" name="email" id="email" value="#{user.email}" /></div>
+	<div class="field"><span>Nome</span><input type="text" name="name" id="name" value="#{editableuser.name}" /></div>
+	<div class="field"><span>Nome de Usu&aacute;rio</span><input type="text" name="user" id="user" value="#{editableuser.user}" readonly="readonly"/></div>
+	<div class="field"><span>E-mail</span><input type="text" name="email" id="email" value="#{editableuser.email}" /></div>
 	<div class="field"><span>Senha</span><input type="password" name="senha" id="senha" value="" maxlength="6" /></div>
 	<div class="field"><span>Repita a Senha</span><input type="password" name="repitaSenha" id="repitaSenha" value="" maxlength="6" /></div>
-	<div class="field"><span>Renovar Senha</span>#{user.renewoptions}</div>
-	<div class="field"><span>Ativo</span>#{user.activeoptions}</div>
+	<div class="field"><span>Renovar Senha</span>#{editableuser.renewoptions}</div>
+	<div class="field"><span>Ativo</span>#{editableuser.activeoptions}</div>
 	<div class="buttons"><input type="submit" value="Salvar"/> &nbsp; <input type="button" value="Cancelar" onclick="javascript:window.history.back()" /></div>
 </div>
 </form>
