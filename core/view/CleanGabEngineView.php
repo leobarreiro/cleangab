@@ -32,6 +32,7 @@ class CleanGabEngineView {
 		$navigator 			= new stdClass();
 		$navigator->referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : "#";
 		$this->addObject("navigator", $navigator);
+		
 		if (isset($_SESSION) && isset($_SESSION["CLEANGAB"]))
 		{
 			$session = $_SESSION["CLEANGAB"];
@@ -59,7 +60,7 @@ class CleanGabEngineView {
 		} 
 		elseif (file_exists(CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $relativePath))
 		{
-			$this->file  = CLEANGAB_FWK_ROOT .  DIRECTORY_SEPARATOR . $relativePath;
+			$this->file  = CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $relativePath;
 			$this->xhtml = file_get_contents($this->file);
 		}
 		else 
@@ -84,13 +85,25 @@ class CleanGabEngineView {
 		return $this->template;
 	}
 	
-	final function parse() 
+	private final function injectXhtmlFromComponents($content) 
 	{
-		// TODO: revisar conteudo geral. Traduzir template, conteudo e blocos.
+		foreach ($this->objects as $obj) 
+		{
+			if ($this->isXhtmlComponent($obj)) 
+			{
+				$content = str_replace("#{" . $obj->getIdName() . "}", $obj->toXhtml(), $content);
+			}
+		}
+		return $content;
+	}
+	
+	public final function parse() 
+	{
 		$content = str_replace("#{content}", $this->xhtml, $this->templateContent);
-		$tagNames   = $this->parserELTag($content);
-		$content = $this->parseConstants($tagNames, $content);
-		foreach ($tagNames as $tag) 
+		$content = $this->injectXhtmlFromComponents($content);
+		$tags    = $this->parseELTag($content);
+		$content = $this->parseConstants($tags, $content);
+		foreach ($tags as $tag) 
 		{
 			if (strpos($tag, ".") > 0) 
 			{
@@ -140,7 +153,7 @@ class CleanGabEngineView {
 	{
 		if ($this->getObjectByName($identifier)) 
 		{
-			CleanGab::debug("Objects ja possui um membro com idName " . $identifier);
+			CleanGab::log("Objects ja possui um membro com idName " . $identifier);
 			return false;
 		}
 		$this->objects[$identifier] = (is_object($object)) ? $object : (object)$object;
@@ -150,8 +163,6 @@ class CleanGabEngineView {
 	public function renderize() 
 	{
 		$this->parse();
-		//$templateContent = $this->parserConstants($templateContent);
-		//$viewContent = $this->parserConstants($this->parsed);
 		echo $this->parsed;
 	}
 	
@@ -160,7 +171,7 @@ class CleanGabEngineView {
 		return (is_object($mixed) && $mixed instanceof XHTMLComponent);
 	}
 
-	private function parserELTag($xhtml) 
+	private function parseELTag($xhtml) 
 	{
 		$pattern = "%(\#{){1}.(.)+.(\}){1}%";
 		preg_match_all($pattern, $xhtml, $matches, PREG_PATTERN_ORDER);
@@ -172,6 +183,7 @@ class CleanGabEngineView {
 		{
 			$tags[$i] = str_replace(array("#", "{", "}"), array("", "", ""), $tags[$i]);
 		}
+		
 		return $tags;
 	}
 	
@@ -189,7 +201,6 @@ class CleanGabEngineView {
 	
 	private function parseConstants($tags, $content)
 	{
-		//$tags = $this->parserELTag($content);
 		$constantPatter = '/^CLEANGAB_/';
 		foreach ($tags as $tag)
 		{
