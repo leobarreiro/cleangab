@@ -4,11 +4,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<title></title>
 	<link rel="SHORTCUT ICON" href="/intranet/favicon.ico" />
-	<link rel="stylesheet" href="/cleangab/core/lib/css/base.css" type="text/css" /> 
+	<link rel="stylesheet" href="#{CLEANGAB_URL_BASE_APP}/lib/css/base.css" type="text/css" /> 
 	<script src="/cleangab/core/lib/js/jquery.js"></script>
 	<script src="/cleangab/core/lib/js/jquery.maskedinput.js"></script>
 	<script src="/cleangab/core/lib/js/jquery.maxlength.js"></script>
 	<script src="/cleangab/core/lib/js/jquery.user.menu.js"></script>
+	<script src="/cleangab/core/lib/js/menu.drop.down.js"></script>
 </head>
 <body>
 
@@ -24,7 +25,7 @@
 
 	<div class="footer">
 		<ul>
-			<li><a href="http://disys.com" target="_blank">DISYS</a></li>
+			<li><a href="http://e-faber.com.br" target="_blank">e-faber</a></li>
 			<li>
 				#{CLEANGAB_APP_ENV}/
 				#{CLEANGAB_AUTH_METHOD}
@@ -38,7 +39,11 @@
 	   $(".datetimeformatter").mask("99/99/9999 99:99");
 	   $(".phoneformatter").mask("(99) 9999.9999");
 	   $(".cpformatter").mask("99999-999");
+	   $("div#uimessage").fadeOut(4500);
 	});
+	
+	var menu=new menu.dd("menu");
+	menu.init("menu","menuhover");
 	</script>
 
 </body>

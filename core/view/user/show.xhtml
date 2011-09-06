@@ -1,13 +1,12 @@
+	
+	#{uimessage}
+	#{toolbar}
 
-#{uimessage}
-<h2>Visualizar Usu&aacute;rio</h2>
-<input type="hidden" name="iduser" value="#{visibleuser.id}" />
-<div class="edit-form">
-	<div class="field"><span>Nome</span><input type="text" name="name" id="name" value="#{visibleuser.name}"  disabled="disabled" /></div>
-	<div class="field"><span>Nome de Usu&aacute;rio</span><input type="text" name="user" id="user" value="#{visibleuser.user}" readonly="readonly"  disabled="disabled" /></div>
-	<div class="field"><span>E-mail</span><input type="text" name="email" id="email" value="#{visibleuser.email}"  disabled="disabled" /></div>
-	<div class="field"><span>Ativo</span>#{visibleuser.activeoptions}</div>
-</div>
-<div class="tools">
-	<a href="#{navigator.referer}" class="go-back">Go back</a>
-</div>
+	<h2>Visualizar Usu&aacute;rio</h2>
+	<input type="hidden" name="iduser" value="#{visibleuser.id}" />
+	<div class="edit-form">
+		<div class="field"><span>Nome</span><input type="text" name="name" id="name" value="#{visibleuser.name}"  disabled="disabled" /></div>
+		<div class="field"><span>Nome de Usu&aacute;rio</span><input type="text" name="user" id="user" value="#{visibleuser.user}" readonly="readonly"  disabled="disabled" /></div>
+		<div class="field"><span>E-mail</span><input type="text" name="email" id="email" value="#{visibleuser.email}"  disabled="disabled" /></div>
+		<div class="field"><span>Ativo</span>#{visibleuser.activeoptions}</div>
+	</div>

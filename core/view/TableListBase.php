@@ -23,28 +23,31 @@ class TableListBase implements XHTMLComponent {
 	protected $operation;
 	protected $operations;
 	protected $xhtml;
+	protected $view;
 
-	public function __construct($idName, $controllerName, $operationName, $objectModel)
+	public function __construct($idName, $view, $model)
 	{
 		Validate::notNull($idName, "ID can not be null");
-		$this->idName 		  = $idName;
-		$this->header 		  = ($objectModel->getHintFields() != null) ? $objectModel->getHintFields() : array();
-		$this->masks  		  = ($objectModel->getMasks() != null) ? $objectModel->getMasks() : array();
+		$this->idName 	  = $idName;
+		$this->header 	  = ($model->getHintFields() != null) ? $model->getHintFields() : array();
+		$this->masks  	  = ($model->getMasks() != null) ? $model->getMasks() : array();
 		
-		$this->inject($objectModel->getRecordset());
+		$this->inject($model->getRecordset());
 		
-		$totalRecords 		  = $objectModel->getEntity()->getTotal();
-		$actualRecord 		  = ($objectModel->getEntity()->getOffset() > $totalRecords) ? $totalRecords : $objectModel->getEntity()->getOffset();
-		$recordsPerPage 	  = $objectModel->getEntity()->getLimit();
+		$totalRecords 	  = $model->getEntity()->getTotal();
+		$actualRecord 	  = ($model->getEntity()->getOffset() > $totalRecords) ? $totalRecords : $model->getEntity()->getOffset();
+		$recordsPerPage   = $model->getEntity()->getLimit();
 		
-		$this->pages 		  = ceil($totalRecords / $recordsPerPage);
-		$this->page  		  = $this->getActualPage($totalRecords, $recordsPerPage, $actualRecord);
-		$this->formFields 	  = $objectModel->getListableFields();
-		$this->renderForm 	  = true;
-		$this->nameFields 	  = $objectModel->getHintFields();
-		$this->controller 	  = $controllerName;
-		$this->operation  	  = $operationName;
-		$this->operations     = array("show", "edit");
+		$this->pages 	  = ceil($totalRecords / $recordsPerPage);
+		$this->page 	  = $this->getActualPage($totalRecords, $recordsPerPage, $actualRecord);
+		$this->formFields = $model->getListableFields();
+		$this->renderForm = true;
+		$this->nameFields = $model->getHintFields();
+		$this->view 	  = $view;
+		$this->controller = $view->getController();
+		$this->operation  = $view->getOperation();
+		$this->operations = array("show", "edit");
+		$view->addObject($this->getIdName(), $this);
 	}
 	
 	public function setOperations($arOperations)
@@ -109,7 +112,6 @@ class TableListBase implements XHTMLComponent {
 				$xhtml[] = "</tr>";
 			}
 			$xhtml[] = "</table>";
-			//$xhtml[] = $this->paginationToXhtml();
 		}
 		$this->xhtml = implode("", $xhtml);
 	}
@@ -138,7 +140,7 @@ class TableListBase implements XHTMLComponent {
 	{
 		$xhtml   = array();
 		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Tools\">";
-		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Actions\">";
+		//$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Actions\">";
 		foreach ($this->operations as $operation)
 		{
 			$id = strtolower(get_class($this)) . $this->idName . $operation;
@@ -146,13 +148,11 @@ class TableListBase implements XHTMLComponent {
 			$uri = "javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')";
 			$tbBt = new ToolbarButton($id, $uri, $key, $operation);
 			$tbBt->setControllerAction($this->controller, $this->operation);
-			Session::addToolbarButton($tbBt);
-			$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')" . "\" class=\"" . $operation . "\">" . $operation . "</a>&nbsp;";
+			$this->view->toolbar->addButton($tbBt);
+			//$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')" . "\" class=\"" . $operation . "\">" . $operation . "</a>&nbsp;";
 		}
-		$xhtml[] = "</div>";
-		
+		//$xhtml[] = "</div>";
 		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Paginator\">";
-		
 		if ($this->pages > 1)
 		{
 			$xhtml[] = "P&aacute;ginas: \n";
@@ -246,7 +246,8 @@ class TableListBase implements XHTMLComponent {
 		$frm[] = "document." . $this->idName . "ActionForm" . ".key.value=key;";
 		$frm[] = "$(\"tr\").removeClass('" . strtolower(get_class($this)) . "SelectedRecord');";
 		$frm[] = "$(obj).addClass('" . strtolower(get_class($this)) . "SelectedRecord');";
-		$frm[] = "$('." . strtolower(get_class($this)) . "Actions > a').addClass('active');";
+		//$frm[] = "$('." . strtolower(get_class($this)) . "Actions > a').addClass('active');";
+		$frm[] = "$('#toolbar-buttons > a').addClass('active');";
 		$frm[] = "}";
 		$frm[] = "</script>";
 		return implode("", $frm);

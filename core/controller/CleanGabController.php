@@ -1,9 +1,9 @@
 <?php
 /**
- * Clean-Gab Framework
+ * CleanGab Framework
  * CleanGabController.php
- * Date: 	2011-01-29
- * Author: 	Leopoldo Barreiro
+ * Date: 2011-01-29
+ * Author: Leopoldo Barreiro
  */
 
 include ("CleanGabEngineView.php");

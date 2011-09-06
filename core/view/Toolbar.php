@@ -5,18 +5,19 @@ require_once ("XHTMLComponent.php");
 class Toolbar implements XHTMLComponent {
 	
 	protected $idName;
-	private $controller;
-	private $operation;
+	private   $controller;
+	private   $operation;
 	protected $content;
-	protected $actions;
+	public    $buttons;
 	protected $xml;
 	
 	public function __construct($controller, $operation) 
 	{
-		$this->idName = "toolbar";
+		$this->idName     = "toolbar";
 		$this->controller = $controller;
-		$this->operation = $operation;
-		$this->xml = simplexml_load_file(CLEANGAB_FWK_SECURITY . DIRECTORY_SEPARATOR . "permissions.xml");
+		$this->operation  = $operation;
+		$this->buttons    = array();
+		$this->xml 		  = simplexml_load_file(CLEANGAB_FWK_SECURITY . DIRECTORY_SEPARATOR . "permissions.xml");
 	}
 	
 	public function assemble() 
@@ -70,9 +71,8 @@ class Toolbar implements XHTMLComponent {
 	
 	private function assembleToolbarButtons()
 	{
-		$buttons = Session::getToolbarButtons($this->controller, $this->operation);
 		$xhtml = array();
-		foreach ($buttons as $bt)
+		foreach ($this->buttons as $bt)
 		{
 			$xhtml[] = $bt->toXhtml();
 		}
@@ -97,6 +97,19 @@ class Toolbar implements XHTMLComponent {
 	public function setOperation($operation)
 	{
 		$this->operation = $operation;
+	}
+	
+	public function addButton($actButton)
+	{
+		foreach ($this->buttons as $tbBt)
+		{
+			if (strtolower($tbBt->getIdName()) == strtolower($actButton->getIdName()))
+			{
+				return false;
+			}
+		}
+		$this->buttons[] = $actButton;
+		return true;
 	}
 	
 }

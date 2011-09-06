@@ -288,35 +288,5 @@ class Session {
 		return $isValidSession;
 	}
 	
-	public static function addToolbarButton($actButton) 
-	{
-		if (!isset($_SESSION["CLEANGAB"]["toolbarButtons"]))
-		{
-			$_SESSION["CLEANGAB"]["toolbarButtons"] = array();
-		}
-		foreach ($_SESSION["CLEANGAB"]["toolbarButtons"] as $tbBt)
-		{
-			if ($tbBt->getIdName() == $actButton->getIdName())
-			{
-				return false;
-			}
-		}
-		$_SESSION["CLEANGAB"]["toolbarButtons"][] = $actButton;
-		return true;
-	}
-	
-	public static function getToolbarButtons($controller, $operation)
-	{
-		$btns = array();
-		foreach ($_SESSION["CLEANGAB"]["toolbarButtons"] as $button)
-		{
-			if ($button->getController() == $controller && $button->getOperation() == $operation)
-			{
-				$btns[] = $button;
-			}
-		}
-		return $btns;
-	}
-	
 }
 ?>

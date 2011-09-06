@@ -24,11 +24,11 @@ class UserController extends CleanGabController {
 		// Prepare List
 		$model->prepareList();
 		// View
-		$tableUsers = new TableListBase("users", "user", "index", $model);
-		$tableUsers->setFormFields(array("user", "email", "name"));
 		$view = new CleanGabEngineView("user", "index");
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
-		$view->addObject($tableUsers->getIdName(), $tableUsers);
+		$tableUsers = new TableListBase("users", $view, $model);
+		$tableUsers->setFormFields(array("user", "email", "name"));
+		//$view->addObject($tableUsers->getIdName(), $tableUsers);
 		$view->renderize();
 	}
 
@@ -101,6 +101,8 @@ class UserController extends CleanGabController {
 			$tinyActive->setDisabled(true);
 			$user->activeoptions = $tinyActive->toFormField("active", "active", $user->active);
 			$view = new CleanGabEngineView("User", "show");
+			$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
+			$view->toolbar->addButton(new ToolbarButton("back", CLEANGAB_URL_BASE_APP . "/user/index", "user_list", "back active"));
 			$view->addObject("visibleuser", $user);
 			$view->renderize();
 		}
@@ -135,6 +137,8 @@ class UserController extends CleanGabController {
 		
 		// View
 		$view = new CleanGabEngineView("User", "edit");
+		$view->toolbar->addButton(new ToolbarButton("save", "javascript:document.show.submit()", "user_edit", "save active"));
+		$view->toolbar->addButton(new ToolbarButton("back", CLEANGAB_URL_BASE_APP . "/user/index", "user_list", "back active"));
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$view->addObject("editableuser", $objUser);
 		$view->renderize();

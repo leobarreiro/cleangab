@@ -2,8 +2,8 @@
 /**
  * CleanGab Framework
  * CleanGabEngineView.php
- * Date: 	2011-01-28
- * Author: 	Leopoldo Barreiro
+ * Date: 2011-01-28
+ * Author: Leopoldo Barreiro
  */
 
 //header("Content-Type: text/html; charset=ISO-8859-1");
@@ -16,6 +16,7 @@ class CleanGabEngineView {
 	
 	protected $controller;
 	protected $operation;
+	public    $toolbar;
 	protected $objects;
 	protected $templateFile;
 	protected $templateXhtml;
@@ -44,8 +45,7 @@ class CleanGabEngineView {
 		{
 			$user = (object)$_SESSION["CLEANGAB"]["user"];
 			$this->addObject("user", $user);
-			$toolbar = new Toolbar($this->controller, $this->operation);
-			$this->addObject($toolbar->getIdName(), $toolbar);
+			$this->toolbar = new Toolbar($this->controller, $this->operation);
 		}
 		else 
 		{
@@ -82,6 +82,16 @@ class CleanGabEngineView {
 		return $this->controller;
 	}
 	
+	public function getOperation()
+	{
+		return $this->operation;
+	}
+	
+	public function getToolbar()
+	{
+		return $this->toolbar;
+	}
+	
 	public function setTemplate($template) 
 	{
 		$this->template = $template;
@@ -106,6 +116,10 @@ class CleanGabEngineView {
 	
 	public final function parse() 
 	{
+		if (Session::isUserLogged())
+		{
+			$this->addObject($this->toolbar->getIdName(), $this->toolbar);
+		}
 		$content = str_replace("#{content}", $this->xhtml, $this->templateContent);
 		$content = $this->injectXhtmlFromComponents($content);
 		$tags    = $this->parseELTag($content);
@@ -171,7 +185,6 @@ class CleanGabEngineView {
 	{
 		$this->parse();
 		echo $this->parsed;
-		//CleanGab::debug($_SESSION["CLEANGAB"]["toolbarButtons"]);
 	}
 	
 	private function isXhtmlComponent($mixed) 
