@@ -9,13 +9,10 @@ h1, h2, h3, h4, h5, h6 {
 	color: #1B2A54;
 }
 
-h1 {
-	font-size: 24px;
-}
-
 h2 {
-	font-size: 18px;
-	margin-left: 20px;
+	display: inline-block;
+	padding: 2px;
+	margin: 2px;
 }
 
 div.header {
@@ -53,28 +50,26 @@ div.footer {
 	margin-left: -500px;
 	width: 998px;
 	display: block;
-	height: 30px;
 	background: #1B2A54;
 	border: 1px solid #2F3C94;
 	padding: 0px;
 	margin-top: 2px;
 }
 
-div.footer ul {
+div.footer span {
+	display: inline-block;
 	color: #fff;
-	list-style: none;
 	font-size: 10px;
 	margin: 2px;
 	padding: 2px;
 }
 
-div.footer ul li {
-	padding: 0px;
-	margin: 0px;
+div.footer span a {
+	color: #fff;
 }
 
-html body div.footer ul li a {
-	color: #fff;
+div.footer span.right-side {
+	float: right;
 }
 
 div.workarea {
@@ -421,11 +416,11 @@ div.uimessagebase {
 	top: 10px;
 	right: 20px;
 	z-index: 20;
-	width: 300px;
+	width: 420px;
 	height: 20px;
 	border: 2px solid #C2C2C6;
 	border-radius: 4px;
-	background: url("img/info.png") no-repeat left center #FFB7FC;
+	background: url("img/info.png") no-repeat left center #A8D3FF;
 	font-size: 16px;
 	font-weight: bold;
 	margin: 4px;
@@ -497,7 +492,8 @@ ul.menu {
 	list-style: none; 
 	margin: 0; 
 	padding: 0;
-	background: #EDEDED;
+	background: #fff;
+	text-align: left;
 }
 
 ul.menu * {
@@ -507,8 +503,8 @@ ul.menu * {
 
 ul.menu a {
 	display: block; 
-	color: #000; 
-	text-decoration: none;
+	color: #1B2A54; 
+	text-decoration: underline;
 }
 
 ul.menu li {
@@ -517,7 +513,7 @@ ul.menu li {
 	margin-right: 2px;
 }
 
-ul.menu ul {
+ul.menu li ul {
 	position: absolute; 
 	top: 26px; 
 	left: 0; 
@@ -529,18 +525,16 @@ ul.menu ul {
 
 ul.menu ul li {
 	position: relative; 
-	border-style: solid;
-	border-color: #aaa;
-	border-width: 0px 0px 1px 0px;  
-	border-top: none; 
+	border: none;  
 	width: 148px; 
 	margin: 0;
 }
 
 ul.menu ul li a {
 	display: block; 
-	padding: 3px 7px 5px; 
-	background-color: #EEE;
+	padding: 3px 7px 5px;
+	border-top: 1px solid #E0E0E0;
+	border-bottom: 1px solid #E0E0E0;
 }
 
 ul.menu ul li a:hover {
@@ -559,6 +553,3 @@ ul.menu .menulink {
 	background: url("img/arrow_user.png") no-repeat center right #EEEEEE;
 }
 
-ul.menu .topline {
-	border-top: 1px solid #aaa;
-}
