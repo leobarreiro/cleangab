@@ -24,19 +24,19 @@ class Toolbar implements XHTMLComponent {
 	{
 		$xhtml   = array();
 		$xhtml[] = "<div class=\"toolbar\">";
-		$xhtml[] = "<ul class=\"menu\" id=\"menu\">";
-		$xhtml[] = "<li><a href=\"#\" class=\"menulink\">#{user.name}</a>";
-		$xhtml[] = "<ul>";
+		$xhtml[] = "<ul class=\"dropdown\" id=\"menu\">";
+		$xhtml[] = "<li><a href=\"#\">#{user.name}</a>";
+		$xhtml[] = "<ul class=\"sub_menu\">";
 		foreach ($this->xml as $module) 
 		{
 			$xhtml[] = "<li>";
-			$xhtml[] = "<a href=\"#\" class=\"sub\">" . $module['name'] . "</a>";
+			$xhtml[] = "<a href=\"#\">" . $module['name'] . "</a>";
 			$xhtml[] = "<ul>";
 			foreach ($module->permission as $prm) 
 			{
 				if (Session::permissionExists($prm['key']) && $prm['menu'] == "yes") 
 				{
-					$xhtml[] = "<li class=\"topline\"><a href=\"#{CLEANGAB_URL_BASE_APP}" . $prm['uri'] . "\">" . $prm['name'] . "</a></li>";
+					$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}" . $prm['uri'] . "\">" . $prm['name'] . "</a></li>";
 				}
 			}
 			$xhtml[] = "</ul>";

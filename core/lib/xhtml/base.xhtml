@@ -4,12 +4,15 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 	<title></title>
 	<link rel="SHORTCUT ICON" href="/intranet/favicon.ico" />
-	<link rel="stylesheet" href="#{CLEANGAB_URL_BASE_APP}/lib/css/base.css" type="text/css" /> 
+	<link rel="stylesheet" href="/cleangab/core/lib/css/base.css" type="text/css" /> 
+    <!--[if lte IE 7]>
+	<link rel="stylesheet" type="text/css" href="/cleangab/core/lib/css/ie.css" media="screen" />
+    <![endif]-->
 	<script src="/cleangab/core/lib/js/jquery.js"></script>
 	<script src="/cleangab/core/lib/js/jquery.maskedinput.js"></script>
 	<script src="/cleangab/core/lib/js/jquery.maxlength.js"></script>
-	<script src="/cleangab/core/lib/js/jquery.user.menu.js"></script>
-	<script src="/cleangab/core/lib/js/menu.drop.down.js"></script>
+	<script src="/cleangab/core/lib/js/hoverIntent.js"></script>
+	<script src="/cleangab/core/lib/js/jquery.dropdown.js"></script>
 </head>
 <body>
 
@@ -41,9 +44,6 @@
 	   $(".cpformatter").mask("99999-999");
 	   $("div#uimessage").fadeOut(4500);
 	});
-	
-	var menu=new menu.dd("menu");
-	menu.init("menu","menuhover");
 	</script>
 
 </body>
