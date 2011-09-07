@@ -16,7 +16,7 @@ class TinyIntFormatter extends Formatter {
 	{	
 		$this->dataBasePattern 	= "/^[0-9]$/";
 		$this->screenPattern 	= "/^[a-zA-Z]$/";
-		$this->setOptions(array("0"=>"I", "1"=>"A"));
+		$this->setOptions(array("0"=>"No", "1"=>"Yes"));
 	}
 	
 	public function setOptions($options)
