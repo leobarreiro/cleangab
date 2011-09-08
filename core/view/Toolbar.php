@@ -25,7 +25,7 @@ class Toolbar implements XHTMLComponent {
 		$xhtml   = array();
 		$xhtml[] = "<div class=\"toolbar\">";
 		$xhtml[] = "<ul class=\"dropdown\" id=\"menu\">";
-		$xhtml[] = "<li><a href=\"#\">#{user.name}</a>";
+		$xhtml[] = "<li><a href=\"#\" class=\"user\">#{user.name}</a>";
 		$xhtml[] = "<ul class=\"sub_menu\">";
 		foreach ($this->xml as $module) 
 		{

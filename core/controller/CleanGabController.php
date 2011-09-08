@@ -39,6 +39,10 @@ class CleanGabController {
 		}
 		return false;
 	}
+	
+	public function add() {}
+	
+	public function edit() {}
 
 	public function index() {}
 	

@@ -10,6 +10,7 @@
     <![endif]-->
 	<script src="/cleangab/core/lib/js/jquery.js"></script>
 	<script src="/cleangab/core/lib/js/jquery.maskedinput.js"></script>
+	<script src="/cleangab/core/lib/js/jquery.priceformat.js"></script>
 	<script src="/cleangab/core/lib/js/jquery.maxlength.js"></script>
 	<script src="/cleangab/core/lib/js/hoverIntent.js"></script>
 	<script src="/cleangab/core/lib/js/jquery.dropdown.js"></script>
@@ -38,12 +39,15 @@
 
 	<script type="text/javascript">
 	jQuery(document).ready(function() {
-	   $(".dateformatter").mask("99/99/9999");
-	   $(".datetimeformatter").mask("99/99/9999 99:99");
-	   $(".phoneformatter").mask("(99) 9999.9999");
-	   $(".cpformatter").mask("99999-999");
-	   $("div#uimessage").fadeOut(4500);
-	});
+		   $(".dateformatter").mask("99/99/9999");
+		   $(".datetimeformatter").mask("99/99/9999 99:99");
+		   $(".phoneformatter").mask("(99) 9999.9999");
+		   $(".cpformatter").mask("99999-999");
+		   $("div#uimessage").fadeOut(4500);
+		   $('.moeda').priceFormat({ prefix: '', centsSeparator: ',', thousandsSeparator: '.', limit: 8 });
+		   $('.percent').priceFormat({ prefix: '', centsSeparator: ',', thousandsSeparator: '.', limit: 5 });
+		   $(".mes").mask("99");
+		});
 	</script>
 
 </body>

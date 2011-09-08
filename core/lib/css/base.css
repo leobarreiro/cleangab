@@ -3,6 +3,7 @@
 body {
 	font-family: Trebuchet MS, Arial, Verdana, Helvetica;
 	font-size: 11px;
+	background: #ddd;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -13,6 +14,13 @@ h2 {
 	display: inline-block;
 	padding: 2px;
 	margin: 2px;
+}
+
+input {
+	margin: 2px;
+	border: 1px solid #cecece;
+	padding: 2px;
+	font-size: 11px;
 }
 
 div.header {
@@ -77,11 +85,22 @@ div.workarea {
 	left: 50%;
 	margin-left: -500px;
 	width: 986px;
-	border: 1px solid #2F3C94;
+	border: 1px solid #ccc;
 	display: block;
 	vertical-align: top;
 	padding: 6px;
 	text-align: center;
+	background: #fff;
+}
+
+html body div.workarea h2 {
+	display: inline-block;
+	text-align: left;
+	padding: 0px;
+	margin: 2px;
+	width: 100%;
+	font-size: 20px;
+	height: 22px;
 }
 
 div.workarea div.toolbar {
@@ -92,18 +111,8 @@ div.workarea div.toolbar {
 	height: 28px;
 	padding: 4px;
 	text-align: center;
-	margin: 2px 0px 20px 0px;
+	margin: 2px 0px 4px 0px;
 	/*background: #EEEEEE;*/
-}
-
-div.workarea div.toolbar h2 {
-	display: inline-block;
-	float: left;
-	height: 24px;
-	padding: 1px;
-	width: auto;
-	margin: 1px 4px 1px 20px;
-	text-align: center;
 }
 
 div.workarea div.toolbar div#toolbar-buttons {
@@ -117,7 +126,7 @@ div.workarea div.user-login {
 	border: 1px solid #C2C2C6;
 	display: inline-block;
 	float: right;
-	width: 260px;
+	width: 300px;
 	height: 30px;
 	padding: 4px;
 	text-align: right;
@@ -135,8 +144,6 @@ div.workarea div.user-menu {
 }
 
 div.workarea div.user-login form input[type=text], div.workarea div.user-login form input[type=password]  {
-	margin: 4px 2px 4px 2px;
-	border: 1px solid #cecece;
 	width: 80px;
 }
 
@@ -240,8 +247,8 @@ div.tablelistbasePaginator b {
 	display: inline-block;
 	padding: 2px 6px 2px 6px;
 	margin: 2px;
-	border: 1px solid #000;
-	background: #000066;
+	border: 1px solid #1B2A54;
+	background: #1B2A54;
 	color: #fff;
 	font-size: 12px;
 	border-radius: 4px;
@@ -285,11 +292,7 @@ div.tablelistbaseForm form div span {
 }
 
 div.tablelistbaseForm form div input, div.tablelistbaseForm form div select {
-	padding: 4px;
-	font-size: 11px;
-	border: 1px solid #999999;
-	border-radius: 4px;
-	margin: 4px;
+	width: 200px;
 }
 
 table.tablelistbase tbody tr:hover {
@@ -439,6 +442,35 @@ div.edit-form {
 	display: inline-block;
 	margin: 20px;
 	padding: 8px;
+	border: 1px solid #EEE;
+	width: 410px;
+}
+
+div.double-form {
+	border: 1px solid #dedede;
+	border-radius: 4px;
+	display: inline-block;
+	margin: 2px 0px 12px 0px;
+	padding: 8px;
+}
+
+div.double-form fieldset.status {
+	border-radius: 4px;
+	width: 80px;
+	height: 40px;
+	float: right;
+}
+
+div.double-form fieldset.status span.hifi-status {
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 6px;
+	padding: 2px;
+}
+
+div.double-form fieldset.status span.rascunho {
+	color: gray;
 }
 
 div.edit-form div.field {
@@ -456,7 +488,23 @@ div.edit-form div.field span {
 	display: inline-block;
 	width: 160px;
 	text-align: left;
-	padding-left: 20px;
+}
+
+div.double-form div.field span {
+	width: 90px;
+	display: inline-block;
+	text-align: left;
+}
+
+div.double-form div.field {
+	display: inline-block;
+	height: 20px;
+	width: 270px;
+	vertical-align: middle;
+	text-align: left;
+	padding: 0px;
+	margin: 4px;
+	float: left;
 }
 
 div.edit-form div.buttons {
@@ -466,10 +514,9 @@ div.edit-form div.buttons {
 	text-align: center;
 }
 
-div.edit-form div.field input[type=text] {
+div.edit-form div.field input.text {
 	width: 200px;
 	font-size: 11px;
-	padding: 2px;
 }
 
 div.edit-form div.field input[type=password] {
@@ -500,7 +547,13 @@ ul.dropdown li {
 	font-weight: bold; 
 	float: left; 
 	zoom: 1; 
-	background: #ccc;
+	background: url("img/arrow_user.png") no-repeat right center #EEE;
+	padding-right: 20px;
+}
+
+ul.dropdown li a.user {
+	background: url("img/secure.png") no-repeat left center;
+	text-indent: 16px;
 }
 
 ul.dropdown a:hover	{
@@ -516,6 +569,8 @@ ul.dropdown li a {
 	padding: 4px 8px; 
 	border-right: 1px solid #333;
 	color: #222;
+	text-decoration: none;
+	font-size: 12px;
 }
 
 ul.dropdown li:last-child a {
@@ -525,9 +580,9 @@ ul.dropdown li:last-child a {
 /* Doesn't work in IE */
 ul.dropdown li.hover,
 ul.dropdown li:hover {
-	background: #F3D673; 
 	color: black; 
 	position: relative;
+	font-weight: bold;
 }
 
 ul.dropdown li.hover a {
@@ -547,7 +602,7 @@ ul.dropdown ul {
 
 ul.dropdown ul li {
 	font-weight: normal;
-	background: #f6f6f6;
+	background: #EEE;
 	color: #000;
 	border-bottom: 1px solid #ccc;
 	float: none;
@@ -570,4 +625,86 @@ ul.dropdown ul ul {
 
 ul.dropdown li:hover > ul {
 	visibility: visible;
+}
+
+html body div.workarea div.abas {
+	display: inline-block;
+	width: 100%;
+	height: 30px;
+	text-align: left;
+}
+
+html body div.workarea div.abas span {
+	display: inline-block;
+	padding: 6px;
+	border-style: solid;
+	border-color: #dedede;
+	border-width: 1px 1px 0px 1px;
+	background: #eeeeee;
+	margin: 0px 2px 0px 2px;
+	cursor: pointer;
+}
+
+html body div.workarea div.abas span:hover {
+	background: #F0F8FF;
+}
+
+html body div.workarea div.abas span.active {
+	background: #fff;
+	font-weight: bold;
+	padding-bottom: 8px;
+}
+
+html body div.workarea div.content {
+	border: 1px solid #dedede;
+	border-radius: 4px;
+	height: 320px;
+	padding: 8px;
+}
+
+.ocult {
+	display: none;
+	visibility: hidden;
+}
+
+input.moeda {
+	width: 80px;
+	text-align: right;
+	background: url("img/moeda.png") no-repeat left center;
+	text-indent: 20px;
+}
+
+input.percent {
+	width: 60px;
+	text-align: right;
+	background: url("img/percent.png") no-repeat right center;
+	padding-right: 20px;
+}
+
+input.codigo {
+	width: 80px;
+}
+
+input.readonly {
+	background: #dedede;
+}
+input.nome {
+	width: 160px;
+}
+
+input.mes {
+	width: 30px;
+	text-align: left;
+}
+
+input.dateformatter {
+	width: 70px;
+}
+
+div.left {
+	float: left;
+}
+
+div.right {
+	float: right;
 }

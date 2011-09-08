@@ -34,4 +34,10 @@ ini_set ('include_path',
 			PATH_SEPARATOR . CLEANGAB_FWK_FORMATTER . 
 			PATH_SEPARATOR . CLEANGAB_FWK_ORM . DIRECTORY_SEPARATOR . CLEANGAB_DB_DRIVER . 
 			PATH_SEPARATOR);
+
+if (defined("CLEANGAB_PATH_BASE_APP"))
+{
+	ini_set('include_path', ini_get('include_path') . 
+			PATH_SEPARATOR . CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "controller");
+}
 ?>
