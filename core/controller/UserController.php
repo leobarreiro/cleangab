@@ -36,7 +36,7 @@ class UserController extends CleanGabController {
 	{
 		$name = filter_input(INPUT_POST, "name", FILTER_SANITIZE_STRING);
 		$email = filter_input(INPUT_POST, "email", FILTER_VALIDATE_EMAIL);
-		$created = new date();
+		$created = date("dd/mm/YY");
 	}
 
 	public function login()

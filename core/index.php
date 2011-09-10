@@ -1,6 +1,8 @@
+
 <?php
 require_once ("CleanGab.php");
 require_once ("Toolbar.php");
+require_once ("UIMessageBase.php");
 require_once ("ToolbarButton.php");
 require_once ("Session.php");
 

@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Description of all permissions in the system -->
 <modules>
-	<module name="Security">
+	<module name="Users">
 		<permission name="Login web interface" key="user_loginweb" uri="/user/login" menu="no" />
 		<permission name="Grant permissions to others users" key="user_grant" uri="/user/permissions" menu="no" />
 		<permission name="List Users" key="user_list" uri="/user/index" menu="yes" />
 		<permission name="Show User" key="user_show" uri="/user/show" menu="no" />
 		<permission name="Add a new user" key="user_show" uri="/user/add" menu="yes" />
 		<permission name="Edit an user" key="user_edit" uri="/user/edit" menu="no" />
+	</module>
+	<module name="HiFi">
+		<permission name="Add a new HiFi" key="hifi_add" uri="/hifi/add" menu="yes" />
 	</module>
 </modules>
