@@ -16,4 +16,5 @@ define ("CLEANGAB_AUTH_METHOD", "DB"); // Microsoft Active Directory: AD; DataBa
 define ("CLEANGAB_AD_HOST", "lanpoap01");
 define ("CLEANGAB_AD_DOMAIN", "disys");
 define ("CLEANGAB_AD_PORT", "");
+define ("CLEANGAB_APP_LANGUAGE", "pt_BR");
 ?>
