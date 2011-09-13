@@ -147,7 +147,20 @@ class CleanGabEngineView {
 				if ($methods) 
 				{
 					$eval = implode(".", $methods);
-					$content = str_replace("#{" . $tag . "}", $obj->{$eval}, $content);
+					
+					if ($obj->{$eval} instanceof XHTMLComponent)
+					{
+						$content = str_replace("#{" . $tag . "}", $obj->{$eval}->toXhtml(), $content);
+					}
+					else if ($obj->{$eval} instanceof Formatter)
+					{
+						$content = str_replace("#{" . $tag . "}", $obj->{$eval}->toScreen($obj->{$eval}->getDataBaseContent()), $content);
+					}
+					else 
+					{
+						$content = str_replace("#{" . $tag . "}", $obj->{$eval}, $content);
+					}
+					//$content = str_replace("#{" . $tag . "}", $obj->{$eval}, $content);
 				}
 				else 
 				{
@@ -155,9 +168,13 @@ class CleanGabEngineView {
 					{
 						$content = str_replace("#{" . $tag . "}", $obj->toXhtml(), $content);
 					}
+					else if ($obj instanceof Formatter)
+					{
+						$content = str_replace("#{" . $tag . "}", $obj->toScreen($obj->getDataBaseContent()), $content);
+					}
 					else 
 					{
-						$content = str_replace("#{" . $tag . "}", (string)$obj, $content);
+						$content = str_replace("#{" . $tag . "}", $obj, $content);
 					}
 				}
 			}
@@ -177,7 +194,7 @@ class CleanGabEngineView {
 			CleanGab::log("Objects ja possui um membro com idName " . $identifier);
 			return false;
 		}
-		$this->objects[$identifier] = (is_object($object)) ? $object : (object)$object;
+		$this->objects[$identifier] = $object;
 		return true;
 	}
 	
