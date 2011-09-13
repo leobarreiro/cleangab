@@ -23,9 +23,10 @@ class SelectInput extends Input {
 		$this->options[$key] = $value;
 	}
 	
-	public function setOptions($arOptions)
+	public function setOptions($mixedOptions)
 	{
-		$this->options = $arOptions;
+		$opts = (!is_array($mixedOptions)) ? (array)$mixedOptions : $mixedOptions;
+		$this->options = $opts;
 	}
 	
 	public function assemble() 
@@ -52,16 +53,16 @@ class SelectInput extends Input {
 		
 		if (is_array($this->options) && count($this->options) > 0)
 		{
-			foreach ($this->options as $opt)
+			foreach ($this->options as $k=>$v)
 			{
 				$option = array();	
-				$option[] = "<option value=\"" . $opt->k . "\"";
-				if ($this->value == $opt->v)
+				$option[] = "<option value=\"" . $k . "\"";
+				if ($this->value == $v)
 				{
 					$option[] = " selected";
 				}
 				$option[] = ">";
-				$option[] = $opt->v . "</option>";
+				$option[] = $v . "</option>";
 				$xhtml[] = implode("", $option);
 			}
 		}
