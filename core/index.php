@@ -19,6 +19,8 @@ $friendlyUrl 				 = array();
 $friendlyUrl['cgController'] = filter_input(INPUT_GET, "cgController", FILTER_SANITIZE_STRING);
 $friendlyUrl['cgAction'] 	 = filter_input(INPUT_GET, "cgAction", FILTER_SANITIZE_STRING);
 $friendlyUrl['cgParam'] 	 = filter_input(INPUT_GET, "cgParam", FILTER_SANITIZE_STRING);
+$friendlyUrl['cgParam2'] 	 = filter_input(INPUT_GET, "cgParam2", FILTER_SANITIZE_STRING);
+$friendlyUrl['cgParam3'] 	 = filter_input(INPUT_GET, "cgParam3", FILTER_SANITIZE_STRING);
 
 // Controller
 
@@ -47,10 +49,14 @@ if ($friendlyUrl['cgAction'] != null &&
 	
 	// Params
 	
-	if ($friendlyUrl['cgParam'] != null) 
+	if ($friendlyUrl['cgParam'] != null && $friendlyUrl['cgParam2'] != null) 
+	{
+		$controller->$friendlyUrl['cgAction']($friendlyUrl['cgParam'], $friendlyUrl['cgParam2']);
+	} 
+	else if ($friendlyUrl['cgParam'] != null) 
 	{
 		$controller->$friendlyUrl['cgAction']($friendlyUrl['cgParam']);
-	} 
+	}
 	else 
 	{
 		$controller->{$friendlyUrl['cgAction']}();
