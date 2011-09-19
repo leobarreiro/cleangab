@@ -111,6 +111,7 @@ div.workarea div.toolbar {
 	height: 28px;
 	padding: 4px;
 	text-align: center;
+	vertical-align: middle;
 	margin: 2px 0px 4px 0px;
 	/*background: #EEEEEE;*/
 }
@@ -440,8 +441,8 @@ div.workarea div.show div span {
 
 div.edit-form {
 	display: inline-block;
-	margin: 20px;
-	padding: 8px;
+	margin: 10px;
+	padding: 2px;
 	border: 1px solid #EEE;
 	width: 410px;
 }
@@ -456,9 +457,19 @@ div.double-form {
 
 div.double-form fieldset.status {
 	border-radius: 4px;
+	border-color: #ddd;
 	width: 80px;
-	height: 40px;
+	height: 50px;
 	float: right;
+}
+
+div.double-form fieldset.status span.hifi-code {
+	font-size: 16px;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 4px;
+	padding: 2px;
+	color: #1B2A54;
 }
 
 div.double-form fieldset.status span.hifi-status {
@@ -473,10 +484,17 @@ div.double-form fieldset.status span.rascunho {
 	color: gray;
 }
 
-div.edit-form div.field {
+div.double-form fieldset.status span.aprovado {
+	color: green;
+}
+
+div.double-form fieldset.status span.em-avaliacao {
+	color: orange;
+}
+
+div.field {
 	display: inline-block;
 	height: 20px;
-	width: 400px;
 	vertical-align: middle;
 	text-align: left;
 	padding: 0px;
@@ -484,7 +502,24 @@ div.edit-form div.field {
 	float: left;
 }
 
-div.edit-form div.field span {
+div.big {
+	width: 270px;
+}
+
+div.mini {
+	width: 180px;
+}
+
+div.edit-form div.subtotal {
+	border-top: 1px solid #ddd;
+	padding-top: 4px;
+}
+
+div.edit-form input.subtotal {
+	margin-left: 68px;
+}
+
+div.field span {
 	display: inline-block;
 	width: 160px;
 	text-align: left;
@@ -496,17 +531,6 @@ div.double-form div.field span {
 	text-align: left;
 }
 
-div.double-form div.field {
-	display: inline-block;
-	height: 20px;
-	width: 270px;
-	vertical-align: middle;
-	text-align: left;
-	padding: 0px;
-	margin: 4px;
-	float: left;
-}
-
 div.edit-form div.buttons {
 	display: block;
 	height: 30px;
@@ -515,7 +539,7 @@ div.edit-form div.buttons {
 }
 
 div.edit-form div.field input.text {
-	width: 200px;
+	width: 220px;
 	font-size: 11px;
 }
 
@@ -607,7 +631,7 @@ ul.dropdown ul li {
 	border-bottom: 1px solid #ccc;
 	float: none;
 }
-									  
+						  
 /* IE 6 & 7 Needs Inline Block */
 ul.dropdown ul li a	{
 	border-right: none;
@@ -668,17 +692,17 @@ html body div.workarea div.content {
 }
 
 input.moeda {
-	width: 80px;
+	width: 70px;
 	text-align: right;
 	background: url("img/moeda.png") no-repeat left center;
-	text-indent: 20px;
+	text-indent: 16px;
 }
 
 input.percent {
-	width: 60px;
+	width: 40px;
 	text-align: right;
 	background: url("img/percent.png") no-repeat right center;
-	padding-right: 20px;
+	padding-right: 14px;
 }
 
 input.codigo {
@@ -686,15 +710,22 @@ input.codigo {
 }
 
 input.readonly {
-	background: #dedede;
+	background-color: #ddd;
 }
+
 input.nome {
 	width: 160px;
 }
 
-input.mes {
+input.mes, 
+input.inteiro {
 	width: 30px;
-	text-align: left;
+	text-align: right;
+}
+
+input.cargahoraria {
+	width: 40px;
+	text-align: right;
 }
 
 input.dateformatter {
@@ -723,6 +754,7 @@ div#ajaxloader {
 	height: 100%;
 	z-index: 40;
 	opacity: 0.6;
+	filter: alpha(opacity = 60);
 }
 
 div#ajaxloader img {
@@ -731,4 +763,95 @@ div#ajaxloader img {
 	left: 50%;
 	margin: -15px 0px 0px -15px;
 	padding: 0px;
+}
+
+.hide {
+	display: none;
+	visibility: hidden;
+}
+
+input.mini {
+	width: 16px;
+	height: 16px;
+	border: none;
+	font-size: 0px;
+	text-indent: 20px;
+}
+
+input.refresh-mini {
+	background: url("img/refresh-mini.png") no-repeat center center;
+}
+
+input.calculator-mini {
+	background: url("img/calculator-mini.png") no-repeat center center;
+}
+
+div.note {
+	text-align: center;
+	font-style: italic;
+	color: #808080;
+	text-indent: 40px;
+}
+
+a.hintbutton {
+	cursor: help;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url("img/help-mini.png") no-repeat center center;
+	color: transparent;
+	margin: 0px 2px 0px 8px;
+	padding: 0px;
+	font-size: 0px;
+	text-indent: 20px;
+	vertical-align: middle;
+}
+
+.ac_results {
+	padding: 0px;
+	border: 1px solid black;
+	background-color: white;
+	overflow: hidden;
+	z-index: 99999;
+}
+
+.ac_results ul {
+	width: 100%;
+	list-style-position: outside;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.ac_results li {
+	margin: 0px;
+	padding: 2px 5px;
+	cursor: default;
+	display: block;
+	/* 
+	if width will be 100% horizontal scrollbar will apear 
+	when scroll mode will be used
+	*/
+	/*width: 100%;*/
+	font: menu;
+	font-size: 12px;
+	/* 
+	it is very important, if line-height not setted or setted 
+	in relative units scroll will be broken in firefox
+	*/
+	line-height: 16px;
+	overflow: hidden;
+}
+
+.ac_loading {
+	background: white url('indicator.gif') right center no-repeat;
+}
+
+.ac_odd {
+	background-color: #eee;
+}
+
+.ac_over {
+	background-color: #0A246A;
+	color: white;
 }
