@@ -58,6 +58,7 @@ class Entity implements IDBEntity {
 		$this->countThis 		= true;
 		$this->sqlCount 		= null;
 		$this->objectToPersist 	= null;
+		$this->init();
 	}
 	
 	private function connectIfNull() 
