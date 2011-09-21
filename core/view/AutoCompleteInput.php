@@ -11,10 +11,12 @@ require_once ("Input.php");
 class AutoCompleteInput extends Input implements XHTMLComponent {
 	
 	protected $uri;
+	protected $pluginEvents; // according to jquery autocomplete plugin: http://jqueryui.com/demos/autocomplete/#event-select
 		
 	public function __construct($name, $value, $uri) 
 	{
 		parent::__construct($name, $value, "text");
+		$this->pluginEvents = array("create", "search", "open", "focus", "select", "close", "change");
 		$this->uri = $uri;
 	}
 	
@@ -25,10 +27,15 @@ class AutoCompleteInput extends Input implements XHTMLComponent {
 		$complement = array();
 		$complement[] = "<script type=\"text/javascript\">";
 		$complement[] = "jQuery(\"#" . $this->getIdName() . "\").autocomplete('" . $this->uri . "', {";
-		$complement[] = "width: 300,";
-		$complement[] = "multiple: false,";
-		$complement[] = "matchContains: true,";
-		//$complement[] = "formatItem: autoCompleteFormatItem,";
+		$complement[] = "width: 260, ";
+		$complement[] = "multiple: false, ";
+		$complement[] = "matchContains: true, ";
+		foreach ($this->triggersJs as $event=>$action)
+		{
+			if (in_array($event, $this->pluginEvents))
+			$complement[] = $event . ": function(event, ui){" . $action . "}, ";
+		}
+		//$complement[] = "formatItem: autoCompleteFormatItem, ";
 		$complement[] = "formatResult: autoCompleteFormatResult";
 		$complement[] = "});";
 		$complement[] = "</script>";
