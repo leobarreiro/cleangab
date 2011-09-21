@@ -49,7 +49,7 @@ class SelectInput extends Input {
 		}
 		$xhtml[] = ">";
 		
-		$xhtml[] = "<option value=\"\">Selecione...</option>";
+		$xhtml[] = "<option value=\"\">Select...</option>";
 		
 		if (is_array($this->options) && count($this->options) > 0)
 		{
