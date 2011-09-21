@@ -17,6 +17,7 @@ class Input implements XHTMLComponent {
 	protected $xhtml;
 	protected $cssClass;
 	protected $triggersJs;
+	protected $supportedTriggers;
 	
 	public function __construct($name, $value, $type="text") 
 	{
@@ -28,6 +29,7 @@ class Input implements XHTMLComponent {
 		$this->setType($type);
 		$this->attribs = array();
 		$this->triggersJs = array();
+		$this->supportedTriggers = array("onselect", "onchange", "onblur", "onclick", "onmouseover", "onmousedown", "onkeydown", "onkeyover");
 	}
 	
 	public function getCssClass() 
@@ -51,7 +53,7 @@ class Input implements XHTMLComponent {
 	
 	public function addTriggerJs($event, $todo) 
 	{
-		$this->triggersJs[strtolower($event)] = $todo;	
+		$this->triggersJs[strtolower($event)] = $todo;
 	}
 	
 	public function addAttrib($attribName, $attribValue) 
@@ -81,7 +83,10 @@ class Input implements XHTMLComponent {
 		}
 		foreach ($this->triggersJs as $event=>$todo)
 		{
-			$xhtml[] = " " . $event . "=\"" . $todo ."\"";
+			if (in_array($event, $this->supportedTriggers))
+			{
+				$xhtml[] = " " . $event . "=\"" . $todo ."\"";
+			}
 		}
 		$xhtml[] = "/>";
 		$this->xhtml = implode("", $xhtml);
