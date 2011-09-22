@@ -2,6 +2,7 @@
 require_once ("CleanGabController.php");
 require_once ("UserModel.php");
 require_once ("TableListBase.php");
+require_once ("DateTimeFormatter.php");
 require_once ("UIMessageBase.php");
 require_once ("TinyIntFormatter.php");
 
@@ -100,21 +101,19 @@ class UserController extends CleanGabController {
 			$tinyActive->setOptions($arOpt);
 			$tinyActive->setDisabled(true);
 			$user->activeoptions = $tinyActive->toFormField("active", "active", $user->active);
+			$user->renewoptions = $tinyActive->toFormField("renew", "renew", $user->renew_passwd);
+			$xhtml = $this->listPermissions($user->id, true);
 			$view = new CleanGabEngineView("User", "show");
 			$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 			$view->toolbar->addButton(new ToolbarButton("back", CLEANGAB_URL_BASE_APP . "/user/index", "user_list", "back active"));
 			$view->addObject("visibleuser", $user);
+			$view->addObject("permissions", implode("", $xhtml));
 			$view->renderize();
 		}
 		else
 		{
 			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/index");
 		}
-	}
-	
-	public function newItem()
-	{
-		
 	}
 	
 	public function edit($key)
@@ -134,6 +133,11 @@ class UserController extends CleanGabController {
 		$tinyRenew = new TinyIntFormatter();
 		$tinyRenew->setOptions($arOpt);
 		$objUser->renewoptions = $tinyRenew->toFormField("renew", "renew", $objUser->renew_passwd);
+		$created = new DateTimeFormatter();
+		$created->toScreen($objUser->created);
+		$objUser->created = $created;
+		
+		$xhtml = $this->listPermissions($objUser->id, false);
 		
 		// View
 		$view = new CleanGabEngineView("User", "edit");
@@ -141,6 +145,7 @@ class UserController extends CleanGabController {
 		$view->toolbar->addButton(new ToolbarButton("back", CLEANGAB_URL_BASE_APP . "/user/index", "user_list", "back active"));
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$view->addObject("editableuser", $objUser);
+		$view->addObject("permissions", implode("", $xhtml));
 		$view->renderize();
 	}
 	
@@ -148,6 +153,7 @@ class UserController extends CleanGabController {
 	{
 		$model = new UserModel();
 		$model->addArgumentData("iduser", $this->getUserInput("iduser"));
+		$model->addArgumentData("uuid", $this->getUserInput("uuid"));
 		$model->addArgumentData("name", $this->getUserInput("name"));
 		$model->addArgumentData("user", $this->getUserInput("user"));
 		$model->addArgumentData("email", $this->getUserInput("email"));
@@ -155,7 +161,6 @@ class UserController extends CleanGabController {
 		$model->addArgumentData("repitaSenha", $this->getUserInput("repitaSenha"));
 		$model->addArgumentData("active", $this->getUserInput("active"));
 		$model->addArgumentData("renew", $this->getUserInput("renew"));
-		
 		if ($model->save())
 		{
 			Session::addRedir("user", "index");
@@ -167,6 +172,50 @@ class UserController extends CleanGabController {
 			Session::addUIMessage("Registro n&atilde;o salvo ou nada a alterar.");
 			Session::goBack();
 		}
+	}
+	
+	private function listPermissions($userId, $editable)
+	{
+		if ($_SESSION["CLEANGAB"]["xmlmenu"] == null)
+		{
+			if (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "security" . DIRECTORY_SEPARATOR . "permissions.xml"))
+			{
+				$xmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "security" . DIRECTORY_SEPARATOR . "permissions.xml";
+			}
+			else 
+			{
+				$xmlFile = CLEANGAB_FWK_SECURITY . DIRECTORY_SEPARATOR . "permissions.xml";
+			}
+			$xmlPermissions = simplexml_load_file($xmlFile);
+			$_SESSION["CLEANGAB"]["xmlmenu"] = file_get_contents($xmlFile, FILE_TEXT);
+		} 
+		else 
+		{
+			$xmlPermissions = simplexml_load_string($_SESSION["CLEANGAB"]["xmlmenu"]);
+		}
+		
+		$readonly = ($editable) ? " readonly=\"readonly\" " : "";
+		$xhtml = array();
+		$xhtml[] = "<ul>";
+		foreach ($xmlPermissions as $module) 
+		{
+			$xhtml[] = "<li>";
+			$xhtml[] = "<b>" . $module['name'] . "</b>";
+			$xhtml[] = "<ul>";
+			foreach ($module->permission as $prm) 
+			{
+				$xhtml[] = "<li>";
+				// TODO Pegar permissoes do usuario da tela e não do usuario logado.
+				$checked = (Session::permissionExists($prm['key'])) ? "checked" : "";
+				$xhtml[] = "<label><input type=\"checkbox\" " . $checked . " " . $readonly . " value=\"" . $prm['key'] . "\" />";
+				$xhtml[] = $prm['name'];
+				$xhtml[] = "</label></li>";
+			}
+			$xhtml[] = "</ul>";
+			$xhtml[] = "</li>";
+		}
+		$xhtml[] = "</ul>";
+		return $xhtml;
 	}
 }
 ?>

@@ -9,7 +9,8 @@
 		<permission name="Add a new user" key="user_show" uri="/user/add" menu="yes" />
 		<permission name="Edit an user" key="user_edit" uri="/user/edit" menu="no" />
 	</module>
-	<module name="HiFi">
-		<permission name="Add a new HiFi" key="hifi_add" uri="/hifi/add" menu="yes" />
+	<module name="Mining">
+		<permission name="List resources" key="mining_resource_list" uri="mining/listresource" menu="yes" />
+		<permission name="Add a new resource" key="mining_resource_add" uri="mining/addresource" menu="yes" />
 	</module>
 </modules>

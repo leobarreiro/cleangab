@@ -74,8 +74,8 @@ class Session {
 		$_SESSION["CLEANGAB"]["user"] 			= array();
 		$_SESSION["CLEANGAB"]["uimessages"] 	= array();
 		$_SESSION["CLEANGAB"]["toolbarButtons"] = array();
-		$_SESSION["CLEANGAB"]["xmlmenu"] 			= null;
-		//$_SESSION["CLEANGAB"]["redir"] 			= array();
+		$_SESSION["CLEANGAB"]["xmlmenu"] 		= null;
+		//$_SESSION["CLEANGAB"]["redir"] 		= array();
 		Session::addUIMessage("Logoff performed correctly");
 		Session::goToRedir();
 	}

@@ -79,6 +79,7 @@ class UserModel extends CleanGabModel {
 	{
 		$objUser = new stdClass();
 		$objUser->id = $this->getArgumentData("iduser");
+		$objUser->uuid = $this->getArgumentData("uuid");
 		$objUser->name = $this->getArgumentData("name");
 		$objUser->user = $this->getArgumentData("user");
 		$objUser->email = $this->getArgumentData("email");
