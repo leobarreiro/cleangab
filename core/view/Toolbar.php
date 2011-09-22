@@ -17,7 +17,24 @@ class Toolbar implements XHTMLComponent {
 		$this->controller = $controller;
 		$this->operation  = $operation;
 		$this->buttons    = array();
-		$this->xml 		  = simplexml_load_file(CLEANGAB_FWK_SECURITY . DIRECTORY_SEPARATOR . "permissions.xml");
+		
+		if ($_SESSION["CLEANGAB"]["xmlmenu"] == null)
+		{
+			if (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "security" . DIRECTORY_SEPARATOR . "permissions.xml"))
+			{
+				$xmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "security" . DIRECTORY_SEPARATOR . "permissions.xml";
+			}
+			else 
+			{
+				$xmlFile = CLEANGAB_FWK_SECURITY . DIRECTORY_SEPARATOR . "permissions.xml";
+			}
+			$this->xml = simplexml_load_file($xmlFile);
+			$_SESSION["CLEANGAB"]["xmlmenu"] = file_get_contents($xmlFile, FILE_TEXT);
+		} 
+		else 
+		{
+			$this->xml = simplexml_load_string($_SESSION["CLEANGAB"]["xmlmenu"]);
+		}
 	}
 	
 	public function assemble() 
@@ -42,7 +59,7 @@ class Toolbar implements XHTMLComponent {
 			$xhtml[] = "</ul>";
 			$xhtml[] = "</li>";
 		}
-		$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}/user/logoff/\" class=\"sub\">Logoff</a></li>";
+		$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}/user/logoff/\">Logoff</a></li>";
 		$xhtml[] = "</ul>";
 		$xhtml[] = "</li>";
 		$xhtml[] = "</ul>";

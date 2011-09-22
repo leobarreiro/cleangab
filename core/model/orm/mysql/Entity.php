@@ -19,6 +19,9 @@ class Entity implements IDBEntity {
 	private $offset;
 	private $limit;
 	private $total;
+	private $nextID;
+	private $engine;
+	private $rows;
 	private $sql;
 	private $countThis;
 	private $sqlCount;
@@ -45,6 +48,9 @@ class Entity implements IDBEntity {
 		$this->fk 				= array();
 		$this->uk 				= array();
 		$this->total 			= 0;
+		$this->nextID 			= null;
+		$this->engine 			= null;
+		$this->rows 			= null;
 		$this->args 			= array();
 		$this->offset 			= 0;
 		$this->limit  			= CLEANGAB_DEFAULT_SQL_LIMIT;
@@ -52,6 +58,7 @@ class Entity implements IDBEntity {
 		$this->countThis 		= true;
 		$this->sqlCount 		= null;
 		$this->objectToPersist 	= null;
+		$this->init();
 	}
 	
 	private function connectIfNull() 
@@ -142,6 +149,9 @@ class Entity implements IDBEntity {
 		$foreignKeys = array();
 		$uniqueKeys  = array();
 		$this->connectIfNull();
+		
+		$this->getTableInfo();
+		
 		try 
 		{
 			$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS));
@@ -192,6 +202,19 @@ class Entity implements IDBEntity {
 		$this->fk      = $foreignKeys;
 		$this->uk      = $uniqueKeys;
 		$this->orderBy = $this->pk;
+	}
+	
+	private function getTableInfo()
+	{
+		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_INFO));
+		if (!$qr)
+		{
+			throw new Exception("Error when retrieving table info", "3");
+		}
+		$record = $qr->fetch_object();
+		$this->nextID = $record->Auto_increment;
+		$this->engine = $record->Engine;
+		$this->rows   = $record->Rows;
 	}
 	
 	public function setSql($sql)
@@ -281,7 +304,8 @@ class Entity implements IDBEntity {
 		{
 			if ($update)
 			{
-				return $this->connection->resource->affected_rows;
+				//return $this->connection->resource->affected_rows;
+				return $this->objectToPersist->{$this->pk};
 			}
 			else 
 			{
@@ -416,6 +440,7 @@ class Entity implements IDBEntity {
 				}
 				else 
 				{
+					$this->objectToPersist->{$this->pk} = $this->nextID;
 					$old[] = "[insert_fields]";
 					$new[] = implode(", ", array_keys($this->fields));
 					$insert_values = "";
@@ -443,6 +468,7 @@ class Entity implements IDBEntity {
 		$new[] = ($this->limit > 0) ? "LIMIT " . $this->offset . ", " . $this->limit : "";
 		$sql = str_replace($old, $new, $sql);
 		$sql = str_replace(array("\n", "\r", "\t"), array("", "", ""), $sql);
+		//CleanGab::debug($sql);
 		return $sql;
 	}
 	
