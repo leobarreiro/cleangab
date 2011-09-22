@@ -4,6 +4,8 @@ body {
 	font-family: Trebuchet MS, Arial, Verdana, Helvetica;
 	font-size: 11px;
 	background: #ddd;
+	margin: 0px;
+	padding: 0px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -26,7 +28,7 @@ input {
 div.header {
 	position: relative;
 	left: 50%;
-	margin-left: -500px;
+	margin: 2px 0px 2px -500px;
 	width: 1000px;
 	display: block;
 	height: 70px;
@@ -58,7 +60,7 @@ div.footer {
 	margin-left: -500px;
 	width: 998px;
 	display: block;
-	background: #1B2A54;
+	background: #48A0EB;
 	border: 1px solid #2F3C94;
 	padding: 0px;
 	margin-top: 2px;
@@ -83,9 +85,10 @@ div.footer span.right-side {
 div.workarea {
 	position: relative;
 	left: 50%;
+	margin: 2px 0px 2px -500px;
 	margin-left: -500px;
 	width: 986px;
-	border: 1px solid #ccc;
+	border: 1px solid #2F3C94;
 	display: block;
 	vertical-align: top;
 	padding: 6px;
@@ -296,11 +299,11 @@ div.tablelistbaseForm form div input, div.tablelistbaseForm form div select {
 }
 
 table.tablelistbase tbody tr:hover {
-	background: #cecece;
+	background: #EEEEEE;
 }
 
 div table.tablelistbase tbody tr th {
-	background: #CCC819;
+	background: #48A0EB;
 }
 
 table.tablelistbase tbody tr td.tablelistbaseOperations {
@@ -548,7 +551,7 @@ ul.dropdown li {
 	float: left; 
 	zoom: 1; 
 	background: url("img/arrow_user.png") no-repeat right center #EEE;
-	padding-right: 20px;
+	padding: 2px 20px 2px 2px;
 }
 
 ul.dropdown li a.user {
@@ -580,13 +583,18 @@ ul.dropdown li:last-child a {
 /* Doesn't work in IE */
 ul.dropdown li.hover,
 ul.dropdown li:hover {
-	color: black; 
+	color: #FFF; 
 	position: relative;
 	font-weight: bold;
+	background: #999;
 }
 
-ul.dropdown li.hover a {
-	color: black;
+ul.dropdown li a:hover {
+	color: #FFF;
+}
+
+ul.dropdown li a {
+	color: #000;
 }
 
 ul.dropdown ul {
