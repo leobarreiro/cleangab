@@ -4,6 +4,7 @@ define ("CLEANGAB_SQL_NUMERIC_TYPES", serialize(array("INT", "NUMERIC", "FLOAT")
 define ("CLEANGAB_SQL_DATE_TYPES", serialize(array("DATE", "DATETIME")));
 define ("CLEANGAB_SQL_LIKE", "LIKE '[like]'");
 define ("CLEANGAB_SQL_RETRIEVE_ALL", "SELECT [listable_fields] FROM `[database]`.`[table]` [args] [order] [limit] ");
+define ("CLEANGAB_SQL_DELETE_ALL", "DELETE FROM `[database]`.`[table]` [args] [limit] ");
 define ("CLEANGAB_SQL_COUNT_ALL", "SELECT COUNT([pk]) AS total FROM `[database]`.`[table]` [args] ");
 define ("CLEANGAB_SQL_RETRIEVE_TABLE_FIELDS", "SHOW COLUMNS FROM `[database]`.`[table]` ");
 define ("CLEANGAB_SQL_RETRIEVE_TABLE_INFO", "SHOW TABLE status LIKE '[table]' ");

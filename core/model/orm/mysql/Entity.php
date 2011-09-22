@@ -204,7 +204,7 @@ class Entity implements IDBEntity {
 		$this->orderBy = $this->pk;
 	}
 	
-	private function getTableInfo()
+	public function getTableInfo()
 	{
 		$qr = $this->connection->resource->query($this->prepare(CLEANGAB_SQL_RETRIEVE_TABLE_INFO));
 		if (!$qr)

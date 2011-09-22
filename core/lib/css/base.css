@@ -491,6 +491,7 @@ fieldset.tree-form ul li ul li {
 	margin: 1px;
 	padding: 2px;
 }
+
 div.double-form fieldset.status {
 	border-radius: 4px;
 	border-color: #ddd;
@@ -752,6 +753,10 @@ input.codigo {
 
 input.readonly {
 	background-color: #ddd;
+}
+
+input.full {
+	width: 180px;
 }
 
 input.nome {

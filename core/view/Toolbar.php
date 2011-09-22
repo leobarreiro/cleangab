@@ -47,19 +47,20 @@ class Toolbar implements XHTMLComponent {
 		foreach ($this->xml as $module) 
 		{
 			$xhtml[] = "<li>";
-			$xhtml[] = "<a href=\"#\">" . $module['name'] . "</a>";
+			//TODO Listar somente os modulos onde o usuario possua ao menos uma permissao
+			$xhtml[] = "<a href=\"#\">" . $module["name"] . "</a>";
 			$xhtml[] = "<ul>";
 			foreach ($module->permission as $prm) 
 			{
-				if (Session::permissionExists($prm['key']) && $prm['menu'] == "yes") 
+				if (Session::permissionExists($prm["key"]) && $prm["menu"] == "yes") 
 				{
-					$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}" . $prm['uri'] . "\">" . $prm['name'] . "</a></li>";
+					$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}" . $prm['uri'] . "\" class=\"" . $prm["key"] . "\">" . $prm["name"] . "</a></li>";
 				}
 			}
 			$xhtml[] = "</ul>";
 			$xhtml[] = "</li>";
 		}
-		$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}/user/logoff/\">Logoff</a></li>";
+		$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}/user/logoff/\" class=\"logoff\">Logoff</a></li>";
 		$xhtml[] = "</ul>";
 		$xhtml[] = "</li>";
 		$xhtml[] = "</ul>";

@@ -45,5 +45,27 @@ class PermissionModel extends CleanGabModel {
 		return $entity->retrieve();
 	}
 	
+	public function grantToUser($userId, $permissions)
+	{
+		$entity = new Entity("permission");
+		$entity->addArgument("user_id", $userId, "=");
+		$entity->execute(CLEANGAB_SQL_DELETE_ALL);
+		$toGrant = new stdClass();
+		$recordSaved = 0;
+		foreach ($permissions as $prm)
+		{
+			$toGrant->id = null;
+			$toGrant->permission = $prm;
+			$toGrant->user_id = $userId;
+			$entity->getTableInfo();
+			$entity->setObjectToPersist($toGrant);
+			if ($entity->save())
+			{
+				++$recordSaved;
+			}
+		}
+		return ($recordSaved > 0);
+	}
+	
 }
 ?>

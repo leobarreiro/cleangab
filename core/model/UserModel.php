@@ -56,7 +56,6 @@ class UserModel extends CleanGabModel {
 		return Session::authenticate($entity, CLEANGAB_SQL_VERIFY_LOGIN);
 	}
 	
-	
 	public function getUserById($idUser) 
 	{
 		$entity = new Entity("user");
@@ -77,31 +76,43 @@ class UserModel extends CleanGabModel {
 	
 	public function save()
 	{
-		$objUser = new stdClass();
-		$objUser->id = $this->getArgumentData("iduser");
-		$objUser->uuid = $this->getArgumentData("uuid");
-		$objUser->name = $this->getArgumentData("name");
-		$objUser->user = $this->getArgumentData("user");
-		$objUser->email = $this->getArgumentData("email");
-		$objUser->passwd = md5($this->getArgumentData("senha"));
-		$objUser->senha = $this->getArgumentData("senha");
-		$objUser->repitaSenha = $this->getArgumentData("repitaSenha");
-		$objUser->active = $this->getArgumentData("active");
-		$objUser->renew_passwd = $this->getArgumentData("renew");
-		
-		if ($objUser->senha && $objUser->repitaSenha)
+		$user = new stdClass();
+		$user->id = $this->getArgumentData("iduser");
+		$user->uuid = $this->getArgumentData("uuid");
+		$user->name = $this->getArgumentData("name");
+		$user->user = $this->getArgumentData("user");
+		$user->email = $this->getArgumentData("email");
+		$user->passwd = md5($this->getArgumentData("senha"));
+		$user->senha = $this->getArgumentData("senha");
+		$user->repitaSenha = $this->getArgumentData("repitaSenha");
+		$user->active = $this->getArgumentData("active");
+		$user->renew_passwd = $this->getArgumentData("renew");
+		$user->first_page = $this->getArgumentData("firstpage");
+		$permissions = $this->getArgumentData("permission");
+		if ($user->senha && $user->repitaSenha)
 		{
-			if ($objUser->senha != $objUser->repitaSenha)
+			if ($user->senha != $user->repitaSenha)
 			{
 				Session::addUIMessage("A Senha n&atilde;o foi confirmada corretamente");
 				Session::goBack();
 			}
 		}
-		
 		$entity = new Entity("user");
 		$entity->init();
-		$entity->setObjectToPersist($objUser);
-		return $entity->save();
+		$entity->setObjectToPersist($user);
+		$saved = $entity->save();
+		if ($saved)
+		{
+			$user->id = $saved;
+		}
+		$granted = false;
+		if ($user->id > 0)
+		{
+			$prmModel = new PermissionModel();
+			$granted = $prmModel->grantToUser($user->id, $permissions);
+		}
+		
+		return ($saved || $granted);
 	}
 	
 }
