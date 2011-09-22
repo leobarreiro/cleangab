@@ -155,7 +155,7 @@ class TableListBase implements XHTMLComponent {
 		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Paginator\">";
 		if ($this->pages > 1)
 		{
-			$xhtml[] = "P&aacute;ginas: \n";
+			$xhtml[] = "Go to Page: \n";
 			if ($this->pages > 10)
 			{
 				$xhtml[] = "<select name=\"" . strtolower(get_class($this)) . "PageSelector\" onchange=\"" . strtolower(get_class($this)) . $this->idName . "FormPg(this.value)\">";
