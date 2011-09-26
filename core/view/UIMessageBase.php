@@ -5,9 +5,7 @@
  * Date: 	2011-06-25
  * Author: 	Leopoldo Barreiro
  */
-
 require_once ("XHTMLComponent.php");
-
 class UIMessageBase implements XHTMLComponent {
 
 	protected $idName;
@@ -58,6 +56,5 @@ class UIMessageBase implements XHTMLComponent {
 	{
 		return $this->idName;
 	}
-	
 }
 ?>

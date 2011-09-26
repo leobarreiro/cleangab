@@ -1,7 +1,5 @@
 <?php
-
 require_once ("XHTMLComponent.php");
-
 class Toolbar implements XHTMLComponent {
 	
 	protected $idName;
@@ -29,7 +27,7 @@ class Toolbar implements XHTMLComponent {
 				$xmlFile = CLEANGAB_FWK_SECURITY . DIRECTORY_SEPARATOR . "permissions.xml";
 			}
 			$this->xml = simplexml_load_file($xmlFile);
-			$_SESSION["CLEANGAB"]["xmlmenu"] = file_get_contents($xmlFile, FILE_TEXT);
+			$_SESSION["CLEANGAB"]["xmlmenu"] = file_get_contents($xmlFile);
 		} 
 		else 
 		{
@@ -129,6 +127,5 @@ class Toolbar implements XHTMLComponent {
 		$this->buttons[] = $actButton;
 		return true;
 	}
-	
 }
 ?>

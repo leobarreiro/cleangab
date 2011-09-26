@@ -6,10 +6,8 @@
  * Author: 	Leopoldo Barreiro
  *
  */
-
 require_once ("Entity.php");
 require_once ("PermissionModel.php");
-
 class Session {
 
 	public static function authenticate($entity, $sql=CLEANGAB_SQL_VERIFY_LOGIN)
@@ -292,6 +290,5 @@ class Session {
 		is_array($_SESSION['CLEANGAB']['user']) && count($_SESSION['CLEANGAB']['user']) > 0);
 		return $isValidSession;
 	}
-
 }
 ?>

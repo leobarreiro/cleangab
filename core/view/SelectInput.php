@@ -57,7 +57,7 @@ class SelectInput extends Input {
 			{
 				$option = array();	
 				$option[] = "<option value=\"" . $k . "\"";
-				if ($this->value == $v)
+				if ($this->value == $k)
 				{
 					$option[] = " selected";
 				}

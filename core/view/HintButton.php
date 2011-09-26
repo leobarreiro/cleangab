@@ -1,7 +1,5 @@
 <?php
-
 require_once ("XHTMLComponent.php");
-
 class HintButton implements XHTMLComponent {
 	
 	protected $idName;
@@ -55,6 +53,5 @@ class HintButton implements XHTMLComponent {
 		}
 		return $uuid;
 	}
-	
 }
 ?>

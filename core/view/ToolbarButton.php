@@ -1,7 +1,5 @@
 <?php
-
 require_once ("XHTMLComponent.php");
-
 class ToolbarButton implements XHTMLComponent {
 	
 	protected $idName;

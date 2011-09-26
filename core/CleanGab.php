@@ -1,5 +1,4 @@
 <?php
-
 class CleanGab {
 	
 	static function debug($mixedVar) 
@@ -57,6 +56,5 @@ class CleanGab {
 			}
 		}
 	}
-		
 }
 ?>
