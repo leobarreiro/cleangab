@@ -77,15 +77,30 @@ class UserController extends CleanGabController {
 			Session::loadPermissions();
 			Session::addUIMessage("Log in performed correctly");
 			$user = (object) $_SESSION['CLEANGAB']['user'];
-			// TODO: verificar permissoes do usuario para definir qual sera sua pagina inicial apos o login
-			Session::addRedir("hifi", "index");
+			$uri = array();
+			if (strpos($user->first_page, "/") !== false)
+			{
+				$uriParts = explode("/", $user->first_page);
+				foreach ($uriParts as $part)
+				{
+					if (strlen($part) > 0)
+					{
+						$uri[] = strtolower($part);
+					}
+				}
+				Session::addRedir($uri[0], $uri[1]);
+			} 
+			else 
+			{
+				Session::addRedir("user", "option");
+			}
+			Session::goToRedir();
 		}
 		else
 		{
-			Session::addRedir("user", "login");
 			Session::addUIMessage("User or password invalid");
+			Session::goBack();
 		}
-		header("Location:" . Session::getLastRedir());
 	}
 
 	public function show($key) 
