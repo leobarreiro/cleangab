@@ -424,17 +424,30 @@ div.uimessagebase {
 	left: 50%;
 	z-index: 20;
 	width: 400px;
-	height: 30px;
+	height: 20px;
 	border: 2px solid #C2C2C6;
 	border-radius: 4px;
-	background: url("img/info.png") no-repeat left center #A8D3FF;
 	font-size: 16px;
 	font-weight: bold;
 	margin: 6px;
 	color: #1000FF;
 	padding: 8px;
-	text-indent: 20px;
+	text-indent: 24px;
+	vertical-align: middle;
 }
+
+div.msginfo {
+	background: url("img/info.png") no-repeat left center #A8D3FF;
+}
+
+div.msgerror {
+	background: url("img/error.png") no-repeat left center #A8D3FF;
+}
+
+div.msgsuccess {
+	background: url("img/info.png") no-repeat left center #A8D3FF;
+}
+
 
 div.workarea div.show div span {
 	display: inline-block;
@@ -617,6 +630,14 @@ ul.dropdown li a.user {
 	text-indent: 16px;
 }
 
+ul.dropdown li ul.sub_menu li a {
+	text-indent: 16px;
+}
+
+ul.dropdown li ul.sub_menu li a.logoff {
+	background: url("img/logoff.png") no-repeat left center;
+}
+
 ul.dropdown a:hover	{
 	color: #000;
 }
@@ -752,7 +773,8 @@ input.codigo {
 }
 
 input.readonly {
-	background-color: #ddd;
+	background-color: #eeeeee;
+	color: #666;
 }
 
 input.full {

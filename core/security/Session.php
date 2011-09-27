@@ -160,11 +160,11 @@ class Session {
 		return (isset($_SESSION["CLEANGAB"]["objects"][$uniqueName])) ? $_SESSION["CLEANGAB"]["objects"][$uniqueName] : false;
 	}
 
-	public static function addUIMessage($message)
+	public static function addUIMessage($message, $type="msginfo")
 	{
 		Session::createIfNotExists();
 		$msg = filter_var($message, FILTER_SANITIZE_STRING);
-		$_SESSION['CLEANGAB']['uimessages'][] = (object) array('timestamp'=>time(), 'msg'=>$msg, 'read'=>false);
+		$_SESSION['CLEANGAB']['uimessages'][] = (object) array('timestamp'=>time(), 'msg'=>$msg, 'type'=>$type, 'read'=>false);
 	}
 
 	public static function getLastUIMessage()
@@ -301,5 +301,22 @@ class Session {
 		}
 		$_SESSION["CLEANGAB"]["xmlmenu"] = file_get_contents($xmlFile);
 	}
+	
+	public static function getUriByPermission($key) 
+	{
+		$xml = simplexml_load_string($_SESSION["CLEANGAB"]["xmlmenu"]);
+		foreach ($xml as $module) 
+		{
+			foreach ($module->permission as $prm) 
+			{
+				if ($prm["key"] == $key) 
+				{
+					return $prm["uri"];
+				}
+			}
+		}
+		return false;
+	}
+	
 }
 ?>

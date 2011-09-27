@@ -10,6 +10,7 @@ class UIMessageBase implements XHTMLComponent {
 
 	protected $idName;
 	protected $content;
+	protected $type;
 	protected $xhtml;
 
 	public function __construct($idName, $mixedContent)
@@ -26,16 +27,15 @@ class UIMessageBase implements XHTMLComponent {
 	public function assemble()
 	{
 		$xhtml = array();
-		
 		if (is_string($this->content) && strlen($this->content) > 0)
 		{
-			$xhtml[] = "<div id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">";
+			$xhtml[] = "<div id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . " msginfo\">";
 			$xhtml[] = $this->content;
 			$xhtml[] = "</div>\n";
 		}
 		else if (is_object($this->content))
 		{
-			$xhtml[] = "<div id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">";
+			$xhtml[] = "<div id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . " " . $this->content->type . "\">";
 			$xhtml[] = $this->content->msg;
 			$xhtml[] = "</div>\n";
 		}
