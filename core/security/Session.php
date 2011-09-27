@@ -112,7 +112,6 @@ class Session {
 		{
 			Session::addUIMessage("You don't have permissions to access this content. Please, proceed to log in");
 			CleanGab::log("The user `" . $_SESSION["CLEANGAB"]["user"]["user"] . "` tried to access the permission `" . $key . "`");
-			Session::goToRedir();
 			return false;
 		}
 	}
@@ -289,6 +288,18 @@ class Session {
 		$isValidSession = (isset($_SESSION) && isset($_SESSION['CLEANGAB']) && isset($_SESSION['CLEANGAB']['user']) &&
 		is_array($_SESSION['CLEANGAB']['user']) && count($_SESSION['CLEANGAB']['user']) > 0);
 		return $isValidSession;
+	}
+	
+	public static function loadXmlPermissions() {
+		if (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "security" . DIRECTORY_SEPARATOR . "permissions.xml"))
+		{
+			$xmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "security" . DIRECTORY_SEPARATOR . "permissions.xml";
+		}
+		else 
+		{
+			$xmlFile = CLEANGAB_FWK_SECURITY . DIRECTORY_SEPARATOR . "permissions.xml";
+		}
+		$_SESSION["CLEANGAB"]["xmlmenu"] = file_get_contents($xmlFile);
 	}
 }
 ?>
