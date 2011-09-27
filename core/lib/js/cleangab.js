@@ -25,35 +25,33 @@ function autoCompleteFormatItem(row) {
 	return row[0] + " (<strong>id: " + row[1] + "</strong>)";
 }
 
+
 function CleanGabJs() {
-	
-	this.auto = function() {
-		alert('oi');
-	};
-	
-}
-
-jQuery.fn.assembleFirstPageSelect = function() {
-	var sel = document.getElementById("firstpage");
-	var def = document.getElementById("firstpage").value;
-	for (var i=0; (i<sel.length-1); i++) {
-		sel.option[i] = null;
-	}
-	jQuery("input[name='permission\[\]'][rel['firstpage']").each(
-		function(i) {
-			if (this.checked) {
-			    var opt = new Option(this.value, this.value);
-			    jQuery(document).addOptionToFirstPageSelect(sel, opt);
+	this.urlbase = '';
+	this.loadPermissionToSelectFirstPage = function(obj) {
+		var sel = document.getElementById("first_page");
+		var def = document.getElementById("first_page").value;
+		var exists = false;
+		if (obj.checked) {
+			for (var i=0; i<sel.options.length; i++) {
+				if (sel.options[i].value == obj.value) {
+					exists = true;
+				}
 			}
-		}		
-	);
-	sel.value = def;
-}
+			if (!exists) {
+				sel.options[sel.options.length] = new Option(jQuery(obj).attr('rel'), obj.value);
+			}
+		} 
+		else {
+			for (var i=0; i<sel.options.length; i++) {
+				if (sel.options[i].value == obj.value) {
+					sel.options[i] = null;
+				}
+			}
+		}
+		sel.value = def;
+	}
 
-jQuery.fn.addOptionToFirstPageSelect = function(selectField, option) {
-    var optsLen = selectField.options.length;
-    selectField.options[optsLen] = option;
 }
 
 cleangabJs = new CleanGabJs();
-

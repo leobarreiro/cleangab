@@ -75,12 +75,14 @@ class UserController extends CleanGabController {
 		if ($auth)
 		{
 			Session::loadPermissions();
+			Session::loadXmlPermissions();
 			Session::addUIMessage("Log in performed correctly");
 			$user = (object) $_SESSION['CLEANGAB']['user'];
+			$uriPermission = Session::getUriByPermission($user->first_page);
 			$uri = array();
-			if (strpos($user->first_page, "/") !== false)
+			if (strpos($uriPermission, "/") !== false)
 			{
-				$uriParts = explode("/", $user->first_page);
+				$uriParts = explode("/", $uriPermission);
 				foreach ($uriParts as $part)
 				{
 					if (strlen($part) > 0)
@@ -98,7 +100,7 @@ class UserController extends CleanGabController {
 		}
 		else
 		{
-			Session::addUIMessage("User or password invalid");
+			Session::addUIMessage("User or password invalid", "msgerror");
 			Session::goBack();
 		}
 	}
@@ -108,28 +110,7 @@ class UserController extends CleanGabController {
 		Session::addRedir("user", "login");
 		Session::verify();
 		Session::hasPermission("user_show");
-		if ($key > 0)
-		{
-			$model = new UserModel();
-			$user = $model->get($key);
-			$arOpt = array("0"=>"N&atilde;o", "1"=>"Sim");
-			$tinyActive = new TinyIntFormatter();
-			$tinyActive->setOptions($arOpt);
-			$tinyActive->setDisabled(true);
-			$user->activeoptions = $tinyActive->toFormField("active", "active", $user->active);
-			$user->renewoptions = $tinyActive->toFormField("renew", "renew", $user->renew_passwd);
-			$xhtml = $this->listPermissions($user->id, true);
-			$view = new CleanGabEngineView("User", "show");
-			$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
-			$view->toolbar->addButton(new ToolbarButton("back", CLEANGAB_URL_BASE_APP . "/user/index", "user_list", "back active"));
-			$view->addObject("visibleuser", $user);
-			$view->addObject("permissions", implode("", $xhtml));
-			$view->renderize();
-		}
-		else
-		{
-			header("Location: " . CLEANGAB_URL_BASE_APP . "/user/index");
-		}
+		$this->loadUserPage($key, true);
 	}
 	
 	public function edit($key)
@@ -138,9 +119,13 @@ class UserController extends CleanGabController {
 		Session::verify();
 		Session::hasPermission("user_edit");
 		
+		$this->loadUserPage($key, false);
+	}
+	
+	private function loadUserPage($userId, $isReadonly=true) 
+	{
 		$model = new UserModel();
-		$user = $model->getUserById($key);
-		
+		$user = $model->getUserById($userId);
 		$arOpt = array("0"=>"N&atilde;o", "1"=>"Sim");
 		$tinyActive = new TinyIntFormatter();
 		$tinyActive->setOptions($arOpt);
@@ -153,16 +138,22 @@ class UserController extends CleanGabController {
 		$created->toScreen($user->created);
 		$user->created = $created;
 		$user->first_page = new SelectInput("firstpage", $user->first_page);
-		
 		$xhtml = $this->listPermissions($user->id, false);
 		
 		// View
 		$view = new CleanGabEngineView("User", "edit");
-		$view->toolbar->addButton(new ToolbarButton("save", "javascript:document.show.submit()", "user_edit", "save active"));
+		if (!$isReadonly)
+		{
+			$view->toolbar->addButton(new ToolbarButton("save", "javascript:document.show.submit()", "user_edit", "save active"));
+		}
 		$view->toolbar->addButton(new ToolbarButton("back", CLEANGAB_URL_BASE_APP . "/user/index", "user_list", "back active"));
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
-		$view->addObject("editableuser", $user);
+		$view->addObject("pageuser", $user);
 		$view->addObject("permissions", implode("", $xhtml));
+		$pageTitle = ($isReadonly) ? "Show User" : "Edit User";
+		$view->addObject("pagetitle", $pageTitle);
+		$readOnlyScript = ($isReadonly) ? "jQuery(\"input\").add(\"select\").attr('disabled', 'disable').addClass('readonly');" : "<!-- -->";
+		$view->addObject("readonlyscript", $readOnlyScript);
 		$view->renderize();
 	}
 	
@@ -178,7 +169,7 @@ class UserController extends CleanGabController {
 		$model->addArgumentData("repitaSenha", $this->getUserInput("repitaSenha"));
 		$model->addArgumentData("active", $this->getUserInput("active"));
 		$model->addArgumentData("renew", $this->getUserInput("renew"));
-		$model->addArgumentData("firstpage", $this->getUserInput("firstpage"));
+		$model->addArgumentData("first_page", $this->getUserInput("first_page"));
 		$model->addArgumentData("permission", $_POST["permission"]);
 		
 		if ($model->save())
@@ -189,7 +180,7 @@ class UserController extends CleanGabController {
 		} 
 		else 
 		{
-			Session::addUIMessage("Registro n&atilde;o salvo ou nada a alterar.");
+			Session::addUIMessage("Registro n&atilde;o salvo ou nada a alterar.", "msgerror");
 			Session::goBack();
 		}
 	}
@@ -200,22 +191,9 @@ class UserController extends CleanGabController {
 		
 		if ($_SESSION["CLEANGAB"]["xmlmenu"] == null)
 		{
-			if (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "security" . DIRECTORY_SEPARATOR . "permissions.xml"))
-			{
-				$xmlFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "security" . DIRECTORY_SEPARATOR . "permissions.xml";
-			}
-			else 
-			{
-				$xmlFile = CLEANGAB_FWK_SECURITY . DIRECTORY_SEPARATOR . "permissions.xml";
-			}
-			$xmlPermissions = simplexml_load_file($xmlFile);
-			$_SESSION["CLEANGAB"]["xmlmenu"] = file_get_contents($xmlFile, FILE_TEXT);
+			Session::loadXmlPermissions();
 		} 
-		else 
-		{
-			$xmlPermissions = simplexml_load_string($_SESSION["CLEANGAB"]["xmlmenu"]);
-		}
-		
+		$xmlPermissions = simplexml_load_string($_SESSION["CLEANGAB"]["xmlmenu"]);
 		$readonly = ($editable) ? " readonly=\"readonly\" disabled=\"true\" " : "";
 		$xhtml = array();
 		$xhtml[] = "<ul>";
@@ -229,20 +207,14 @@ class UserController extends CleanGabController {
 			{
 				$xhtml[] = "<li>";
 				$checked = (in_array($prm['key'], $permissions)) ? "checked=\"true\"" : "";
-				$toFirstPage = ($prm["menu"] == "yes") ? " rel=\"firstpage\" " : "";
-				$xhtml[] = "<label><input type=\"checkbox\" id=\"permission_" . $prm["key"] . "\" name=\"permission[]\" " . $checked . " " . $readonly . " " . $toFirstPage . " value=\"" . $prm["key"] . "\" >" . $prm["name"] . "</input>";
-				//$xhtml[] = $prm['name'];
+				$toFirstPage = ($prm["menu"] == "yes") ? " class=\"firstpage\" " : "";
+				$xhtml[] = "<label><input type=\"checkbox\" id=\"permission_" . $prm["key"] . "\" name=\"permission[]\" " . $checked . " " . $readonly . " " . $toFirstPage . " value=\"" . $prm["key"] . "\" rel=\"" . $prm["name"] . "\" >" . $prm["name"] . "</input>";
 				$xhtml[] = "</label></li>";
 			}
 			$xhtml[] = "</ul>";
 			$xhtml[] = "</li>";
 		}
 		$xhtml[] = "</ul>";
-		
-		$xhtml[] = "<div class=\"field\">";
-		$xhtml[] = "<span>First page after login</span>";
-		$firstPage = new SelectInput("firstpage", "");
-		$xhtml[] = $firstPage->toXhtml();
 		$xhtml[] = "</div>";
 		return $xhtml;
 	}

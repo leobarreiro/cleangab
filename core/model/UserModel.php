@@ -87,8 +87,11 @@ class UserModel extends CleanGabModel {
 		$user->repitaSenha = $this->getArgumentData("repitaSenha");
 		$user->active = $this->getArgumentData("active");
 		$user->renew_passwd = $this->getArgumentData("renew");
-		$user->first_page = $this->getArgumentData("firstpage");
+		$user->first_page = $this->getArgumentData("first_page");
 		$permissions = $this->getArgumentData("permission");
+		if (strlen($user->senha) == 0) {
+			$user->passwd = null;
+		}
 		if ($user->senha && $user->repitaSenha)
 		{
 			if ($user->senha != $user->repitaSenha)

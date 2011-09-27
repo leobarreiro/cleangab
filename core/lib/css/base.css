@@ -430,7 +430,7 @@ div.uimessagebase {
 	font-size: 16px;
 	font-weight: bold;
 	margin: 6px;
-	color: #1000FF;
+
 	padding: 8px;
 	text-indent: 24px;
 	vertical-align: middle;
@@ -438,10 +438,12 @@ div.uimessagebase {
 
 div.msginfo {
 	background: url("img/info.png") no-repeat left center #A8D3FF;
+	color: #1000FF;
 }
 
 div.msgerror {
-	background: url("img/error.png") no-repeat left center #A8D3FF;
+	background: url("img/error.png") no-repeat left center orange;
+	color: red;
 }
 
 div.msgsuccess {
