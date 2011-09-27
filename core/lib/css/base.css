@@ -425,7 +425,6 @@ div.uimessagebase {
 	z-index: 20;
 	width: 400px;
 	height: 20px;
-	border: 2px solid #C2C2C6;
 	border-radius: 4px;
 	font-size: 16px;
 	font-weight: bold;
@@ -437,17 +436,21 @@ div.uimessagebase {
 }
 
 div.msginfo {
+	border: 2px solid #1000FF;
 	background: url("img/info.png") no-repeat left center #A8D3FF;
 	color: #1000FF;
 }
 
 div.msgerror {
-	background: url("img/error.png") no-repeat left center orange;
-	color: red;
+	border: 2px solid #BB0A0A;
+	background: url("img/error.png") no-repeat left center #F8BA34;
+	color: #BB0A0A;
 }
 
 div.msgsuccess {
-	background: url("img/info.png") no-repeat left center #A8D3FF;
+	border: 2px solid #2DA32D;
+	background: url("img/success.gif") no-repeat left center #D0FC97;
+	color: #000;
 }
 
 

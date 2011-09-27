@@ -175,7 +175,7 @@ class UserController extends CleanGabController {
 		if ($model->save())
 		{
 			Session::addRedir("user", "index");
-			Session::addUIMessage("Registro salvo corretamente");
+			Session::addUIMessage("Registro salvo corretamente", "msgsuccess");
 			Session::goToRedir();
 		} 
 		else 
