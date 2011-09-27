@@ -12,5 +12,5 @@ define ("CLEANGAB_SQL_RETRIEVE_USERS", "SELECT * FROM `[database]`.usuario WHERE
 define ("CLEANGAB_SQL_RETRIEVE_PERMISSIONS", "SELECT * FROM `[database]`.permission WHERE user_id = [user_id] ");
 define ("CLEANGAB_SQL_INSERT", "INSERT INTO `[database]`.`[table]` ([insert_fields]) VALUES ([insert_values])");
 define ("CLEANGAB_SQL_UPDATE", "UPDATE `[database]`.`[table]` SET [update_values] WHERE [update_conditions] ");
-define ("CLEANGAB_SQL_VERIFY_LOGIN", "SELECT id, user, name, email FROM `[database]`.`[table]` [args] LIMIT 0, 1 ");
+define ("CLEANGAB_SQL_VERIFY_LOGIN", "SELECT id, user, name, email, first_page FROM `[database]`.`[table]` [args] LIMIT 0, 1 ");
 ?>
