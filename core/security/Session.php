@@ -82,7 +82,7 @@ class Session {
 	{
 		if (!Session::isUserLogged())
 		{
-			Session::addUIMessage("Session is not valid. Please, proceed to log in");
+			Session::addUIMessage("Session is not valid. Please, proceed to log in", "msgerror");
 			Session::goToRedir();
 		}
 	}
