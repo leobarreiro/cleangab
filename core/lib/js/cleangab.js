@@ -27,7 +27,11 @@ function autoCompleteFormatItem(row) {
 
 
 function CleanGabJs() {
-	this.urlbase = '';
+
+	this.urlbase = "";
+	
+	this.userFirstPage = "";
+	
 	this.loadPermissionToSelectFirstPage = function(obj) {
 		var sel = document.getElementById("first_page");
 		var def = document.getElementById("first_page").value;
@@ -49,7 +53,7 @@ function CleanGabJs() {
 				}
 			}
 		}
-		sel.value = def;
+		sel.value = this.userFirstPage;
 	}
 
 }

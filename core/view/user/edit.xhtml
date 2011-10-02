@@ -5,9 +5,9 @@
 	<form name="show" action="#{CLEANGAB_URL_BASE_APP}/user/save/" method="post">
 	<input type="hidden" name="iduser" value="#{pageuser.id}" />
 	<div class="edit-form">
-		<div class="field"><span>UUID</span><input type="text" name="uuid" id="uuid" value="#{pageuser.uuid}" readonly="readonly" class="full" /></div>
+		<div class="field"><span>UUID</span><input type="text" name="uuid" id="uuid" value="#{pageuser.uuid}" readonly="readonly" class="readonly" /></div>
 		<div class="field"><span>Nome</span><input type="text" name="name" id="name" value="#{pageuser.name}" /></div>
-		<div class="field"><span>Nome de Usu&aacute;rio</span><input type="text" name="user" id="user" value="#{pageuser.user}" readonly="readonly" class="full" /></div>
+		<div class="field"><span>Nome de Usu&aacute;rio</span><input type="text" name="user" id="user" value="#{pageuser.user}" class="full" /></div>
 		<div class="field"><span>E-mail</span><input type="text" name="email" id="email" value="#{pageuser.email}" class="full" /></div>
 		<div class="field"><span>Senha</span><input type="password" name="senha" id="senha" value="" maxlength="6" class="full" /></div>
 		<div class="field"><span>Repita a Senha</span><input type="password" name="repitaSenha" id="repitaSenha" value="" maxlength="6" class="full" /></div>
@@ -23,7 +23,9 @@
 	</form>
 
 	<script type="text/javascript">
+	cleangabJs.userFirstPage = "#{pageuser.first_page}";
 	jQuery("input[class='firstpage']").each(function(){cleangabJs.loadPermissionToSelectFirstPage(this);});
 	jQuery("input[class='firstpage']").click(function(){cleangabJs.loadPermissionToSelectFirstPage(this);});
+	jQuery("#first_page").change(function(){cleangabJs.userFirstPage = this.value;});
 	#{readonlyscript}
 	</script>

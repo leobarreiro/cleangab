@@ -27,6 +27,7 @@ class UserController extends CleanGabController {
 		$model->prepareList();
 		// View
 		$view = new CleanGabEngineView("user", "index");
+		$view->toolbar->addButton(new ToolbarButton("add", CLEANGAB_URL_BASE_APP . "/user/add", "user_add", "adduser active"));
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$tableUsers = new TableListBase("users", $view, $model);
 		$tableUsers->setFormFields(array("user", "email", "name"));
@@ -36,9 +37,9 @@ class UserController extends CleanGabController {
 
 	public function add() 
 	{
-		$name = filter_input(INPUT_POST, "name", FILTER_SANITIZE_STRING);
-		$email = filter_input(INPUT_POST, "email", FILTER_VALIDATE_EMAIL);
-		$created = date("dd/mm/YY");
+		Session::verify();
+		Session::hasPermission("user_add");
+		$this->loadUserPage(null, false);
 	}
 
 	public function login()
@@ -122,10 +123,10 @@ class UserController extends CleanGabController {
 		$this->loadUserPage($key, false);
 	}
 	
-	private function loadUserPage($userId, $isReadonly=true) 
+	private function loadUserPage($userId=null, $isReadonly=true) 
 	{
 		$model = new UserModel();
-		$user = $model->getUserById($userId);
+		$user = ($userId == null) ? $model->createEmptyObject() : $model->getUserById($userId);
 		$arOpt = array("0"=>"N&atilde;o", "1"=>"Sim");
 		$tinyActive = new TinyIntFormatter();
 		$tinyActive->setOptions($arOpt);
@@ -134,12 +135,12 @@ class UserController extends CleanGabController {
 		$tinyRenew = new TinyIntFormatter();
 		$tinyRenew->setOptions($arOpt);
 		$user->renewoptions = $tinyRenew->toFormField("renew", "renew", $user->renew_passwd);
-		$created = new DateTimeFormatter();
-		$created->toScreen($user->created);
-		$user->created = $created;
-		$user->first_page = new SelectInput("firstpage", $user->first_page);
-		$xhtml = $this->listPermissions($user->id, false);
-		
+		if ($userId == null)
+		{
+			$user->uuid    = uniqid();
+			$user->created = date("d/m/Y H:i:s");
+		}
+		$xhtml = $this->listPermissions($userId, false);
 		// View
 		$view = new CleanGabEngineView("User", "edit");
 		if (!$isReadonly)
@@ -169,6 +170,7 @@ class UserController extends CleanGabController {
 		$model->addArgumentData("repitaSenha", $this->getUserInput("repitaSenha"));
 		$model->addArgumentData("active", $this->getUserInput("active"));
 		$model->addArgumentData("renew", $this->getUserInput("renew"));
+		$model->addArgumentData("created", $this->getUserInput("created"));
 		$model->addArgumentData("first_page", $this->getUserInput("first_page"));
 		$model->addArgumentData("permission", $_POST["permission"]);
 		
@@ -185,16 +187,15 @@ class UserController extends CleanGabController {
 		}
 	}
 	
-	private function listPermissions($userId, $editable)
+	private function listPermissions($userId=null, $readonly=true)
 	{
-		$permissions = $this->getPermissionsByUserId($userId);
-		
+		$permissions = ($userId != null) ? $this->getPermissionsByUserId($userId) : array();
 		if ($_SESSION["CLEANGAB"]["xmlmenu"] == null)
 		{
 			Session::loadXmlPermissions();
 		} 
 		$xmlPermissions = simplexml_load_string($_SESSION["CLEANGAB"]["xmlmenu"]);
-		$readonly = ($editable) ? " readonly=\"readonly\" disabled=\"true\" " : "";
+		$disabled = ($readonly) ? " readonly=\"readonly\" disabled=\"true\" " : "";
 		$xhtml = array();
 		$xhtml[] = "<ul>";
 		
@@ -208,7 +209,7 @@ class UserController extends CleanGabController {
 				$xhtml[] = "<li>";
 				$checked = (in_array($prm['key'], $permissions)) ? "checked=\"true\"" : "";
 				$toFirstPage = ($prm["menu"] == "yes") ? " class=\"firstpage\" " : "";
-				$xhtml[] = "<label><input type=\"checkbox\" id=\"permission_" . $prm["key"] . "\" name=\"permission[]\" " . $checked . " " . $readonly . " " . $toFirstPage . " value=\"" . $prm["key"] . "\" rel=\"" . $prm["name"] . "\" >" . $prm["name"] . "</input>";
+				$xhtml[] = "<label><input type=\"checkbox\" id=\"permission_" . $prm["key"] . "\" name=\"permission[]\" " . $checked . " " . $disabled . " " . $toFirstPage . " value=\"" . $prm["key"] . "\" rel=\"" . $prm["name"] . "\" >" . $prm["name"] . "</input>";
 				$xhtml[] = "</label></li>";
 			}
 			$xhtml[] = "</ul>";
