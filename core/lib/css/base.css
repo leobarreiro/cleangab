@@ -231,6 +231,11 @@ table.tablelistbase tbody tr td a {
 	text-decoration: none;
 }
 
+table.tablelistbase tbody tr.records td.email {
+	color: blue;
+	text-align: left;
+}
+
 div.tablelistbasePaginator {
 	text-align: right;
 	padding: 4px;
@@ -351,9 +356,8 @@ div.tablelistbaseTools div.tablelistbaseActions {
 div.workarea div.toolbar div#toolbar-buttons a, 
 div.tablelistbaseTools div.tablelistbaseActions a {
 	display: inline-block;
-	margin: 2px;
-	padding: 2px;
-	/*border: 1px solid #3A5E83;*/
+	margin: 4px;
+	padding: 0px;
 	font-size: 0px;
 	background: #999;
 	width: 24px;
@@ -370,18 +374,20 @@ div.workarea div.toolbar div#toolbar-buttons a.back {
 	background: url("img/back.png") no-repeat center;
 }
 
-div.workarea div.toolbar div#toolbar-buttons a.show, 
-div.tablelistbaseTools div.tablelistbaseActions a.show  {
+div.workarea div.toolbar div#toolbar-buttons a.show  {
 	background: url("img/show.png") no-repeat center;
 }
 
-div.workarea div.toolbar div#toolbar-buttons a.edit, 
-div.tablelistbaseTools div.tablelistbaseActions a.edit {
+div.workarea div.toolbar div#toolbar-buttons a.edit {
 	background: url("img/edit.png") no-repeat center;
 }
 
 div.workarea div.toolbar div#toolbar-buttons a.save {
 	background: url("img/save.png") no-repeat center;
+}
+
+div.workarea div.toolbar div#toolbar-buttons a.adduser {
+	background: url("img/add_user.png") no-repeat center;
 }
 
 div.workarea div.toolbar div#toolbar-buttons a.active, 
@@ -423,14 +429,13 @@ div.uimessagebase {
 	top: 10px;
 	left: 50%;
 	z-index: 20;
-	width: 400px;
+	width: 420px;
 	height: 20px;
 	border-radius: 4px;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: bold;
 	margin: 6px;
-
-	padding: 8px;
+	padding: 12px 8px 8px 8px;
 	text-indent: 24px;
 	vertical-align: middle;
 }
