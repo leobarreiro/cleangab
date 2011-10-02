@@ -137,8 +137,13 @@ class UserController extends CleanGabController {
 		$user->renewoptions = $tinyRenew->toFormField("renew", "renew", $user->renew_passwd);
 		if ($userId == null)
 		{
-			$user->uuid    = uniqid();
-			$user->created = date("d/m/Y H:i:s");
+			$user->uuid 	= uniqid();
+			$user->created 	= date("d/m/Y H:i:s");
+			$pageTitle 		= "Add an User";
+		}
+		else 
+		{
+			$pageTitle 		= ($isReadonly) ? "Show User" : "Edit User";
 		}
 		$xhtml = $this->listPermissions($userId, false);
 		// View
@@ -151,7 +156,6 @@ class UserController extends CleanGabController {
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$view->addObject("pageuser", $user);
 		$view->addObject("permissions", implode("", $xhtml));
-		$pageTitle = ($isReadonly) ? "Show User" : "Edit User";
 		$view->addObject("pagetitle", $pageTitle);
 		$readOnlyScript = ($isReadonly) ? "jQuery(\"input\").add(\"select\").attr('disabled', 'disable').addClass('readonly');" : "<!-- -->";
 		$view->addObject("readonlyscript", $readOnlyScript);
