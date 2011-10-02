@@ -110,8 +110,9 @@ class Session {
 		}
 		else
 		{
-			Session::addUIMessage("You don't have permissions to access this content. Please, proceed to log in");
+			Session::addUIMessage("You don't have permissions to access this content.");
 			CleanGab::log("The user `" . $_SESSION["CLEANGAB"]["user"]["user"] . "` tried to access the permission `" . $key . "`");
+			Session::goBack();
 			return false;
 		}
 	}
