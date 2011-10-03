@@ -54,9 +54,9 @@ class CleanGabEngineView {
 		}
 
 		// Template XHTML
-		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->templateFile;
-		$this->templateFile 	= (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath)) ? CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath : CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $templatePath;
-		$this->templateContent  = file_get_contents($this->templateFile);
+		//$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->templateFile;
+		//$this->templateFile 	= (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath)) ? CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath : CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $templatePath;
+		//$this->templateContent  = file_get_contents($this->templateFile);
 		
 		// XHTML Page
 		$relativePath = "view" . DIRECTORY_SEPARATOR . strtolower($this->controller) . DIRECTORY_SEPARATOR . strtolower($this->operation) . ".xhtml";
@@ -92,14 +92,24 @@ class CleanGabEngineView {
 		return $this->toolbar;
 	}
 	
-	public function setTemplate($template) 
+	public function setTemplateFile($nameFile) 
 	{
-		$this->template = $template;
+		$this->templateFile = $nameFile;
 	}
 	
-	public function getTemplate() 
+	public function getTemplateFile() 
 	{
-		return $this->template;
+		return $this->templateFile;
+	}
+	
+	public function setTemplateXhtml($templateXhtml)
+	{
+		$this->templateXhtml = $templateXhtml;
+	}
+	
+	public function getTemplateXhtml()
+	{
+		return $this->templateXhtml;
 	}
 	
 	private final function injectXhtmlFromComponents($content) 
@@ -116,6 +126,11 @@ class CleanGabEngineView {
 	
 	public final function parse() 
 	{
+		// Template XHTML
+		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->templateFile;
+		$this->templateFile 	= (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath)) ? CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath : CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $templatePath;
+		$this->templateContent  = file_get_contents($this->templateFile);
+		
 		if (Session::isUserLogged())
 		{
 			$this->addObject($this->toolbar->getIdName(), $this->toolbar);
@@ -147,20 +162,25 @@ class CleanGabEngineView {
 				if ($methods) 
 				{
 					$eval = implode(".", $methods);
-					
-					if ($obj->{$eval} instanceof XHTMLComponent)
+					if (isset($obj->{$eval}))
 					{
-						$content = str_replace("#{" . $tag . "}", $obj->{$eval}->toXhtml(), $content);
-					}
-					else if ($obj->{$eval} instanceof Formatter)
-					{
-						$content = str_replace("#{" . $tag . "}", $obj->{$eval}->toScreen($obj->{$eval}->getDataBaseContent()), $content);
+						if ($obj->{$eval} instanceof XHTMLComponent)
+						{
+							$content = str_replace("#{" . $tag . "}", $obj->{$eval}->toXhtml(), $content);
+						}
+						else if ($obj->{$eval} instanceof Formatter)
+						{
+							$content = str_replace("#{" . $tag . "}", $obj->{$eval}->toScreen($obj->{$eval}->getDataBaseContent()), $content);
+						}
+						else 
+						{
+							$content = str_replace("#{" . $tag . "}", $obj->{$eval}, $content);
+						}
 					}
 					else 
 					{
-						$content = str_replace("#{" . $tag . "}", $obj->{$eval}, $content);
+						$content = str_replace("#{" . $tag . "}", "", $content);
 					}
-					//$content = str_replace("#{" . $tag . "}", $obj->{$eval}, $content);
 				}
 				else 
 				{
