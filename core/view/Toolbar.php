@@ -34,7 +34,7 @@ class Toolbar implements XHTMLComponent {
 		{
 			$xhtml[] = "<li>";
 			//TODO Listar somente os modulos onde o usuario possua ao menos uma permissao
-			$xhtml[] = "<a href=\"#\">" . $module["name"] . "</a>";
+			$xhtml[] = "<a href=\"#\" class=\"" . $module["key"] . "\">" . $module["name"] . "</a>";
 			$xhtml[] = "<ul>";
 			foreach ($module->permission as $prm) 
 			{
