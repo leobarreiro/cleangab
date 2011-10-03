@@ -123,5 +123,24 @@ class UserModel extends CleanGabModel {
 		return ($saved || $granted);
 	}
 	
+	public function getUsersHaveAPermission($keyPermission) 
+	{
+		$sql = "SELECT u.id, u.user, u.name, u.email FROM `[database]`.`user` u INNER JOIN `[database]`.`permission` p ON p.user_id [args] [order] [limit]";
+		$entity = new Entity("user");
+		$entity->addArgument("p.active", "1", "=");
+		$entity->addArgument("p.permission", $key_permission, "=");
+		$entity->setOrderBy("u.user, u.name");
+		$entity->setCountThis(false);
+		$recordSet = $entity->retrieve();
+		if ($recordSet->hasRecords())
+		{
+			return $recordSet->getRecords();
+		}
+		else 
+		{
+			return false;
+		}
+	}
+
 }
 ?>
