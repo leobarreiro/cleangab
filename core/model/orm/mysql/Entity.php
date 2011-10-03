@@ -77,7 +77,7 @@ class Entity implements IDBEntity {
 	public function createObjectToPersist($mixed=null)
 	{
 		$dateTypes = unserialize(CLEANGAB_SQL_DATE_TYPES);
-		$mixed = (array) $mixed;
+		$mixed = ($mixed != null) ? (array) $mixed : array();
 		foreach (array_keys($this->fields) as $field)
 		{
 			if (!isset($mixed[$field]))
@@ -470,7 +470,7 @@ class Entity implements IDBEntity {
 		$sql = str_replace($old, $new, $sql);
 		$sql = str_replace(array("\n", "\r", "\t"), array("", "", ""), $sql);
 		//CleanGab::debug($sql);
-		//CleanGab::log($sql);
+		CleanGab::log($sql);
 		return $sql;
 	}
 	
