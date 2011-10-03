@@ -56,6 +56,16 @@ function CleanGabJs() {
 		sel.value = this.userFirstPage;
 	}
 
+	this.sanitizeString = function(strToSanitize) {
+		var str 	= new String(strToSanitize);
+		var fromStr = new Array("á", "â", "à", "ã", "ô", "ó", "õ", "ê", "é", "í", "ì", "î", "ú", "û", "ù");
+		var toStr   = new Array("a", "a", "a", "a", "o", "o", "o", "e", "e", "i", "i", "i", "u", "u", "u");
+		for (var i=0; i<fromStr.length; i++) {
+			str = str.replace(fromStr[i], toStr[i]);
+		}
+		return str;
+	}
+
 }
 
 cleangabJs = new CleanGabJs();
