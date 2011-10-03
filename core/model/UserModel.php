@@ -125,16 +125,16 @@ class UserModel extends CleanGabModel {
 	
 	public function getUsersHaveAPermission($keyPermission) 
 	{
-		$sql = "SELECT u.id, u.user, u.name, u.email FROM `[database]`.`user` u INNER JOIN `[database]`.`permission` p ON p.user_id [args] [order] [limit]";
+		$sql = "SELECT u.id AS id, u.user AS user, u.name AS name, u.email AS email FROM `[database]`.`user` u INNER JOIN `[database]`.`permission` p ON p.user_id = u.id [args] [order] [limit]";
 		$entity = new Entity("user");
-		$entity->addArgument("p.active", "1", "=");
-		$entity->addArgument("p.permission", $key_permission, "=");
+		$entity->addArgument("u.active", "1", "=");
+		$entity->addArgument("p.permission", $keyPermission, "=");
 		$entity->setOrderBy("u.user, u.name");
 		$entity->setCountThis(false);
-		$recordSet = $entity->retrieve();
-		if ($recordSet->hasRecords())
+		$rset = $entity->retrieve($sql);
+		if ($rset->hasRecords())
 		{
-			return $recordSet->getRecords();
+			return $rset;
 		}
 		else 
 		{

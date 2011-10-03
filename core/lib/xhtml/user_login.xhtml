@@ -1,6 +1,7 @@
 
 	<div class="user-login">
 		<form name="login" action="#{CLEANGAB_URL_BASE_APP}/user/authenticate/" method="post">
+			<input type="hidden" name="redir" value="#{redir}" />
 			<span>Login:</span>
 			<input type="text" name="userlogin" value="" />
 			<input type="password" name="passwdlogin" value="" />

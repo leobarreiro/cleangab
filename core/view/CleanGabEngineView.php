@@ -28,7 +28,8 @@ class CleanGabEngineView {
 	{
 		$this->controller 	= strtolower($controller);
 		$this->operation 	= strtolower($operation);
-		$this->templateFile	= CLEANGAB_XHTML_TEMPLATE;
+		
+		$this->setTemplateFile(CLEANGAB_XHTML_TEMPLATE);
 		$this->objects 		= array();
 		
 		$navigator 			= new stdClass();
@@ -52,7 +53,7 @@ class CleanGabEngineView {
 			$userToolsMenu = new UserToolsMenu();
 			$this->addObject($userToolsMenu->getIdName(), $userToolsMenu);
 		}
-
+		
 		// Template XHTML
 		//$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->templateFile;
 		//$this->templateFile 	= (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath)) ? CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath : CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $templatePath;
@@ -92,9 +93,19 @@ class CleanGabEngineView {
 		return $this->toolbar;
 	}
 	
-	public function setTemplateFile($nameFile) 
+	public function setTemplateFile($nameFile=null) 
 	{
-		$this->templateFile = $nameFile;
+		if ($nameFile != null)
+		{
+			$templatePath 		 = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $nameFile;
+			$this->templateFile  = (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath)) ? CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath : CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $templatePath;
+			$this->templateXhtml = file_get_contents($this->templateFile);
+		}
+		else 
+		{
+			$this->templateFile  = "";
+			$this->templateXhtml = "#{content}";
+		}
 	}
 	
 	public function getTemplateFile() 
@@ -126,16 +137,11 @@ class CleanGabEngineView {
 	
 	public final function parse() 
 	{
-		// Template XHTML
-		$templatePath = "lib" . DIRECTORY_SEPARATOR . "xhtml" . DIRECTORY_SEPARATOR . $this->templateFile;
-		$this->templateFile 	= (file_exists(CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath)) ? CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . $templatePath : CLEANGAB_FWK_ROOT . DIRECTORY_SEPARATOR . $templatePath;
-		$this->templateContent  = file_get_contents($this->templateFile);
-		
 		if (Session::isUserLogged())
 		{
 			$this->addObject($this->toolbar->getIdName(), $this->toolbar);
 		}
-		$content = str_replace("#{content}", $this->xhtml, $this->templateContent);
+		$content = str_replace("#{content}", $this->xhtml, $this->templateXhtml);
 		$content = $this->injectXhtmlFromComponents($content);
 		$tags    = $this->parseELTag($content);
 		$content = $this->parseConstants($tags, $content);

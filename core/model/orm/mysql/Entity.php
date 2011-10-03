@@ -469,8 +469,7 @@ class Entity implements IDBEntity {
 		$new[] = ($this->limit > 0) ? "LIMIT " . $this->offset . ", " . $this->limit : "";
 		$sql = str_replace($old, $new, $sql);
 		$sql = str_replace(array("\n", "\r", "\t"), array("", "", ""), $sql);
-		//CleanGab::debug($sql);
-		CleanGab::log($sql);
+		//CleanGab::log($sql);
 		return $sql;
 	}
 	
