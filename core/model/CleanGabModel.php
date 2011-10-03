@@ -138,6 +138,26 @@ class CleanGabModel {
 	
 	// TODO: override
 	public function save() {}
+	
+	public function createEmptyObject($table=null) 
+	{
+		$tableName = ($table != null) ? strtolower($table) : str_replace("model", "", strtolower(get_class($this)));
+		$this->entity = new Entity($tableName);
+		$fields = $this->entity->getFields();
+		if (is_array($fields) && count($fields) > 0)
+		{
+			$obj = new stdClass();
+			foreach (array_keys($fields) as $field)
+			{
+				$obj->{$field} = null;
+			}
+			return $obj;
+		}
+		else 
+		{
+			return false;
+		}
+	}
 
 }
 ?>
