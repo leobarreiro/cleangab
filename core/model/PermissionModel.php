@@ -67,5 +67,13 @@ class PermissionModel extends CleanGabModel {
 		return ($recordSaved > 0);
 	}
 	
+	public function removePermissionsByUserId($userId)
+	{
+		$sql = "DELETE FROM `[database]`.`[table]` [args]";
+		$entity = new Entity("permission");
+		$entity->addArgument("user_id", $userId, "=");
+		$entity->execute($sql);
+	}
+	
 }
 ?>

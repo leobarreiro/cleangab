@@ -117,6 +117,7 @@ class UserModel extends CleanGabModel {
 		if ($user->id > 0)
 		{
 			$prmModel = new PermissionModel();
+			$prmModel->removePermissionsByUserId($user->id);
 			$granted = $prmModel->grantToUser($user->id, $permissions);
 		}
 		
