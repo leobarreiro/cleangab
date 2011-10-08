@@ -648,6 +648,10 @@ ul.dropdown li ul.sub_menu li a.logoff {
 	background: url("img/logoff.png") no-repeat left center;
 }
 
+ul.dropdown li ul.sub_menu li a.user-settings {
+	background: url("img/user_settings.png") no-repeat left center;
+}
+
 ul.dropdown a:hover	{
 	color: #000;
 }
