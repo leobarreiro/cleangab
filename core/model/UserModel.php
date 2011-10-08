@@ -88,7 +88,7 @@ class UserModel extends CleanGabModel {
 		$user->active 		= $this->getArgumentData("active");
 		$user->renew_passwd = $this->getArgumentData("renew");
 		$formatter 			= new DateTimeFormatter();
-		$user->created 		= ($this->getArgumentData("created")) ? $formatter->toDataBase($this->getArgumentData("created")) : date("Y-m-d H:i:s");
+		$user->created 		= ($this->getArgumentData("created") !== false) ? $formatter->toDataBase($this->getArgumentData("created")) : date("Y-m-d H:i:s");
 		$user->first_page 	= $this->getArgumentData("first_page");
 		$permissions 		= $this->getArgumentData("permission");
 		

@@ -126,9 +126,12 @@ class UserController extends CleanGabController {
 	{
 		Session::addRedir("user", "login");
 		Session::verify();
-		$user = Session::getUser();
-		
+		$sessionUser = Session::getUser();
 		$model = new UserModel();
+		$user = $model->getUserById($sessionUser->id);
+		$dateTimeFormatter = new DateTimeFormatter();
+		$user->created = $dateTimeFormatter->toScreen($user->created);
+		
 		$pageTitle = "User Options";
 		$xhtml = $this->listPermissions($user->id, true);
 
@@ -153,7 +156,6 @@ class UserController extends CleanGabController {
 		$tinyActive = new TinyIntFormatter();
 		$tinyActive->setOptions($arOpt);
 		$user->activeoptions = $tinyActive->toFormField("active", "active", $user->active);
-		
 		$tinyRenew = new TinyIntFormatter();
 		$tinyRenew->setOptions($arOpt);
 		$user->renewoptions = $tinyRenew->toFormField("renew", "renew", $user->renew_passwd);
@@ -165,7 +167,9 @@ class UserController extends CleanGabController {
 		}
 		else 
 		{
-			$pageTitle 		= ($isReadonly) ? "Show User" : "Edit User";
+			$dateTimeFormatter 	= new DateTimeFormatter();
+			$user->created 		= $dateTimeFormatter->toScreen($user->created);
+			$pageTitle 			= ($isReadonly) ? "Show User" : "Edit User";
 		}
 		$xhtml = $this->listPermissions($userId, false);
 		// View
