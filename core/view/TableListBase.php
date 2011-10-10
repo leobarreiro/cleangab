@@ -148,7 +148,10 @@ class TableListBase implements XHTMLComponent {
 			$uri = "javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')";
 			$tbBt = new ToolbarButton($id, $uri, $key, $operation);
 			$tbBt->setControllerAction($this->controller, $this->operation);
-			$this->view->toolbar->addButton($tbBt);
+			if (is_object($this->view->toolbar))
+			{
+				$this->view->toolbar->addButton($tbBt);
+			}
 			//$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')" . "\" class=\"" . $operation . "\">" . $operation . "</a>&nbsp;";
 		}
 		//$xhtml[] = "</div>";
