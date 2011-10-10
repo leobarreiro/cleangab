@@ -163,6 +163,7 @@ class CleanGabEngineView {
 				$objectName = $tag;
 			}
 			$obj = $this->getObjectByName($objectName);
+			
 			if ($obj) 
 			{
 				if ($methods) 
@@ -203,6 +204,10 @@ class CleanGabEngineView {
 						$content = str_replace("#{" . $tag . "}", $obj, $content);
 					}
 				}
+			}
+			else 
+			{
+				$content = str_replace("#{" . $tag . "}", "", $content);
 			}
 		}
 		$this->parsed = $content;

@@ -1,5 +1,6 @@
 <?php
 require_once ("CleanGabController.php");
+require_once ("RedirController.php");
 require_once ("UserModel.php");
 require_once ("TableListBase.php");
 require_once ("DateTimeFormatter.php");
@@ -42,11 +43,13 @@ class UserController extends CleanGabController {
 		$this->loadUserPage(null, false);
 	}
 
-	public function login()
+	public function login($uuidRedir=null)
 	{
 		$lastMessage = new UIMessageBase("uimessage", Session::getLastUIMessage());
 		$view = new CleanGabEngineView("User", "login");
 		$view->addObject("uimessage", $lastMessage);
+		$view->addObject("redir", $uuidRedir);
+		CleanGab::log("UUID: " . $uuidRedir);
 		$view->renderize();
 	}
 	
@@ -60,6 +63,7 @@ class UserController extends CleanGabController {
 	{
 		$user = $this->getUserInput("userlogin");
 		$passwd = $this->getUserInput("passwdlogin");
+		$uuidRedir = $this->getUserInput("redir");
 		
 		if (strtoupper(CLEANGAB_AUTH_METHOD) == "AD")
 		{
@@ -78,26 +82,34 @@ class UserController extends CleanGabController {
 			Session::loadPermissions();
 			Session::loadXmlPermissions();
 			Session::addUIMessage("Log in performed correctly");
-			$user = (object) $_SESSION['CLEANGAB']['user'];
-			$uriPermission = Session::getUriByPermission($user->first_page);
-			$uri = array();
-			if (strpos($uriPermission, "/") !== false)
+			if (isset($uuidRedir) && strlen($uuidRedir) > 0)
 			{
-				$uriParts = explode("/", $uriPermission);
-				foreach ($uriParts as $part)
-				{
-					if (strlen($part) > 0)
-					{
-						$uri[] = strtolower($part);
-					}
-				}
-				Session::addRedir($uri[0], $uri[1]);
-			} 
+				$redirController = new RedirController();
+				$redirController->goto($uuidRedir);
+			}
 			else 
 			{
-				Session::addRedir("user", "option");
+				$user = (object) $_SESSION['CLEANGAB']['user'];
+				$uriPermission = Session::getUriByPermission($user->first_page);
+				$uri = array();
+				if (strpos($uriPermission, "/") !== false)
+				{
+					$uriParts = explode("/", $uriPermission);
+					foreach ($uriParts as $part)
+					{
+						if (strlen($part) > 0)
+						{
+							$uri[] = strtolower($part);
+						}
+					}
+					Session::addRedir($uri[0], $uri[1]);
+				} 
+				else 
+				{
+					Session::addRedir("user", "option");
+				}
+				Session::goToRedir();
 			}
-			Session::goToRedir();
 		}
 		else
 		{
