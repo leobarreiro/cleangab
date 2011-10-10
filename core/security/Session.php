@@ -10,6 +10,12 @@ require_once ("Entity.php");
 require_once ("PermissionModel.php");
 class Session {
 
+	/**
+	 * Generic Authentication. Can be used by any Model Class under the application structure.
+	 * @param Entity $entity An entity with specific table defined that will be used to execute the query in the database
+	 * @param String $sql A specific query that will be executed by Entity object.
+	 * @return boolean: True if the authentication is successfull, otherwise returns False.
+	 */
 	public static function authenticate($entity, $sql=CLEANGAB_SQL_VERIFY_LOGIN)
 	{
 		Session::createIfNotExists();
@@ -59,9 +65,9 @@ class Session {
 	}
 
 	/**
-	 * logoff()
-	 * Limpa a Sessao
+	 * Cleans the Session ($_SESSION["CLEANGAB"])
 	 * Utiliza o ultimo redir ao final da operacao
+	 * 
 	 * Modo de utilizar:
 	 *
 	 * Session::addRedir($controller, $action);
@@ -147,6 +153,10 @@ class Session {
 		if (!isset($_SESSION["CLEANGAB"]["xmlmenu"]))
 		{
 			$_SESSION["CLEANGAB"]["xmlmenu"] = null;
+		}
+		if (!isset($_SESSION["CLEANGAB"]["goto"]))
+		{
+			$_SESSION["CLEANGAB"]["goto"] = null;
 		}
 	}
 
