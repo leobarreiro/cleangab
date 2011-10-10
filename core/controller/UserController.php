@@ -119,8 +119,33 @@ class UserController extends CleanGabController {
 		Session::addRedir("user", "login");
 		Session::verify();
 		Session::hasPermission("user_edit");
-		
 		$this->loadUserPage($key, false);
+	}
+	
+	public function options()
+	{
+		Session::addRedir("user", "login");
+		Session::verify();
+		$sessionUser = Session::getUser();
+		$model = new UserModel();
+		$user = $model->getUserById($sessionUser->id);
+		$dateTimeFormatter = new DateTimeFormatter();
+		$user->created = $dateTimeFormatter->toScreen($user->created);
+		
+		$pageTitle = "User Options";
+		$xhtml = $this->listPermissions($user->id, true);
+
+		$view = new CleanGabEngineView("User", "options");
+		$view->toolbar->addButton(new ToolbarButton("save", "javascript:document.frm.submit()", "user_options", "save active"));
+		if (isset($_SERVER["HTTP_REFERER"]) && strlen($_SERVER["HTTP_REFERER"]) > 0)
+		{
+			$view->toolbar->addButton(new ToolbarButton("back", $_SERVER["HTTP_REFERER"], "user_back", "back active"));
+		}
+		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
+		$view->addObject("pageuser", $user);
+		$view->addObject("permissions", implode("", $xhtml));
+		$view->addObject("pagetitle", $pageTitle);
+		$view->renderize();
 	}
 	
 	private function loadUserPage($userId=null, $isReadonly=true) 
@@ -131,7 +156,6 @@ class UserController extends CleanGabController {
 		$tinyActive = new TinyIntFormatter();
 		$tinyActive->setOptions($arOpt);
 		$user->activeoptions = $tinyActive->toFormField("active", "active", $user->active);
-		
 		$tinyRenew = new TinyIntFormatter();
 		$tinyRenew->setOptions($arOpt);
 		$user->renewoptions = $tinyRenew->toFormField("renew", "renew", $user->renew_passwd);
@@ -143,7 +167,9 @@ class UserController extends CleanGabController {
 		}
 		else 
 		{
-			$pageTitle 		= ($isReadonly) ? "Show User" : "Edit User";
+			$dateTimeFormatter 	= new DateTimeFormatter();
+			$user->created 		= $dateTimeFormatter->toScreen($user->created);
+			$pageTitle 			= ($isReadonly) ? "Show User" : "Edit User";
 		}
 		$xhtml = $this->listPermissions($userId, false);
 		// View
@@ -181,12 +207,32 @@ class UserController extends CleanGabController {
 		if ($model->save())
 		{
 			Session::addRedir("user", "index");
-			Session::addUIMessage("Registro salvo corretamente", "msgsuccess");
+			Session::addUIMessage("Record saved successfull", "msgsuccess");
 			Session::goToRedir();
 		} 
 		else 
 		{
-			Session::addUIMessage("Registro n&atilde;o salvo ou nada a alterar.", "msgerror");
+			Session::addUIMessage("Record not saved", "msgerror");
+			Session::goBack();
+		}
+	}
+	
+	public function saveOptions()
+	{
+		$model = new UserModel();
+		$model->addArgumentData("email", $this->getUserInput("iduser"));
+		$model->addArgumentData("email", $this->getUserInput("email"));
+		$model->addArgumentData("senha", $this->getUserInput("senha"));
+		$model->addArgumentData("repitaSenha", $this->getUserInput("repitaSenha"));
+		$model->addArgumentData("first_page", $this->getUserInput("first_page"));
+		if ($model->saveOptions())
+		{
+			Session::addUIMessage("Record saved successfull", "msgsuccess");
+			Session::goToFirstPage();
+		} 
+		else
+		{
+			Session::addUIMessage("Record not saved", "msgerror");
 			Session::goBack();
 		}
 	}

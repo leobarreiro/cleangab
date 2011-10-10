@@ -644,8 +644,20 @@ ul.dropdown li ul.sub_menu li a {
 	text-indent: 16px;
 }
 
+ul.dropdown li ul.sub_menu li a.users {
+	background: url("img/users.png") no-repeat left center;
+}
+
+ul.dropdown li ul.sub_menu li a.mining {
+	background: url("img/mining.png") no-repeat left center;
+}
+
 ul.dropdown li ul.sub_menu li a.logoff {
 	background: url("img/logoff.png") no-repeat left center;
+}
+
+ul.dropdown li ul.sub_menu li a.user-settings {
+	background: url("img/user_settings.png") no-repeat left center;
 }
 
 ul.dropdown a:hover	{

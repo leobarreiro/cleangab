@@ -46,6 +46,7 @@ class Toolbar implements XHTMLComponent {
 			$xhtml[] = "</ul>";
 			$xhtml[] = "</li>";
 		}
+		$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}/user/options/\" class=\"user-settings\">My account</a></li>";
 		$xhtml[] = "<li><a href=\"#{CLEANGAB_URL_BASE_APP}/user/logoff/\" class=\"logoff\">Logoff</a></li>";
 		$xhtml[] = "</ul>";
 		$xhtml[] = "</li>";

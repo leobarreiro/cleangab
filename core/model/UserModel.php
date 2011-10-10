@@ -88,7 +88,7 @@ class UserModel extends CleanGabModel {
 		$user->active 		= $this->getArgumentData("active");
 		$user->renew_passwd = $this->getArgumentData("renew");
 		$formatter 			= new DateTimeFormatter();
-		$user->created 		= ($this->getArgumentData("created")) ? $formatter->toDataBase($this->getArgumentData("created")) : date("Y-m-d H:i:s");
+		$user->created 		= ($this->getArgumentData("created") !== false) ? $formatter->toDataBase($this->getArgumentData("created")) : date("Y-m-d H:i:s");
 		$user->first_page 	= $this->getArgumentData("first_page");
 		$permissions 		= $this->getArgumentData("permission");
 		
@@ -100,7 +100,7 @@ class UserModel extends CleanGabModel {
 		{
 			if ($user->senha != $user->repitaSenha)
 			{
-				Session::addUIMessage("A Senha n&atilde;o foi confirmada corretamente");
+				Session::addUIMessage("The password and confirmation must be identical");
 				Session::goBack();
 			}
 		}
@@ -141,6 +141,33 @@ class UserModel extends CleanGabModel {
 		{
 			return false;
 		}
+	}
+	
+	public function saveOptions()
+	{
+		$user 				= Session::getUser();
+		$user->email 		= $this->getArgumentData("email");
+		$user->passwd 		= md5($this->getArgumentData("senha"));
+		$user->senha 		= $this->getArgumentData("senha");
+		$user->repitaSenha 	= $this->getArgumentData("repitaSenha");
+		$user->first_page 	= $this->getArgumentData("first_page");
+		
+		if (strlen($user->senha) == 0) 
+		{
+			$user->passwd = null;
+		}
+		if ($user->senha && $user->repitaSenha)
+		{
+			if ($user->senha != $user->repitaSenha)
+			{
+				Session::addUIMessage("The password and confirmation must be identical");
+				Session::goBack();
+			}
+		}
+		$entity = new Entity("user");
+		$entity->init();
+		$entity->setObjectToPersist($user);
+		return $entity->save();
 	}
 
 }

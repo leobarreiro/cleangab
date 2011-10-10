@@ -329,5 +329,22 @@ class Session {
 		return false;
 	}
 	
+	public static function goToFirstPage()
+	{
+		$user = Session::getUser();
+		$uri = Session::getUriByPermission($user->first_page);
+		$uriParts = explode("/", $uri);
+		$parsed = array();
+		foreach ($uriParts as $part)
+		{
+			if (strlen($part) > 0)
+			{
+				$parsed[] = $part;
+			}
+		}
+		Session::addRedir($parsed[0], $parsed[1]);
+		Session::goToRedir();
+	}
+	
 }
 ?>
