@@ -20,7 +20,7 @@ class CleanGab {
 	
 	static function log($msg)
 	{
-		$file = (defined("CLEANGAB_LOG_FILE")) ? CLEANGAB_LOG_FILE : "log" . SEPARATOR . "cleangab.log";
+		$file = (defined("CLEANGAB_LOG_FILE")) ? CLEANGAB_LOG_FILE : "log" . DIRECTORY_SEPARATOR . "cleangab.log";
 		$handle = (file_exists($file)) ? fopen($file, "a") : false;
 		if ($handle) 
 		{
