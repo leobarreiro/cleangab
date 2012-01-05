@@ -12,8 +12,9 @@ class RedirController extends CleanGabController {
 		$url = str_replace("redir/add", "", strtolower($requestURI));
 		$url = CLEANGAB_URL_BASE_APP . substr($url, (strrpos($url, "//")+1));
 		$model = new RedirModel();
-		echo $model->addRedir($url);
+		//$model->addRedir($url);
 	}
+	
 	
 	public function goto($uuid)
 	{

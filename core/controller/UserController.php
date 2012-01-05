@@ -1,6 +1,6 @@
 <?php
 require_once ("CleanGabController.php");
-require_once ("RedirController.php");
+//require_once ("RedirController.php");
 require_once ("UserModel.php");
 require_once ("TableListBase.php");
 require_once ("DateTimeFormatter.php");

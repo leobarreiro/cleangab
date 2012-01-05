@@ -10,7 +10,7 @@
 		<permission name="Grant permissions to others users" key="user_grant" uri="/user/permissions" menu="no" />
 	</module>
 	<module name="Mining" key="mining">
-		<permission name="List resources" key="mining_resource_list" uri="mining/listresource" menu="yes" />
-		<permission name="Add a new resource" key="mining_resource_add" uri="mining/addresource" menu="yes" />
+		<permission name="List resources" key="mining_resource_list" uri="/mining/listresource" menu="yes" />
+		<permission name="Add a new resource" key="mining_resource_add" uri="/mining/addresource" menu="yes" />
 	</module>
 </modules>
