@@ -6,9 +6,7 @@ class RedirModel extends CleanGabModel {
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->listableFields = array("id", "name", "value", "type");
-		$this->masks = array();
-		$this->hintFields = array("id"=>"Id", "name"=>"Name", "value"=>"Value", "type"=>"Type");
+		$this->configure("redirection");
 	}
 	
 	public function addRedir($url)

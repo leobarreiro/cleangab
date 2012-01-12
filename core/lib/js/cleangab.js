@@ -2,7 +2,9 @@ jQuery(document).ready(function() {
 	jQuery(".dateformatter").mask("99/99/9999");
 	jQuery(".datetimeformatter").mask("99/99/9999 99:99");
 	jQuery(".phoneformatter").mask("(99) 9999.9999");
-	jQuery(".cpformatter").mask("99999-999");
+	jQuery(".cepformatter").mask("99999-999");
+	jQuery(".cnpjformatter").mask("99.999.999/9999-99");
+	jQuery(".cepformatter").mask("99999-999");
 	jQuery("div#uimessage").fadeOut(3500);
 	jQuery('.moeda').priceFormat({ prefix: '', centsSeparator: ',', thousandsSeparator: '.', limit: 8 });
 	jQuery('.percent').priceFormat({ prefix: '', centsSeparator: ',', thousandsSeparator: '.', limit: 5 });
@@ -58,7 +60,7 @@ function CleanGabJs() {
 
 	this.sanitizeString = function(strToSanitize) {
 		var str 	= new String(strToSanitize);
-		var fromStr = new Array("á", "â", "à", "ã", "ô", "ó", "õ", "ê", "é", "í", "ì", "î", "ú", "û", "ù");
+		var fromStr = new Array("ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½", "ï¿½");
 		var toStr   = new Array("a", "a", "a", "a", "o", "o", "o", "e", "e", "i", "i", "i", "u", "u", "u");
 		for (var i=0; i<fromStr.length; i++) {
 			str = str.replace(fromStr[i], toStr[i]);

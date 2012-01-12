@@ -21,13 +21,13 @@ class CNPJFormatter extends Formatter {
 	}
 	
 	protected function translateToScreen() {
-		$c  = $this->dataBaseContent;
-		$c1 = substr($content, 0, 2);
-		$c2 = substr($content, 3, 3);
-		$c3 = substr($content, 6, 3);
-		$c4 = substr($content, 9, 4);
-		$c5 = substr($content, 12, 2);
-		$c  = $c1 . "." . $c2 . "." . $c3 . "/" . $c4 ; "-" . $c5;
+		$content 	= $this->dataBaseContent;
+		$c1 		= substr($content, 0, 2);
+		$c2 		= substr($content, 2, 3);
+		$c3 		= substr($content, 5, 3);
+		$c4 		= substr($content, 8, 4);
+		$c5 		= substr($content, 12, 2);
+		$c  		= $c1 . "." . $c2 . "." . $c3 . "/" . $c4 . "-" . $c5;
 		$this->screenContent = $c;
 	}
 	

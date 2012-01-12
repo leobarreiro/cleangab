@@ -6,9 +6,9 @@ class UserModel extends CleanGabModel {
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->listableFields = array("id", "user", "name", "email", "created");
+		$this->configure("user");
 		$this->masks = array("created"=>"DateTimeFormatter");
-		$this->hintFields = array("id"=>"Id", "user"=>"User", "name"=>"Nome", "email"=>"e-mail", "created"=>"Data Cadastro");		
+		$this->noListableFields = array("renew_passwd", "passwd", "first_page");
 	}
 	
 	public function prepareList() 

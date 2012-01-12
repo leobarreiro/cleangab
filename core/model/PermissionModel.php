@@ -7,9 +7,7 @@ class PermissionModel extends CleanGabModel {
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->listableFields = array("id", "permission", "user_id");
-		$this->masks = array();
-		$this->hintFields = array("id"=>"Id", "permission"=>"Permission", "user_id"=>"User Id");
+		$this->configure("permission");
 	}
 	
 	public function hasPermission($permissionKey, $idUser=null)

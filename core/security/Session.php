@@ -8,6 +8,8 @@
  */
 require_once ("Entity.php");
 require_once ("PermissionModel.php");
+require_once("Properties.php");
+
 class Session {
 
 	/**
@@ -75,11 +77,12 @@ class Session {
 	 */
 	public static function logoff()
 	{
-		$_SESSION["CLEANGAB"]["user"] 			= array();
-		$_SESSION["CLEANGAB"]["uimessages"] 	= array();
-		$_SESSION["CLEANGAB"]["toolbarButtons"] = array();
-		$_SESSION["CLEANGAB"]["xmlmenu"] 		= null;
-		//$_SESSION["CLEANGAB"]["redir"] 		= array();
+		$_SESSION["CLEANGAB"]["user"] 				= array();
+		$_SESSION["CLEANGAB"]["uimessages"] 		= array();
+		$_SESSION["CLEANGAB"]["toolbarButtons"] 	= array();
+		$_SESSION["CLEANGAB"]["xmlmenu"] 			= null;
+		//$_SESSION["CLEANGAB"]["redir"] 			= array();
+		$_SESSION["CLEANGAB"]["propertymessages"] 	= array();
 		Session::addUIMessage("Logoff performed correctly");
 		Session::goToRedir();
 	}
@@ -157,6 +160,10 @@ class Session {
 		if (!isset($_SESSION["CLEANGAB"]["goto"]))
 		{
 			$_SESSION["CLEANGAB"]["goto"] = null;
+		}
+		if (!Properties::isPropertyMessagesLoaded())
+		{
+			Session::loadPropertyMessages();
 		}
 	}
 
@@ -344,6 +351,16 @@ class Session {
 		}
 		Session::addRedir($parsed[0], $parsed[1]);
 		Session::goToRedir();
+	}
+	
+	public static function loadPropertyMessages()
+	{
+		$_SESSION["CLEANGAB"]["propertymessages"] = array();
+		$obProps = new Properties();
+		$pathToFile = CLEANGAB_PATH_BASE_APP . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "conf" . DIRECTORY_SEPARATOR . "messages.properties";
+		$obProps->getProperties($pathToFile);
+		$_SESSION["CLEANGAB"]["propertymessages"] = $obProps->getContent();
+		CleanGab::log("Properties loaded in Session");
 	}
 	
 }

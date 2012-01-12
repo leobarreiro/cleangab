@@ -92,7 +92,6 @@ class Formatter {
 	// TODO Escrever a logica de cada Formatter
 	protected function translateToScreen() { }
 	
-	
 	public function getScreenContent() {
 		return $this->screenContent;
 	}

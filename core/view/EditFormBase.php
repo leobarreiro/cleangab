@@ -27,7 +27,7 @@ class EditFormBase implements XHTMLComponent {
 		
 		$this->inject($objectModel->getRecordset());
 		
-		$this->formFields 	  = $objectModel->getListableFields();
+		$this->formFields 	  = $objectModel->getFields();
 		$this->nameFields 	  = $objectModel->getHintFields();
 		$this->nameController = $nameController;
 		$this->formOperation  = array("save");

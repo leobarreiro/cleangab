@@ -29,7 +29,20 @@ class TableListBase implements XHTMLComponent {
 	{
 		Validate::notNull($idName, "ID can not be null");
 		$this->idName 	  = $idName;
-		$this->header 	  = ($model->getHintFields() != null) ? $model->getHintFields() : array();
+
+		$hintFieldsToList = array();
+		$allHints 		  = $model->getHintFields();
+		$hintsAvailable   = array_keys($allHints);
+		$noListableFields = $model->getNoListableFields();
+		
+		foreach ($hintsAvailable as $field) 
+		{
+			if (!in_array($field, $noListableFields))
+			{
+				$hintFieldsToList[$field] = $allHints[$field];
+			}
+		}
+		$this->header 	  = $hintFieldsToList;
 		$this->masks  	  = ($model->getMasks() != null) ? $model->getMasks() : array();
 		
 		$this->inject($model->getRecordset());
@@ -40,7 +53,7 @@ class TableListBase implements XHTMLComponent {
 		
 		$this->pages 	  = ceil($totalRecords / $recordsPerPage);
 		$this->page 	  = $this->getActualPage($totalRecords, $recordsPerPage, $actualRecord);
-		$this->formFields = $model->getListableFields();
+		$this->formFields = $model->getFields();
 		$this->renderForm = true;
 		$this->nameFields = $model->getHintFields();
 		$this->view 	  = $view;

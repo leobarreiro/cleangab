@@ -51,6 +51,8 @@ class Toolbar implements XHTMLComponent {
 		$xhtml[] = "</ul>";
 		$xhtml[] = "</li>";
 		$xhtml[] = "</ul>";
+		$xhtml[] = "<div>";
+		$xhtml[] = "</div>";
 		$xhtml[] = "<div id=\"toolbar-buttons\">";
 		$xhtml[] = $this->assembleToolbarButtons();
 		$xhtml[] = "</div>";

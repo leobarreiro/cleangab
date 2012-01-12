@@ -32,7 +32,6 @@ class UserController extends CleanGabController {
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$tableUsers = new TableListBase("users", $view, $model);
 		$tableUsers->setFormFields(array("user", "email", "name"));
-		//$view->addObject($tableUsers->getIdName(), $tableUsers);
 		$view->renderize();
 	}
 

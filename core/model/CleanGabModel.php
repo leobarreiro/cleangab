@@ -1,8 +1,8 @@
 <?php
 /**
- * Clean-Gab Framework
+ * CleanGab Framework
  * CleanGabModel.php
- * Date: 	2011-01-XX
+ * Date: 	2011-01-11
  * Author: 	Leopoldo Barreiro
  */
 
@@ -13,14 +13,25 @@ class CleanGabModel {
 	
 	// Entity
 	protected $entity;
+
+	// lista de todos os campos
+	// formato array: nome_campo1, nome_campo2...
+	protected $fields;
 	
 	// Descricoes dos campos que irao em cabecalhos de table list, por exemplo
 	// formato array: nome_campo=>descricao
 	protected $hintFields;
 	
-	// campos que devem ser exibidos em uma tablelist
-	// formato array: nome_campo1, nome_campo2...
-	protected $listableFields;
+	// campos que nao devem ser exibidos em uma tablelist
+	// formato array: nomecampo1, nomecampo2, nomecampo3...
+	protected $noListableFields;
+	
+	/**
+	 * Campos que devem ser considerados em um filtro de pesquisa
+	 * 
+	 */
+	protected $searchableFields;
+	
 	
 	// mascaras que devem ser aplicadas por campo
 	// formato array: nome_campo=>nome_classe_formatter
@@ -36,12 +47,13 @@ class CleanGabModel {
 	
 	public function __construct() 
 	{
-		$this->hintFields = array();
-		$this->listableFields = array();
-		$this->masks = array();
-		$this->entity = null;
-		$this->recordset = null;
-		$this->argumentData = array();
+		$this->fields 			= array();
+		$this->hintFields 		= array();
+		$this->noListableFields = array();
+		$this->masks 			= array();
+		$this->entity 			= null;
+		$this->recordset 		= null;
+		$this->argumentData 	= array();
 	}
 
 	public function getHintFields() 
@@ -49,9 +61,9 @@ class CleanGabModel {
 		return $this->hintFields;
 	}
 	
-	public function getListableFields() 
+	public function getFields() 
 	{
-		return $this->listableFields;
+		return $this->fields;
 	}
 	
 	public function setRecordset($recordset) 
@@ -80,6 +92,16 @@ class CleanGabModel {
 	public function getMasks() 
 	{
 		return $this->masks;
+	}
+	
+	public function setNoListableFields($arNoListableFields)
+	{
+		$this->noListableFields = $arNoListableFields;
+	}
+	
+	public function getNoListableFields()
+	{
+		return $this->noListableFields;
 	}
 	
 	public function addArgumentData($key, $value) 
@@ -157,6 +179,19 @@ class CleanGabModel {
 		{
 			return false;
 		}
+	}
+	
+	public function configure($referencedTableName) 
+	{
+		$this->entity 			= new Entity($referencedTableName);
+		$this->fields 			= array_keys($this->entity->getFields());
+		$hintFields 			= array();
+		foreach ($this->fields as $field)
+		{
+			$propertyKey = "field." . $field;
+			$hintFields[$field] = Properties::get($propertyKey);
+		}
+		$this->hintFields = $hintFields;
 	}
 
 }

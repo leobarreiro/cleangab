@@ -300,11 +300,12 @@ class Entity implements IDBEntity {
 		}
 		$this->connectIfNull();
 		$this->connection->resource->query($this->prepare($sql));
-		if ($this->connection->resource->affected_rows > 0)
+		CleanGab::log("(" . $this->connection->resource->errno . ") " . $this->connection->resource->error);
+		CleanGab::log($this->connection->resource->info);
+		if ($this->connection->resource->affected_rows > 0 || $this->connection->resource->errno == 0)
 		{
 			if ($update)
 			{
-				//return $this->connection->resource->affected_rows;
 				return $this->objectToPersist->{$this->pk};
 			}
 			else 

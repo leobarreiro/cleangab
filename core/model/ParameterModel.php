@@ -7,9 +7,7 @@ class ParameterModel extends CleanGabModel {
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->listableFields = array("id", "name", "value", "type");
-		$this->masks = array();
-		$this->hintFields = array("id"=>"Id", "name"=>"Name", "value"=>"Value", "type"=>"Type");
+		$this->configure("parameter");
 	}
 	
 	public function getParameter($parameterName)
