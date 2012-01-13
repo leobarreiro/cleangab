@@ -81,11 +81,6 @@ class Formatter {
 		return $xhtml;
 	}
 	
-	public function toListField($nameField=null, $idField=null) 
-	{
-		return $this->screenContent;
-	}
-	
 	// TODO Escrever a logica de cada Formatter
 	protected function translateToDataBase() { }
 	

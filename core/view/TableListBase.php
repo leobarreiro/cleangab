@@ -113,8 +113,9 @@ class TableListBase implements XHTMLComponent {
 							require_once ($mask . ".php");
 						}
 						$formatter = new $mask();
-						$formatter->toScreen($record->{$headCell});
-						$cellContent = $formatter->toListField();
+						//$formatter->toScreen($record->{$headCell});
+						//$cellContent = $formatter->toListField();
+						$cellContent = $formatter->toScreen($record->{$headCell});
 					}
 					else
 					{
