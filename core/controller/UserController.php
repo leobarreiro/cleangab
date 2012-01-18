@@ -147,11 +147,11 @@ class UserController extends CleanGabController {
 		$xhtml = $this->listPermissions($user->id, true);
 
 		$view = new CleanGabEngineView("User", "options");
-		$view->toolbar->addButton(new ToolbarButton("save", "javascript:document.frm.submit()", "user_options", "save active"));
 		if (isset($_SERVER["HTTP_REFERER"]) && strlen($_SERVER["HTTP_REFERER"]) > 0)
 		{
 			$view->toolbar->addButton(new ToolbarButton("back", $_SERVER["HTTP_REFERER"], "user_back", "back active"));
 		}
+		$view->toolbar->addButton(new ToolbarButton("save", "javascript:document.frm.submit()", "user_options", "save active"));
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$view->addObject("pageuser", $user);
 		$view->addObject("permissions", implode("", $xhtml));
@@ -185,11 +185,11 @@ class UserController extends CleanGabController {
 		$xhtml = $this->listPermissions($userId, false);
 		// View
 		$view = new CleanGabEngineView("User", "edit");
+		$view->toolbar->addButton(new ToolbarButton("back", CLEANGAB_URL_BASE_APP . "/user/index", "user_list", "back active"));
 		if (!$isReadonly)
 		{
 			$view->toolbar->addButton(new ToolbarButton("save", "javascript:document.show.submit()", "user_edit", "save active"));
 		}
-		$view->toolbar->addButton(new ToolbarButton("back", CLEANGAB_URL_BASE_APP . "/user/index", "user_list", "back active"));
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$view->addObject("pageuser", $user);
 		$view->addObject("permissions", implode("", $xhtml));

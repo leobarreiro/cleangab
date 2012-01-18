@@ -10,12 +10,12 @@ require_once ("Formatter.php");
 
 class TinyIntFormatter extends Formatter {
 	
-	private $options;
+	protected $options;
 
 	public function __construct() 
 	{	
 		$this->dataBasePattern 	= "/^[0-9]$/";
-		$this->screenPattern 	= "/^[a-zA-Z]$/";
+		$this->screenPattern 	= "/^[a-zA-Z0-9]$/";
 		$this->setOptions(array("0"=>"No", "1"=>"Yes"));
 	}
 	
@@ -49,27 +49,32 @@ class TinyIntFormatter extends Formatter {
 	
 	public function toFormField($nameField, $idField, $mixedValue)
 	{
+		$this->dataBaseContent = $mixedValue;
 		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
 		$xhtml = array();
-		foreach ($this->options as $key=>$value)
+		
+		if ($this->matchDataBasePattern()) 
 		{
-			$xhtml[] = "<span class=\"" . strtolower(get_class($this)) . "\">";
-			$xhtml[] = "<label>";
-			$xhtml[] = "<input type=\"radio\" name=\"" . $nameField . "\"";
-			$xhtml[] = " id=\"" . $idField . "\" ";
-			$xhtml[] = " value=\"" . $key . "\" ";
-			if ($mixedValue == $key)
+			foreach ($this->options as $key=>$value)
 			{
-				$xhtml[] = " checked ";
+				$xhtml[] = "<span class=\"" . strtolower(get_class($this)) . "\">";
+				$xhtml[] = "<label>";
+				$xhtml[] = "<input type=\"radio\" name=\"" . $nameField . "\"";
+				$xhtml[] = " id=\"" . $idField . "\" ";
+				$xhtml[] = " value=\"" . $key . "\" ";
+				if ($mixedValue == $key)
+				{
+					$xhtml[] = " checked ";
+				}
+				if ($this->disabled)
+				{
+					$xhtml[] = " disabled=\"disabled\" ";
+				}
+				$xhtml[] = "/>";
+				$xhtml[] = $value;
+				$xhtml[] = "</label>";
+				$xhtml[] = "</span>";
 			}
-			if ($this->disabled)
-			{
-				$xhtml[] = " disabled=\"disabled\" ";
-			}
-			$xhtml[] = "/>";
-			$xhtml[] = $value;
-			$xhtml[] = "</label>";
-			$xhtml[] = "</span>";
 		}
 		return implode("", $xhtml);
 	}
