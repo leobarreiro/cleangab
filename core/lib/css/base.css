@@ -795,8 +795,7 @@ input.codigo {
 }
 
 input.readonly {
-	background-color: #eeeeee;
-	color: #666;
+	background-color: #eeeeee !important;
 }
 
 input.full {
