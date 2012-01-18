@@ -1,8 +1,8 @@
 <IfModule mod_rewrite.c>
-   RewriteEngine on
-   RewriteRule ^([a-zA-Z]*)/?$ index.php?cgController=$1 [L]
-   RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/?$ index.php?cgController=$1&cgAction=$2 [L]
-   RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/?([a-zA-Z0-9\.\,\_\+\ ]*)/?$ index.php?cgController=$1&cgAction=$2&cgParam=$3 [L]
-   RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/([a-zA-Z0-9\.\,\_\+\ ]*)/([a-zA-Z0-9\.\,\_\+\ ]*)/?$ index.php?cgController=$1&cgAction=$2&cgParam=$3&cgParam2=$4 [L]
-RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/([a-zA-Z0-9\.\,\_\+\ ]*)/([a-zA-Z0-9\.\,\_\+\ ]*)/([a-zA-Z0-9\.\,\_\+\ ]*)/?$ index.php?cgController=$1&cgAction=$2&cgParam=$3&cgParam2=$4&cgParam3=$5 [L]
+	RewriteEngine on
+	RewriteRule ^([a-zA-Z]*)/?$ index.php?cgController=$1 [L]
+	RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/?$ index.php?cgController=$1&cgAction=$2 [L]
+	RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/?([a-zA-Z0-9\.\,\_\+\-\ ]*)/?$ index.php?cgController=$1&cgAction=$2&cgParam=$3 [L]
+	RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/([a-zA-Z0-9\.\,\_\+\-\ ]*)/([a-zA-Z0-9\.\,\_\+\-\ ]*)/?$ index.php?cgController=$1&cgAction=$2&cgParam=$3&cgParam2=$4 [L]
+	RewriteRule ^([a-zA-Z]*)/([a-zA-Z]*)/([a-zA-Z0-9\.\,\_\+\-\ ]*)/([a-zA-Z0-9\.\,\_\+\-\ ]*)/([a-zA-Z0-9\.\,\_\+\-\ ]*)/?$ index.php?cgController=$1&cgAction=$2&cgParam=$3&cgParam2=$4&cgParam3=$5 [L]
 </IfModule>
