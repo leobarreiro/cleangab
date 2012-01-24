@@ -40,6 +40,14 @@ class CleanGabController {
 		return false;
 	}
 	
+	public function injectBlockOArgumentsData($model) 
+	{
+		$expectedArguments = $model->getExpectedArguments();
+		foreach ($expectedArguments as $argument) {
+			$model->addArgumentData($argument, $this->getUserInput($argument));
+		}
+	}
+	
 	public function add() {}
 	
 	public function edit() {}

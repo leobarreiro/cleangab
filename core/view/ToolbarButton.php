@@ -26,7 +26,7 @@ class ToolbarButton implements XHTMLComponent {
 	
 	public function assemble() 
 	{
-		$this->content = "<a class=\"" . $this->cssStyle . "\" href=\"" . $this->uri . "\">" . $this->key . "</a>";
+		$this->content = "<a title=\"" . $this->idName . "\" class=\"" . $this->cssStyle . "\" href=\"" . $this->uri . "\">" . $this->key . "</a>";
 	}
 	
 	public function getIdName() 

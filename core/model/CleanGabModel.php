@@ -45,6 +45,9 @@ class CleanGabModel {
 	// formato array: nome_campo=>valor_do_input
 	public $argumentData;
 	
+	// Table name referenced, according to database
+	protected $referencedTableName;
+	
 	public function __construct() 
 	{
 		$this->fields 			= array();
@@ -126,6 +129,16 @@ class CleanGabModel {
 		}
 	}
 	
+	public function getReferencedTableName() 
+	{
+		return $this->referencedTableName;
+	}
+	
+	public function setReferencedTableName($tbName) 
+	{
+		$this->referencedTableName = $tbName;
+	}
+	
 	public function clearArgumentData()
 	{
 		$this->argumentData = array();
@@ -163,6 +176,7 @@ class CleanGabModel {
 	
 	public function createEmptyObject($table=null) 
 	{
+		$this->setReferencedTableName($table);
 		$tableName = ($table != null) ? strtolower($table) : str_replace("model", "", strtolower(get_class($this)));
 		$this->entity = new Entity($tableName);
 		$fields = $this->entity->getFields();
@@ -181,8 +195,23 @@ class CleanGabModel {
 		}
 	}
 	
+	public function getExpectedArguments() 
+	{
+		if ($this->referencedTableName != null && strlen($this->referencedTableName) > 0) 
+		{
+			$emptyObject = $this->createEmptyObject($this->referencedTableName);
+			$arObject = (array) $emptyObject;
+			return array_keys($arObject);
+		} 
+		else 
+		{
+			return null;
+		}
+	}
+	
 	public function configure($referencedTableName) 
 	{
+		$this->setReferencedTableName($referencedTableName);
 		$this->entity 			= new Entity($referencedTableName);
 		$this->fields 			= array_keys($this->entity->getFields());
 		$hintFields 			= array();
@@ -193,6 +222,13 @@ class CleanGabModel {
 		}
 		$this->hintFields = $hintFields;
 	}
+	
+	public function setBlockOfArguments($arArgumentsBlock) {
+		foreach ($arArgumentsBlock as $key=>$value) {
+			$this->addArgumentData($key, $value);
+		}
+	}
+	
 
 }
 ?>
