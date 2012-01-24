@@ -948,3 +948,7 @@ a.hintbutton {
 	background-color: #0A246A;
 	color: white;
 }
+
+span.required {
+	font-weight: bold;
+}
