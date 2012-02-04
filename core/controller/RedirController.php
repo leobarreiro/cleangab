@@ -16,7 +16,7 @@ class RedirController extends CleanGabController {
 	}
 	
 	
-	public function goto($uuid)
+	public function redirTo($uuid)
 	{
 		$logged = Session::isUserLogged();
 		if ($logged)

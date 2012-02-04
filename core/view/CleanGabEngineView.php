@@ -201,6 +201,7 @@ class CleanGabEngineView {
 					}
 					else 
 					{
+						
 						$content = str_replace("#{" . $tag . "}", $obj, $content);
 					}
 				}

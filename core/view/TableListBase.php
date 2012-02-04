@@ -161,18 +161,22 @@ class TableListBase implements XHTMLComponent {
 		$xhtml   = array();
 		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Tools\">";
 		//$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Actions\">";
-		foreach ($this->operations as $operation)
+		if (is_array($this->operations)) 
 		{
-			$id = strtolower(get_class($this)) . $this->idName . $operation;
-			$key = strtolower($operation . "_" . $this->controller);
-			$uri = "javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')";
-			$tbBt = new ToolbarButton($id, $uri, $key, $operation);
-			$tbBt->setControllerAction($this->controller, $this->operation);
-			if (is_object($this->view->toolbar))
+			foreach ($this->operations as $operation)
 			{
-				$this->view->toolbar->addButton($tbBt);
+				//$id = strtolower(get_class($this)) . $this->idName . $operation;
+				$id = $operation;
+				$key = strtolower($operation . "_" . $this->controller);
+				$uri = "javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')";
+				$tbBt = new ToolbarButton($id, $uri, $key, $operation);
+				$tbBt->setControllerAction($this->controller, $this->operation);
+				if (is_object($this->view->toolbar))
+				{
+					$this->view->toolbar->addButton($tbBt);
+				}
+				//$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')" . "\" class=\"" . $operation . "\">" . $operation . "</a>&nbsp;";
 			}
-			//$xhtml[] = "<a href=\"javascript:" . strtolower(get_class($this)) . $this->idName . "ActionForm('" . $operation . "')" . "\" class=\"" . $operation . "\">" . $operation . "</a>&nbsp;";
 		}
 		//$xhtml[] = "</div>";
 		$xhtml[] = "<div class=\"" . strtolower(get_class($this)) . "Paginator\">";
@@ -267,10 +271,10 @@ class TableListBase implements XHTMLComponent {
 		$frm[] = "}";
 		$frm[] = "function " . strtolower(get_class($this)) . $this->idName . "KeyActionForm(obj,key) {";
 		$frm[] = "document." . $this->idName . "ActionForm" . ".key.value=key;";
-		$frm[] = "$(\"tr\").removeClass('" . strtolower(get_class($this)) . "SelectedRecord');";
-		$frm[] = "$(obj).addClass('" . strtolower(get_class($this)) . "SelectedRecord');";
+		$frm[] = "jQuery(\"tr\").removeClass('" . strtolower(get_class($this)) . "SelectedRecord');";
+		$frm[] = "jQuery(obj).addClass('" . strtolower(get_class($this)) . "SelectedRecord');";
 		//$frm[] = "$('." . strtolower(get_class($this)) . "Actions > a').addClass('active');";
-		$frm[] = "$('#toolbar-buttons > a').addClass('active');";
+		$frm[] = "jQuery('#toolbar-buttons > a').add('#toolbar-buttons > input').addClass('active');";
 		$frm[] = "}";
 		$frm[] = "</script>";
 		return implode("", $frm);

@@ -12,11 +12,12 @@ class CleanGabController {
 
 	private $action;
 	private $args;
+	public static $readOnlyJqueryScript;
 
 	public function __construct($action=null, $args=null) {
-
 		$this->action = ($action != null) ? $action : "index";
 		$this->args = (is_array($args)) ? $args : array($args);
+		$this->readOnlyJqueryScript = "jQuery(\"div.field > input\").add(\"div.field > select\").add(\"div.field > textarea\").attr('disabled', 'disable').addClass('readonly');";
 	}
 
 	public function getUserInput($strKey, $inputMethod="post") 

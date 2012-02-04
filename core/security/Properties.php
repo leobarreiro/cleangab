@@ -60,6 +60,7 @@ class Properties {
 	
 	public static function get($key) 
 	{
+		Validate::notEmpty($key, "Key property is empty");
 		if (Properties::isPropertyMessagesLoaded() && Properties::isKeyDefined($key))
 		{
 			return $_SESSION["CLEANGAB"]["propertymessages"][$key];

@@ -1,6 +1,6 @@
 <?php
 /**
- * Clean-Gab Framework
+ * CleanGab Framework
  * Validate.php
  * Date: 	2011-01-28
  * Author: 	Leopoldo Barreiro
@@ -22,6 +22,12 @@ class Validate {
 			if (!get_class($mixed) == $type) {
 				throw new UnexpectedValueException($message, 1);
 			}
+		}
+	}
+	
+	public static function notEmpty($mixed, $message) {
+		if (strlen($mixed) == 0) {
+			throw new UnexpectedValueException($message, 1);
 		}
 	}
 	
