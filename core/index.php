@@ -5,6 +5,7 @@ require_once("UIMessageBase.php");
 require_once("ToolbarButton.php");
 require_once("HintButton.php");
 require_once("Session.php");
+require_once("Validation.php");
 
 if (isset($_SERVER['SCRIPT_NAME']) && (preg_match("/\/cleangab\/core\/index.php/", $_SERVER['SCRIPT_NAME']) > 0)) 
 {

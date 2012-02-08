@@ -7,6 +7,7 @@
  *
  */
 require_once("CleanGab.php");
+require_once("Validation.php");
 
 class Properties {
 	
@@ -60,7 +61,7 @@ class Properties {
 	
 	public static function get($key) 
 	{
-		Validate::notEmpty($key, "Key property is empty");
+		Validation::notEmpty($key, "Key property is empty");
 		if (Properties::isPropertyMessagesLoaded() && Properties::isKeyDefined($key))
 		{
 			return $_SESSION["CLEANGAB"]["propertymessages"][$key];

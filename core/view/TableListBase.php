@@ -27,7 +27,7 @@ class TableListBase implements XHTMLComponent {
 
 	public function __construct($idName, $view, $model)
 	{
-		Validate::notNull($idName, "ID can not be null");
+		Validation::notNull($idName, "ID can not be null");
 		$this->idName 	  = $idName;
 
 		$hintFieldsToList = array();
@@ -90,7 +90,6 @@ class TableListBase implements XHTMLComponent {
 		{
 			$xhtml[] = $this->formActionToXhtml();
 			$xhtml[] = $this->formNavigatorToXhtml();
-			$xhtml[] = $this->paginationToXhtml();
 			$xhtml[] = "<table id=\"" . $this->idName . "\" class=\"" . strtolower(get_class($this)) . "\">";
 			$xhtml[] = "<tr>";
 			foreach ($this->header as $headCell)
@@ -132,6 +131,7 @@ class TableListBase implements XHTMLComponent {
 				$xhtml[] = "</tr>";
 			}
 			$xhtml[] = "</table>";
+			$xhtml[] = $this->paginationToXhtml();
 		}
 		$this->xhtml = implode("", $xhtml);
 	}

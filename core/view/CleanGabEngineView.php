@@ -8,7 +8,7 @@
 
 //header("Content-Type: text/html; charset=ISO-8859-1");
 
-require_once ("Validate.php");
+require_once ("Validation.php");
 require_once ("UserToolsMenu.php");
 require_once ("Toolbar.php");
 

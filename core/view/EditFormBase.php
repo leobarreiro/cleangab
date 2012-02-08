@@ -21,7 +21,7 @@ class EditFormBase implements XHTMLComponent {
 
 	public function __construct($idName, $nameController, $objectModel)
 	{
-		Validate::notNull($idName, "ID can not be null");
+		Validation::notNull($idName, "ID can not be null");
 		$this->idName 		  = $idName;
 		$this->masks  		  = ($objectModel->getMasks() != null) ? $objectModel->getMasks() : array();
 		
