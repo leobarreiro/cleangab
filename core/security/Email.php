@@ -6,7 +6,7 @@
  * Author: 	Leopoldo Barreiro
  */
 
-require_once("Validate.php");
+require_once("Validation.php");
 // dependency: PEAR Mail http://pear.php.net/manual/en/package.mail.mail-mime.php
 require_once("Mail.php");
 
