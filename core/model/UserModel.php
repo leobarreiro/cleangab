@@ -3,12 +3,17 @@ require_once ("CleanGabModel.php");
 
 class UserModel extends CleanGabModel {
 
+	private $activeOptions;
+	
 	public function __construct() 
 	{
 		parent::__construct();
 		$this->configure("user");
-		$this->masks = array("created"=>"DateTimeFormatter");
 		$this->noListableFields = array("renew_passwd", "passwd", "first_page");
+		$this->activeOptions = array("0"=>"No", "1"=>"Yes");
+		$tinyIntFormatter = new TinyIntFormatter();
+		$tinyIntFormatter->setOptions($this->activeOptions);
+		$this->masks = array("created"=>"DateTimeFormatter", "active"=>$tinyIntFormatter, "renew_passwd"=>$tinyIntFormatter);
 	}
 	
 	public function prepareList() 
