@@ -15,8 +15,8 @@ class TinyIntFormatter extends Formatter {
 	public function __construct() 
 	{	
 		$this->dataBasePattern 	= "/^[0-9]$/";
-		$this->screenPattern 	= "/^[a-zA-Z0-9]$/";
-		$this->setOptions(array("0"=>"No", "1"=>"Yes"));
+		$this->screenPattern 	= "/^[a-zA-Z0-9]{+}$/";
+		$this->setOptions(array(0=>Properties::get("tinyint.no"), 1=>Properties::get("tinyint.yes")));
 	}
 	
 	public function setOptions($options)
@@ -50,7 +50,7 @@ class TinyIntFormatter extends Formatter {
 	public function toFormField($nameField, $idField, $mixedValue)
 	{
 		$this->dataBaseContent = $mixedValue;
-		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
+		Validation::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
 		$xhtml = array();
 		
 		if ($this->matchDataBasePattern()) 
