@@ -46,7 +46,7 @@ class EnumFormatter extends TinyIntFormatter {
 	public function toFormField($nameField, $idField, $mixedValue)
 	{
 		$this->dataBaseContent = $mixedValue;
-		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
+		Validation::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
 		$xhtml = array();
 		$xhtml[] = "<select name=\"" . $nameField . "\" class=\"" . strtolower(get_class($this)) . "\" id=\"" . $idField . "\" >";
 		foreach ($this->options as $key=>$value)

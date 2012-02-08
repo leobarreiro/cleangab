@@ -70,7 +70,7 @@ class Formatter {
 	
 	public function toFormField($nameField, $idField=null) 
 	{
-		Validate::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
+		Validation::notNull($nameField, "NameField can not be null in a Formatter class, toFormField operation");
 		$xhtml  = "<input type='text' name='" . $nameField . "'";
 		if ($idField != null) 
 		{
