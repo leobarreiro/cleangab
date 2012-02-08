@@ -12,9 +12,29 @@
 				<exclude name="**.project" />
 				<exclude name="**.gitignore" />
 				<exclude name="build.xml" />
+				<exclude name="localconfig.php" />
 			</fileset>
 		</copy>
 		<delete dir="${dest}.git" includeemptydirs="true" />
 		<delete dir="${dest}.settings" includeemptydirs="true" />
+	</target>
+	<target name="upload to remote server">
+		<ftp server="ftp.leopoldobarreiro.com" 
+			port="21"
+		    remotedir="/public_html/sites/e-faber.com.br/cleangab"
+		    userid="leopo074"
+		    password="fgah93"
+		    passive="yes"
+		    depends="yes"
+		    binary="off" verbose="yes">
+		    <fileset dir="/home/efaber/projetos/cleangab">
+		    	<include name="**/*.php"/>
+		    	<include name="**/*.css"/>
+		    	<include name="**/*.xml"/>
+		    	<include name="**/*.xhtml"/>
+		    	<include name="**/*.properties"/>
+		    	<exclude name="build.xml" />
+		    </fileset>
+		  </ftp>
 	</target>
 </project>
