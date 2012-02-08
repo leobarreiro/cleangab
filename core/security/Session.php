@@ -72,7 +72,7 @@ class Session {
 	 * 
 	 * Modo de utilizar:
 	 *
-	 * Session::addRedir($controller, $action);
+	 * Session::addRedir(array($controller, $action));
 	 * Session::logoff();
 	 */
 	public static function logoff()
@@ -205,10 +205,12 @@ class Session {
 		}
 	}
 
-	public static function addRedir($controller, $action)
+	public static function addRedir($arguments)
 	{
 		Session::createIfNotExists();
-		$_SESSION["CLEANGAB"]["redir"][] = array("control"=>$controller, "action"=>$action);
+		if (is_array($arguments)) {
+			$_SESSION["CLEANGAB"]["redir"][] = $arguments;
+		}
 	}
 
 	public static function getLastRedir()
@@ -229,7 +231,7 @@ class Session {
 		if (is_array($_SESSION["CLEANGAB"]["redir"]) && count($_SESSION["CLEANGAB"]["redir"]) > 0)
 		{
 			$lastRedir = $_SESSION["CLEANGAB"]["redir"][count($_SESSION["CLEANGAB"]["redir"])-1];
-			header("Location: " . CLEANGAB_URL_BASE_APP . "/" . $lastRedir["control"] . "/" . $lastRedir["action"]);
+			header("Location: " . CLEANGAB_URL_BASE_APP . "/" . implode("/", $lastRedir));
 			die();
 		}
 		else
@@ -349,7 +351,7 @@ class Session {
 				$parsed[] = $part;
 			}
 		}
-		Session::addRedir($parsed[0], $parsed[1]);
+		Session::addRedir(array($parsed[0], $parsed[1]));
 		Session::goToRedir();
 	}
 	
