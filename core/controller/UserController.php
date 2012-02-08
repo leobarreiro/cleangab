@@ -12,7 +12,7 @@ class UserController extends CleanGabController {
 
 	public function index() 
 	{
-		Session::addRedir("user", "login");
+		Session::addRedir(array("user", "login"));
 		Session::verify();
 		Session::hasPermission("user_list");
 		$model = new UserModel();
@@ -28,7 +28,7 @@ class UserController extends CleanGabController {
 		$model->prepareList();
 		// View
 		$view = new CleanGabEngineView("user", "index");
-		$view->toolbar->addButton(new ToolbarButton("add", CLEANGAB_URL_BASE_APP . "/user/add", "user_add", "adduser active"));
+		$view->toolbar->addButton(new ToolbarButton("add", CLEANGAB_URL_BASE_APP . "/user/add", "user_add", "add active"));
 		$view->addObject("uimessage", new UIMessageBase("uimessage", Session::getLastUIMessage()));
 		$tableUsers = new TableListBase("users", $view, $model);
 		$tableUsers->setFormFields(array("user", "email", "name"));
@@ -54,7 +54,7 @@ class UserController extends CleanGabController {
 	
 	public function logoff()
 	{
-		Session::addRedir("user", "login");
+		Session::addRedir(array("user", "login"));
 		Session::logoff();
 	}
 	
@@ -101,11 +101,11 @@ class UserController extends CleanGabController {
 							$uri[] = strtolower($part);
 						}
 					}
-					Session::addRedir($uri[0], $uri[1]);
+					Session::addRedir(array($uri[0], $uri[1]));
 				} 
 				else 
 				{
-					Session::addRedir("user", "option");
+					Session::addRedir(array("user", "option"));
 				}
 				Session::goToRedir();
 			}
@@ -119,7 +119,7 @@ class UserController extends CleanGabController {
 
 	public function show($key) 
 	{
-		Session::addRedir("user", "login");
+		Session::addRedir(array("user", "login"));
 		Session::verify();
 		Session::hasPermission("user_show");
 		$this->loadUserPage($key, true);
@@ -127,7 +127,7 @@ class UserController extends CleanGabController {
 	
 	public function edit($key)
 	{
-		Session::addRedir("user", "login");
+		Session::addRedir(array("user", "login"));
 		Session::verify();
 		Session::hasPermission("user_edit");
 		$this->loadUserPage($key, false);
@@ -135,7 +135,7 @@ class UserController extends CleanGabController {
 	
 	public function options()
 	{
-		Session::addRedir("user", "login");
+		Session::addRedir(array("user", "login"));
 		Session::verify();
 		$sessionUser = Session::getUser();
 		$model = new UserModel();
@@ -163,18 +163,14 @@ class UserController extends CleanGabController {
 	{
 		$model = new UserModel();
 		$user = ($userId == null) ? $model->createEmptyObject() : $model->getUserById($userId);
-		$arOpt = array("0"=>"N&atilde;o", "1"=>"Sim");
-		$tinyActive = new TinyIntFormatter();
-		$tinyActive->setOptions($arOpt);
-		$user->activeoptions = $tinyActive->toFormField("active", "active", $user->active);
-		$tinyRenew = new TinyIntFormatter();
-		$tinyRenew->setOptions($arOpt);
-		$user->renewoptions = $tinyRenew->toFormField("renew", "renew", $user->renew_passwd);
+
 		if ($userId == null)
 		{
-			$user->uuid 	= uniqid();
-			$user->created 	= date("d/m/Y H:i:s");
-			$pageTitle 		= "Add an User";
+			$user->uuid 		= uniqid();
+			$user->created 		= date("d/m/Y H:i:s");
+			$pageTitle 			= "Add an User";
+			$user->active 		= 1;
+			$user->renew_passwd = 0;
 		}
 		else 
 		{
@@ -182,6 +178,11 @@ class UserController extends CleanGabController {
 			$user->created 		= $dateTimeFormatter->toScreen($user->created);
 			$pageTitle 			= ($isReadonly) ? "Show User" : "Edit User";
 		}
+		
+		$tinyIntFormatter = $model->getMaskByKey("active");
+		$user->activeOpts = $tinyIntFormatter->toFormField("active", "active", $user->active);
+		$user->renewOpts  = $tinyIntFormatter->toFormField("renew", "renew", $user->renew_passwd);
+		
 		$xhtml = $this->listPermissions($userId, false);
 		// View
 		$view = new CleanGabEngineView("User", "edit");
@@ -217,7 +218,7 @@ class UserController extends CleanGabController {
 		
 		if ($model->save())
 		{
-			Session::addRedir("user", "index");
+			Session::addRedir(array("user", "index"));
 			Session::addUIMessage("Record saved successfull", "msgsuccess");
 			Session::goToRedir();
 		} 
