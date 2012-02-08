@@ -1,21 +1,21 @@
 <?php
 /**
  * CleanGab Framework
- * Validate.php
+ * Validation.php
  * Date: 	2011-01-28
  * Author: 	Leopoldo Barreiro
  * 
  */
 
-class Validate {
+class Validation {
 	
-	public static function notNull($mixed, $message) {
+	static function notNull($mixed, $message) {
 		if ($mixed == null) {
 			throw new UnexpectedValueException($message, 1);
 		}
 	}
 	
-	public static function objectType($type, $mixed, $message) {
+	static function objectType($type, $mixed, $message) {
 		if (!is_object($mixed)) {
 			throw new Exception($message, 1);
 		} else {
@@ -25,7 +25,7 @@ class Validate {
 		}
 	}
 	
-	public static function notEmpty($mixed, $message) {
+	static function notEmpty($mixed, $message) {
 		if (strlen($mixed) == 0) {
 			throw new UnexpectedValueException($message, 1);
 		}
