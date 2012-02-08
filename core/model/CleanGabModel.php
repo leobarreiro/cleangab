@@ -97,6 +97,15 @@ class CleanGabModel {
 		return $this->masks;
 	}
 	
+	public function getMaskByKey($key) {
+		Validation::notEmpty($key, "getMaskById: the key can not be empty");
+		if (isset($this->masks[$key])) {
+			return $this->masks[$key];
+		} else {
+			return false;
+		}
+	}
+	
 	public function setNoListableFields($arNoListableFields)
 	{
 		$this->noListableFields = $arNoListableFields;
@@ -176,8 +185,8 @@ class CleanGabModel {
 	
 	public function createEmptyObject($table=null) 
 	{
-		$this->setReferencedTableName($table);
 		$tableName = ($table != null) ? strtolower($table) : str_replace("model", "", strtolower(get_class($this)));
+		$this->setReferencedTableName($tableName);
 		$this->entity = new Entity($tableName);
 		$fields = $this->entity->getFields();
 		if (is_array($fields) && count($fields) > 0)
@@ -195,26 +204,22 @@ class CleanGabModel {
 		}
 	}
 	
-	public function getExpectedArguments() 
+	public function getExpectedArguments($table=null) 
 	{
-		if ($this->referencedTableName != null && strlen($this->referencedTableName) > 0) 
-		{
-			$emptyObject = $this->createEmptyObject($this->referencedTableName);
-			$arObject = (array) $emptyObject;
-			return array_keys($arObject);
-		} 
-		else 
-		{
-			return null;
-		}
+		$tableName = ($table != null) ? strtolower($table) : str_replace("model", "", strtolower(get_class($this)));
+		$this->setReferencedTableName($tableName);
+		$emptyObject = $this->createEmptyObject($this->referencedTableName);
+		$arObject = (array) $emptyObject;
+		return array_keys($arObject);
 	}
 	
-	public function configure($referencedTableName) 
+	public function configure($table=null) 
 	{
-		$this->setReferencedTableName($referencedTableName);
-		$this->entity 			= new Entity($referencedTableName);
-		$this->fields 			= array_keys($this->entity->getFields());
-		$hintFields 			= array();
+		$tableName 	  = ($table != null) ? strtolower($table) : str_replace("model", "", strtolower(get_class($this)));
+		$this->setReferencedTableName($tableName);
+		$this->entity = new Entity($tableName);
+		$this->fields = array_keys($this->entity->getFields());
+		$hintFields   = array();
 		foreach ($this->fields as $field)
 		{
 			$propertyKey = "field." . $field;
@@ -228,7 +233,21 @@ class CleanGabModel {
 			$this->addArgumentData($key, $value);
 		}
 	}
-	
+
+	public function createObjectToPersist($table=null) 
+	{
+		$tableName = ($table != null) ? strtolower($table) : str_replace("model", "", strtolower(get_class($this)));
+		$this->setReferencedTableName($tableName);
+		$objectToPersist = $this->createEmptyObject($tableName);
+		$arFields = (array) $objectToPersist;
+		$arKeys = array_keys($arFields);
+		foreach ($arKeys as $key) {
+			if ($this->getArgumentData($key)) {
+				$objectToPersist->{$key} = $this->getArgumentData($key);
+			}
+		}
+		return $objectToPersist;
+	}
 
 }
 ?>
