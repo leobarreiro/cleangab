@@ -1,40 +1,30 @@
 <?php
 /**
  * CleanGab Framework
- * CEPFormatter.php
- * Date: 	2012-01-12
+ * PersonTypeFormatter.php
+ * Date: 	2012-02-01
  * Author: 	Leopoldo Barreiro
  */
 
-require_once ("Formatter.php");
+require_once ("EnumFormatter.php");
 require_once ("Properties.php");
 
-class PersonTypeFormatter extends Formatter {
+class PersonTypeFormatter extends EnumFormatter {
 	
 	private $properties;
 	private $scrJuridica;
 	private $scrFisica;
 	
 	public function __construct() {
-
-		$this->properties = new Properties();
-		$this->scrJuridica = Properties::get("persontype.juridica");
-		$this->scrFisica = Properties::get("persontype.fisica");
-		$this->dataBasePattern 	= "/^[JF]{1}$/";
+		parent::__construct();
+		$this->properties 		= new Properties();
+		$this->scrJuridica 		= Properties::get("persontype.juridica");
+		$this->scrFisica 		= Properties::get("persontype.fisica");
+		$this->dataBasePattern 	= "/^[FJ]{1}$/";
 		$this->screenPattern 	= array($this->scrFisica, $this->scrJuridica);
+		$this->setOptions(array("J"=>$this->scrJuridica, "F"=>$this->scrFisica));
 	}
 	
-	protected function matchScreenPattern() 
-	{
-		if (in_array($this->screenContent, $this->screenPattern)) 
-		{
-			return true;
-		}
-		else 
-		{
-			return false;
-		}
-	}
 	
 	protected function translateToDataBase() {
 		$this->dataBaseContent = ($this->screenContent == $this->scrJuridica) ? "J" : "F";
