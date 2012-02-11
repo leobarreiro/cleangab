@@ -115,7 +115,7 @@ class Email {
 		$result = $this->mailPear->send($this->recipients, $this->headers, $this->body);
 		if (PEAR::IsError($result))
 		{
-			CleanGab::debug($result->getMessage());
+			CleanGab::log($result->getMessage());
 			return false;
 		}
 		return true;
